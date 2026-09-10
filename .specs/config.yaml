@@ -6,6 +6,7 @@ context: |
   Kickoff: prd.md
   Test command: pytest
   Branch prefix: feat
+  Docs: README.md + docs/ must stay current on every PR (C-008).
 
 commit:
   # Vendored Spec Guardrails skills + Python gates exceed the 500-line default
