@@ -1,0 +1,13 @@
+# Generated Spec Guardrails indexes (rebuild with `memory-index rebuild`)
+.specs/memory/
+.specs/workspaces/
+
+# Local secrets and Python artifacts
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
