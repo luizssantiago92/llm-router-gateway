@@ -1,0 +1,14 @@
+# Project guardrails config (extends preset: python-platform)
+extends: python-platform
+
+context: |
+  Product: LLM Router Gateway (FastAPI reverse gateway for multi-provider LLM traffic).
+  Kickoff: prd.md
+  Test command: pytest
+  Branch prefix: feat
+  Docs: README.md + docs/ must stay current on every PR (C-008).
+
+commit:
+  # Vendored Spec Guardrails skills + Python gates exceed the 500-line default
+  # on install/upgrade. Feature commits should stay far below this ceiling.
+  max_staged_lines: 8000
