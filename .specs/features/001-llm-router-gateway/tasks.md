@@ -46,16 +46,16 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 
 ### T5: Implement Redis exact-match cache
 - **Requirement**: REQ-005, REQ-006, REQ-007, REQ-008
-- **Files**: app/cache/service.py
+- **Files**: app/cache/service.py, app/cache/__init__.py, tests/test_cache.py
 - **Depends on**: T2
 - **Tests**: tests/test_cache.py
 - **Gate**: pytest tests/test_cache.py
 - **Done when**: the cache key is SHA-256 of canonical `messages`+`temperature`+`max_tokens` (model name excluded), GET returns a stored completion, SET uses `CACHE_TTL_SECONDS` default 3600, and 4xx/5xx/timeout payloads are not written
-- [ ] complete
+- [x] complete
 
 ### T6: Implement prompt complexity evaluator
 - **Requirement**: REQ-009
-- **Files**: app/routing/evaluator.py
+- **Files**: app/routing/evaluator.py, app/routing/__init__.py, tests/test_evaluator.py
 - **Depends on**: T2
 - **Tests**: tests/test_evaluator.py
 - **Gate**: pytest tests/test_evaluator.py
@@ -64,7 +64,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 
 ### T7: Implement Ollama local provider adapter
 - **Requirement**: REQ-010
-- **Files**: app/providers/ollama.py
+- **Files**: app/providers/ollama.py, tests/test_ollama_adapter.py
 - **Depends on**: T2, T4
 - **Tests**: tests/test_ollama_adapter.py
 - **Gate**: pytest tests/test_ollama_adapter.py
@@ -73,7 +73,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 
 ### T8: Implement OpenAI cloud provider adapter
 - **Requirement**: REQ-011
-- **Files**: app/providers/openai.py
+- **Files**: app/providers/openai.py, tests/test_openai_adapter.py
 - **Depends on**: T2, T4
 - **Tests**: tests/test_openai_adapter.py
 - **Gate**: pytest tests/test_openai_adapter.py
@@ -84,7 +84,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 
 ### T9: Implement router with one-hop fallback
 - **Requirement**: REQ-010, REQ-011, REQ-012, REQ-013
-- **Files**: app/routing/router.py
+- **Files**: app/routing/router.py, tests/test_routing.py, tests/test_fallback.py
 - **Depends on**: T4, T6
 - **Tests**: tests/test_routing.py, tests/test_fallback.py
 - **Gate**: pytest tests/test_routing.py tests/test_fallback.py
@@ -95,7 +95,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 
 ### T10: Add chat completions FastAPI route
 - **Requirement**: REQ-001, REQ-002, REQ-003, REQ-006, REQ-007, REQ-014, REQ-015
-- **Files**: app/main.py, app/api/completions.py
+- **Files**: app/main.py, app/api/completions.py, app/api/__init__.py, tests/test_chat_completions.py
 - **Depends on**: T3, T5, T7, T8, T9
 - **Tests**: tests/test_chat_completions.py
 - **Gate**: pytest tests/test_chat_completions.py
@@ -115,7 +115,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 
 ### T11: Add health check FastAPI route
 - **Requirement**: REQ-004
-- **Files**: app/api/health.py, app/main.py
+- **Files**: app/api/health.py, app/main.py, tests/test_health.py
 - **Depends on**: T10
 - **Tests**: tests/test_health.py
 - **Gate**: pytest tests/test_health.py
@@ -124,7 +124,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 
 ### T12: Add Docker Compose ship unit
 - **Requirement**: REQ-017
-- **Files**: docker-compose.yml, Dockerfile
+- **Files**: docker-compose.yml, Dockerfile, tests/test_compose_config.py
 - **Depends on**: T10
 - **Tests**: tests/test_compose_config.py
 - **Gate**: pytest tests/test_compose_config.py
