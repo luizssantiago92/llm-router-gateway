@@ -1,6 +1,6 @@
 # API (v1 + demo auth/quota)
 
-OpenAI-shaped facade. Streaming is rejected with HTTP 422 (`stream: true`). Demo callers must send `X-API-Key`. Cloud upstream is Gemini (free-tier oriented). Historical REQs: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md).
+OpenAI-shaped facade. Streaming is rejected with HTTP 422 (`stream: true`). Demo callers must send `X-API-Key`. Cloud upstream is Gemini (free-tier oriented). Product overview: root [README](../README.md). Historical REQs: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md).
 
 Process factory: `app.main:build_default_app` (Uvicorn `--factory`). Routes are registered on `create_app(...)` for tests that inject fakes.
 
@@ -40,9 +40,9 @@ Cache key: SHA-256 of a canonical serialization of `messages` + `temperature` + 
 ## `GET /health`
 
 | Redis | Upstreams | HTTP | Payload `status` |
-| --- | --- | --- | --- |
+| --- | --- | --- |
 | Up | All reachable | 200 | `ok` |
 | Up | At least one down | 200 | `degraded` |
 | Down | — | 503 | `down` |
 
-The process can still serve cache hits when a single upstream is down, as long as Redis is healthy.
+The process can still serve cache hits when a single upstream is down, as long as Redis is healthy. Without Ollama, expect `degraded` while Gemini remains up.

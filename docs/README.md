@@ -1,26 +1,19 @@
 # Documentation
 
-Human-facing project docs. Spec artifacts (requirements, tasks, validation) live under [`.specs/`](../.specs/STATE.md). Product kickoff is [`prd.md`](../prd.md).
+Product overview and quick start live in the root [README](../README.md). This folder holds the technical depth.
 
 | Page | Audience | Contents |
 | --- | --- | --- |
 | [Architecture](architecture.md) | Engineers | Request path, cache, router, fallback, Compose |
 | [API](api.md) | Integrators | `POST /v1/chat/completions`, `GET /health`, headers, errors |
-| [Development](development.md) | Contributors | Spec workflow, stack, documentation-on-every-PR policy |
+| [Development](development.md) | Contributors | Stack, env, pytest, Compose, Spec Guardrails, C-008 |
 
-## Spec memory (not duplicated here)
+**Go deeper**
 
-| Path | Role |
-| --- | --- |
-| [`.specs/project/PROJECT.md`](../.specs/project/PROJECT.md) | Vision, stack, constraints |
-| [`.specs/project/ROADMAP.md`](../.specs/project/ROADMAP.md) | Milestones |
-| [`.specs/project/CONSTITUTION.md`](../.specs/project/CONSTITUTION.md) | Standing principles |
-| [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md) | Archived v1 domain truth (REQ-001–REQ-018) |
-| [`.specs/features/llm-router-gateway/brief.md`](../.specs/features/llm-router-gateway/brief.md) | Elicited requirements brief |
-| [`.specs/features/001-llm-router-gateway/spec.md`](../.specs/features/001-llm-router-gateway/spec.md) | Testable REQs (v1) |
-| [`.specs/features/001-llm-router-gateway/design.md`](../.specs/features/001-llm-router-gateway/design.md) | Components, Ship Surface, AI Surface |
-| [`.specs/features/001-llm-router-gateway/tasks.md`](../.specs/features/001-llm-router-gateway/tasks.md) | T1–T13 Execute breakdown |
-| [`.specs/features/001-llm-router-gateway/overview.md`](../.specs/features/001-llm-router-gateway/overview.md) | REQ → task dashboard |
-| [`.specs/features/001-llm-router-gateway/validation.md`](../.specs/features/001-llm-router-gateway/validation.md) | Independent `/verify` report (PASS) |
+- Product kickoff: [`prd.md`](../prd.md)
+- Project memory: [`.specs/project/PROJECT.md`](../.specs/project/PROJECT.md) · [`ROADMAP.md`](../.specs/project/ROADMAP.md)
+- Domain truth (v1): [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md)
+- Feature history: [`.specs/features/001-llm-router-gateway/`](../.specs/features/001-llm-router-gateway/spec.md)
+- Session state: [`.specs/STATE.md`](../.specs/STATE.md)
 
-When a pull request changes behavior, setup, or status, update the matching page **and** the root [README](../README.md). Policy: [Development → Documentation on every PR](development.md#documentation-on-every-pr).
+When a pull request changes behavior, setup, or status, update the matching page **and** the root README. Policy: [Documentation on every PR](development.md#documentation-on-every-pr).

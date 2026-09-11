@@ -12,14 +12,15 @@
 | `/verify` | done | PASS after fix round 1; `.specs/features/001-llm-router-gateway/validation.md` |
 | `/archive` | done | Domain truth: `.specs/domains/llm-router-gateway/spec.md` |
 | Compose app + Redis | done | `docker-compose.yml` services `api` + `redis` (RNF-03) |
-| Gemini free-tier cloud + demo quota | done | Gemini adapter; `X-API-Key` + Redis daily quota; Ollama + cache first line |
+| Product README + docs index | done | Root README product-style; depth in `docs/` (C-008) |
+| Gemini free-tier cloud + demo quota | done | Gemini adapter; `X-API-Key` + Redis daily quota; Ollama optional |
 
 ## Feature candidates
 
 | Slug | Goal |
 | --- | --- |
 | 001-llm-router-gateway | archived — v1 facade: cache, complexity routing, one-hop fallback, health |
-| gemini-free-demo | cloud = Gemini; `GATEWAY_API_KEY` + `CHAT_DAILY_LIMIT`; keep Ollama + cache |
+| gemini-free-demo | cloud = Gemini; `GATEWAY_API_KEY` + `CHAT_DAILY_LIMIT`; Ollama optional (fallback) |
 
 ## Completed
 

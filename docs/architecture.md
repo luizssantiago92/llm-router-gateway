@@ -1,6 +1,6 @@
 # Architecture
 
-LLM Router Gateway is an async FastAPI reverse proxy in front of local and cloud chat models. Clients never pick a provider; the gateway caches, classifies, routes, and fails over.
+LLM Router Gateway is an async FastAPI reverse proxy in front of local and cloud chat models. Clients never pick a provider; the gateway caches, classifies, routes, and fails over. For a product overview and quick start, see the root [README](../README.md).
 
 Status: **archived v1** (implemented, independently verified, folded into domain truth). Binding requirements: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md) (historical) and [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md). How: [`design.md`](../.specs/features/001-llm-router-gateway/design.md). Verification: [`validation.md`](../.specs/features/001-llm-router-gateway/validation.md). Product kickoff: [`prd.md`](../prd.md).
 
@@ -71,7 +71,7 @@ Every completion returns:
 
 ## Ship unit
 
-Docker Compose runs the FastAPI service (`api`) and Redis (`redis`) in isolation. Kubernetes, Helm, and Terraform are out of scope for v1. Secrets (cloud API keys, local runtime URLs) come from environment variables only. Ollama is an external runtime referenced by `OLLAMA_BASE_URL`.
+Docker Compose runs the FastAPI service (`api`) and Redis (`redis`) in isolation. Kubernetes, Helm, and Terraform are out of scope for v1. Secrets (cloud API keys, local runtime URLs) come from environment variables only. Ollama is an optional external runtime referenced by `OLLAMA_BASE_URL`; when it is unreachable, health is `degraded` and simple prompts fall back to Gemini.
 
 ## Surfaces
 
