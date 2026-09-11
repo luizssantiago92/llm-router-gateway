@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "lessons": [
+    {
+      "id": "L-001",
+      "title": "Chat completion tests must assert JSON observability fields and cached body, not header presence",
+      "trigger": "Verify FAIL on 001-llm-router-gateway: cache-hit and observability mutants survived",
+      "rule": "For OpenAI-shaped completion responses, tests SHALL assert JSON cached (bool), latency_ms (number), provider (string), matching X-Cache/X-Latency-Ms/X-Provider headers, and the stored completion content on cache hits. Header presence and cached=true alone are weak.",
+      "status": "candidate",
+      "source": ".specs/features/001-llm-router-gateway/validation.md:151",
+      "features": [
+        "001-llm-router-gateway"
+      ],
+      "created": "2026-09-11",
+      "updated": "2026-09-11",
+      "penalties": 0
+    }
+  ]
+}

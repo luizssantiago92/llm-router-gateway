@@ -2,7 +2,7 @@
 
 LLM Router Gateway is an async FastAPI reverse proxy in front of local and cloud chat models. Clients never pick a provider; the gateway caches, classifies, routes, and fails over.
 
-Status: **implemented** (T1–T13). Independent `/verify` has not run yet. Binding requirements: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md). How: [`design.md`](../.specs/features/001-llm-router-gateway/design.md). Product kickoff: [`prd.md`](../prd.md).
+Status: **implemented and independently verified** (T1–T13, `/verify` PASS). Binding requirements: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md). How: [`design.md`](../.specs/features/001-llm-router-gateway/design.md). Verification: [`validation.md`](../.specs/features/001-llm-router-gateway/validation.md). Product kickoff: [`prd.md`](../prd.md).
 
 ## Request path
 
