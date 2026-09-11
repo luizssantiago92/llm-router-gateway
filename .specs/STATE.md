@@ -1,12 +1,12 @@
 # Project State & Decisions
 
 ## Active Feature
-- Feature: gemini-free-demo
-- Phase: execute
-- Branch: cursor/gemini-free-demo
+- Feature: —
+- Phase: —
+- Branch: —
 
 ## Next Step (single item)
-- [ ] Land Gemini + demo quota PR; then archive/domain delta as needed
+- [ ] Install/start Docker Desktop (Compose not on PATH on this machine), then `docker compose up --build` and smoke `/health` + chat
 
 ## Blockers
 - none
@@ -41,5 +41,11 @@
 ### AD-004: Zero-cost demo cloud = Gemini + quota
 - **Date**: 2026-09-11
 - **Context**: Owner wants a Gold-Queen-style zero-cost demo; paid OpenAI path deferred to another project
-- **Decision**: Default cloud adapter is Gemini (`GEMINI_API_KEY`); callers send `X-API-Key` (`GATEWAY_API_KEY`); Redis daily quota (`CHAT_DAILY_LIMIT`, default 5); cache hits do not consume; Ollama + exact-match cache remain first line
-- **Consequences**: OpenAI removed from happy path; docs and Compose updated; 401/429 added to API contract
+- **Decision**: Default cloud adapter is Gemini (`GEMINI_API_KEY`); callers send `X-API-Key` (`GATEWAY_API_KEY`); Redis daily quota (`CHAT_DAILY_LIMIT`, default 5); cache hits do not consume; Ollama is optional (fallback to Gemini when local is down)
+- **Consequences**: OpenAI removed from happy path; domain REQ-019–REQ-022; docs and Compose updated; 401/429 on the API contract
+
+### AD-005: Default Gemini model id
+- **Date**: 2026-09-11
+- **Context**: `gemini-2.0-flash` shut down; Google migration points to 3.x Flash
+- **Decision**: Default `GEMINI_MODEL` is `gemini-3.5-flash`; operators may override to `gemini-3.6-flash` via env when listed in AI Studio
+- **Consequences**: Compose and settings defaults updated; `.env` may override without code change

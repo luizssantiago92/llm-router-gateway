@@ -4,7 +4,7 @@
 
 Internal apps call a single completions endpoint. The gateway caches exact matches, sends simple work to a local model when available, sends complex work to the cloud (Gemini), and fails over once when an upstream is down — so repeats stay cheap and you avoid a single provider as a hard dependency.
 
-v1 is shipped and archived. Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](.specs/domains/llm-router-gateway/spec.md). Demo posture: **Gemini free tier** + daily quota + shared `X-API-Key`.
+v1 is shipped and archived. Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](.specs/domains/llm-router-gateway/spec.md) (REQ-001–REQ-022). Demo posture: **Gemini free tier** + daily quota + shared `X-API-Key`.
 
 ---
 

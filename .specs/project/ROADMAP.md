@@ -14,15 +14,17 @@
 | Compose app + Redis | done | `docker-compose.yml` services `api` + `redis` (RNF-03) |
 | Product README + docs index | done | Root README product-style; depth in `docs/` (C-008) |
 | Gemini free-tier cloud + demo quota | done | Gemini adapter; `X-API-Key` + Redis daily quota; Ollama optional |
+| Domain delta REQ-019–REQ-022 | done | Gemini default, demo API key, daily quota, Ollama optional |
 
 ## Feature candidates
 
 | Slug | Goal |
 | --- | --- |
 | 001-llm-router-gateway | archived — v1 facade: cache, complexity routing, one-hop fallback, health |
-| gemini-free-demo | cloud = Gemini; `GATEWAY_API_KEY` + `CHAT_DAILY_LIMIT`; Ollama optional (fallback) |
+| gemini-free-demo | done — merged #8; domain REQ-019–REQ-022 |
 
 ## Completed
 
 - **2026-09-11** `001-llm-router-gateway` — archived. Validation: `.specs/features/001-llm-router-gateway/validation.md`
   - Merged → `.specs/domains/llm-router-gateway/spec.md` (copied 18 requirement(s) from full spec)
+- **2026-09-11** `gemini-free-demo` — merged #8; domain updated with REQ-019–REQ-022

@@ -57,6 +57,8 @@ Default CI/local gate skips live upstream markers. Full suite without the exclud
 
 ## Compose
 
+Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or another Compose-capable Docker). If `docker` is not on PATH, install/start Docker Desktop and reopen the terminal.
+
 ```bash
 docker compose up --build
 ```
@@ -79,7 +81,7 @@ Typical Complex order:
 /elicit → /specify → /discuss? → /plan → /tasks → /loop → /verify → /archive
 ```
 
-v1 (`001-llm-router-gateway`) is archived. Independent `/verify` PASS: [validation.md](../.specs/features/001-llm-router-gateway/validation.md). Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md). Do not re-ask **D-001–D-012**. Session pointer: [`.specs/STATE.md`](../.specs/STATE.md).
+v1 (`001-llm-router-gateway`) is archived. Independent `/verify` PASS: [validation.md](../.specs/features/001-llm-router-gateway/validation.md). Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md) (REQ-001–REQ-022). Do not re-ask **D-001–D-012**. Session pointer: [`.specs/STATE.md`](../.specs/STATE.md).
 
 Hub: [`.cursor/skills/agent-architecture.md`](../.cursor/skills/agent-architecture.md). Conventional Commits; optional gate: `python .specs/guardrails/scripts/check_commit.py --message "…"`.
 

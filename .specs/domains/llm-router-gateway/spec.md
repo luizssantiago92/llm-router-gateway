@@ -47,7 +47,8 @@
 
 ### REQ-011: Complex route uses cloud primary
 
-- **Acceptance Criteria**: WHEN the prompt is classified complex THEN the system SHALL send the completion request to the cloud provider adapter first (default OpenAI)
+- **Acceptance Criteria**: WHEN the prompt is classified complex THEN the system SHALL send the completion request to the cloud provider adapter first
+- **Note**: Demo default cloud adapter is Gemini (see REQ-019). Archived v1 named OpenAI as the default cloud pair.
 
 ### REQ-012: One-hop fallback
 
@@ -75,4 +76,25 @@
 
 ### REQ-018: Automated coverage
 
-- **Acceptance Criteria**: WHEN the test suite runs with pytest-asyncio THEN it SHALL include passing tests for cache hit, cache miss, simple routing, complex routing, fallback after 5xx, fallback after timeout, and health `ok` / `degraded` / Redis-down
+- **Acceptance Criteria**: WHEN the test suite runs with pytest-asyncio THEN it SHALL include passing tests for cache hit, cache miss, simple routing, complex routing, fallback after 5xx, fallback after timeout, health `ok` / `degraded` / Redis-down, missing API key (401), and daily quota exhausted (429)
+
+### REQ-019: Cloud default is Gemini
+
+- **Acceptance Criteria**: WHEN the process starts for the demo happy path THEN the cloud provider adapter SHALL be Gemini configured via `GEMINI_API_KEY` and optional `GEMINI_MODEL` (default `gemini-3.5-flash`)
+- WHEN the prompt is classified complex THEN the system SHALL send the completion request to the Gemini cloud adapter first (replacing the archived OpenAI default from REQ-011)
+
+### REQ-020: Demo caller API key
+
+- **Acceptance Criteria**: WHEN a client calls `POST /v1/chat/completions` without a valid `X-API-Key` matching `GATEWAY_API_KEY` THEN the system SHALL respond with HTTP 401 and SHALL NOT call Redis SET or upstream providers
+- WHEN `GET /health` is called THEN the system SHALL NOT require `X-API-Key`
+
+### REQ-021: Daily chat quota
+
+- **Acceptance Criteria**: WHEN a cache miss occurs for an authenticated caller THEN the system SHALL consume one unit of that caller's daily Redis quota (`CHAT_DAILY_LIMIT`, default 5) before calling upstream providers
+- WHEN the caller has already exhausted the daily limit THEN the system SHALL respond with HTTP 429 (`rate_limit_reached`) and SHALL NOT call upstream providers
+- WHEN the request is a cache hit THEN the system SHALL NOT consume quota
+- WHEN both providers fail after a consumed unit THEN the system SHALL refund that unit
+
+### REQ-022: Ollama optional for demo
+
+- **Acceptance Criteria**: WHEN the local provider health check fails and Gemini is reachable THEN `GET /health` SHALL return HTTP 200 with `status` equal to `degraded` and the router SHALL still be able to complete requests via one-hop fallback to cloud on simple primary failure
