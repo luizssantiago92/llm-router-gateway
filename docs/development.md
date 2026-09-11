@@ -37,7 +37,7 @@ Copy [`.env.example`](../.env.example) to `.env` (never commit `.env`):
 | `REDIS_URL` | yes | Compose: `redis://redis:6379/0` |
 | `OLLAMA_BASE_URL` | yes | Compose default `http://host.docker.internal:11434` (placeholder OK if Ollama is not installed) |
 | `GEMINI_API_KEY` | yes | — |
-| `GEMINI_MODEL` | no | `gemini-2.0-flash` |
+| `GEMINI_MODEL` | no | `gemini-3.5-flash` (or `gemini-3.6-flash` if listed in AI Studio) |
 | `GATEWAY_API_KEY` | yes | — (value callers send as `X-API-Key`) |
 | `CHAT_DAILY_LIMIT` | no | `5` |
 | `CACHE_TTL_SECONDS` | no | `3600` |

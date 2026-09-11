@@ -12,12 +12,12 @@ def _transport(handler):
 @pytest.mark.asyncio
 async def test_gemini_adapter_maps_generate_content() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
-        assert request.url.path.endswith("/models/gemini-2.0-flash:generateContent")
+        assert request.url.path.endswith("/models/gemini-3.5-flash:generateContent")
         assert request.url.params.get("key") == "gemini-test"
         return httpx.Response(
             200,
             json={
-                "modelVersion": "gemini-2.0-flash",
+                "modelVersion": "gemini-3.5-flash",
                 "candidates": [{"content": {"parts": [{"text": "pong"}]}}],
             },
         )

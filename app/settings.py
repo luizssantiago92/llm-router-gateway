@@ -21,7 +21,7 @@ _DEFAULTS = {
     "COMPLEXITY_WORD_THRESHOLD": "150",
     "UPSTREAM_TIMEOUT_SECONDS": "30",
     "CHAT_DAILY_LIMIT": "5",
-    "GEMINI_MODEL": "gemini-2.0-flash",
+    "GEMINI_MODEL": "gemini-3.5-flash",
 }
 
 
@@ -35,7 +35,7 @@ class Settings:
     complexity_word_threshold: int
     upstream_timeout_seconds: int
     chat_daily_limit: int = 5
-    gemini_model: str = "gemini-2.0-flash"
+    gemini_model: str = "gemini-3.5-flash"
 
     @classmethod
     def from_env(cls) -> Settings:

@@ -29,7 +29,7 @@ def test_settings_load_from_environment(monkeypatch: pytest.MonkeyPatch) -> None
     assert settings.complexity_word_threshold == 80
     assert settings.upstream_timeout_seconds == 15
     assert settings.chat_daily_limit == 3
-    assert settings.gemini_model == "gemini-2.0-flash"
+    assert settings.gemini_model == "gemini-3.5-flash"
 
 
 def test_settings_use_documented_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
