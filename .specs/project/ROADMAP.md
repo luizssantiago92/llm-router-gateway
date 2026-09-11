@@ -12,6 +12,7 @@
 | `/verify` | done | PASS after fix round 1; `.specs/features/001-llm-router-gateway/validation.md` |
 | `/archive` | done | Domain truth: `.specs/domains/llm-router-gateway/spec.md` |
 | Compose app + Redis | done | `docker-compose.yml` services `api` + `redis` (RNF-03) |
+| Product README + docs index | done | Root README product-style; depth in `docs/` (C-008) |
 
 ## Feature candidates
 

@@ -1,6 +1,6 @@
 # API (v1)
 
-Internal facade. No caller authentication in v1. Streaming is rejected with HTTP 422 (`stream: true`). Binding criteria: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md) REQ-001–REQ-004, REQ-014.
+Internal facade. No caller authentication in v1. Streaming is rejected with HTTP 422 (`stream: true`). Binding criteria: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md) REQ-001–REQ-004, REQ-014. Product overview: root [README](../README.md).
 
 Process factory: `app.main:build_default_app` (Uvicorn `--factory`). Routes are registered on `create_app(...)` for tests that inject fakes.
 
