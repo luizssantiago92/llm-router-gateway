@@ -69,7 +69,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 - **Tests**: tests/test_ollama_adapter.py
 - **Gate**: pytest tests/test_ollama_adapter.py
 - **Done when**: the adapter sends OpenAI-shaped messages to `OLLAMA_BASE_URL` over async httpx and maps the reply to the shared Completion type (HTTP faked in tests)
-- [ ] complete
+- [x] complete
 
 ### T8: Implement OpenAI cloud provider adapter
 - **Requirement**: REQ-011
