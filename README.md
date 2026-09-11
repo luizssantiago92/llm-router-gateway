@@ -1,100 +1,88 @@
 # LLM Router Gateway
 
-High-performance FastAPI reverse gateway that orchestrates, routes, and caches chat-completion traffic across local and cloud LLM providers.
+**One OpenAI-shaped facade for local and cloud chat models.**
 
-Internal applications call a single OpenAI-compatible facade. The gateway applies exact-match Redis caching, complexity-based routing, and one-hop fallback so simple or repeated prompts stay cheap and fast, while complex work still reaches a stronger cloud model.
+Internal apps call a single completions endpoint. The gateway caches exact matches, sends simple work to a local model, sends complex work to the cloud, and fails over once when an upstream is down — so you pay less, wait less on repeats, and avoid a single cloud provider as a hard dependency.
 
-## Status
+v1 is shipped and archived. Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](.specs/domains/llm-router-gateway/spec.md).
 
-v1 is **archived**. Independent `/verify` PASS; domain truth is [`.specs/domains/llm-router-gateway/spec.md`](.specs/domains/llm-router-gateway/spec.md). Feature history stays under [`.specs/features/001-llm-router-gateway/`](.specs/features/001-llm-router-gateway/spec.md).
+---
 
-| Item | Location |
+## The problem
+
+Calling a cloud LLM directly from every service creates three recurring costs:
+
+| Pain | What goes wrong |
 | --- | --- |
-| Product kickoff | [`prd.md`](prd.md) |
-| Requirements brief | [`.specs/features/llm-router-gateway/brief.md`](.specs/features/llm-router-gateway/brief.md) |
-| Domain truth (v1) | [`.specs/domains/llm-router-gateway/spec.md`](.specs/domains/llm-router-gateway/spec.md) |
-| Feature spec (historical) | [`.specs/features/001-llm-router-gateway/spec.md`](.specs/features/001-llm-router-gateway/spec.md) |
-| Design | [`.specs/features/001-llm-router-gateway/design.md`](.specs/features/001-llm-router-gateway/design.md) |
-| Tasks | [`.specs/features/001-llm-router-gateway/tasks.md`](.specs/features/001-llm-router-gateway/tasks.md) |
-| Validation | [`.specs/features/001-llm-router-gateway/validation.md`](.specs/features/001-llm-router-gateway/validation.md) |
-| Feature dashboard | [`.specs/features/001-llm-router-gateway/overview.md`](.specs/features/001-llm-router-gateway/overview.md) |
-| Project memory | [`.specs/project/PROJECT.md`](.specs/project/PROJECT.md) |
-| Architecture | [`docs/architecture.md`](docs/architecture.md) |
-| API contract (v1) | [`docs/api.md`](docs/api.md) |
-| How we work | [`docs/development.md`](docs/development.md) |
-| Docs index | [`docs/README.md`](docs/README.md) |
+| **Cost** | Short, repeated, or simple prompts burn paid tokens |
+| **Latency** | Identical requests hit the network every time |
+| **SPOF** | One upstream outage blocks the whole product |
 
-Next work starts with `feature-init` (delta specs against the domain). Do not re-ask **D-001–D-012**.
+You want a stable contract for applications — not a scatter of provider SDKs and ad-hoc retries.
 
-## What it does
+---
 
-- **Cache first** — SHA-256 exact match in Redis; cache hits target **<10 ms** with `cached: true` and `latency_ms`.
-- **Route by complexity** — short/simple prompts go to a local model (Ollama / Llama 3 8B class by default); code, long, or structured-reasoning prompts go to the cloud (OpenAI by default).
-- **Fail over once** — HTTP 5xx or timeout on the primary provider retries the other tier, then fails the request.
-- **Stay observable** — provider origin, cache status, and latency on both JSON fields and response headers.
+## What you get
 
-Business goals from the PRD: cut paid-token volume by at least 30% via local routing, and remove a single cloud provider as a hard dependency.
-
-## Stack
-
-| Layer | Choice |
+| Without the gateway | With LLM Router Gateway |
 | --- | --- |
-| API | Python 3.10+, FastAPI, asyncio, Pydantic v2 |
-| HTTP client | httpx (async) |
-| Cache | Redis via redis-py async |
-| Local LLM | Ollama (vLLM adapter-ready) |
-| Cloud LLM | OpenAI (Anthropic adapter-ready) |
-| Ship unit | Docker Compose (app + Redis) |
-| Tests | pytest-asyncio (routing, cache hit/miss, fallback) |
+| Every call is a paid cloud hop | Exact-match cache returns repeats in milliseconds |
+| Apps pick models and fail over themselves | Simple → local; complex → cloud; one automatic hop |
+| Outage = hard fail | Primary 5xx/timeout retries the other tier once |
+| Opaque origin | `X-Cache` / `X-Latency-Ms` / `X-Provider` on every response |
 
-Application source lives in `app/`. Default test command: `pytest` (`-m "not live"`). Local ship unit: `docker compose up --build`.
+Business targets from the PRD: cut paid-token volume by at least 30% via local routing, and remove a single cloud provider as a hard dependency.
 
-## API
+---
 
-```http
-POST /v1/chat/completions
-GET  /health
-```
+## How it works
 
-Request body follows OpenAI Chat Completions (`messages`, `temperature`, `max_tokens`). There is no caller authentication in v1 (internal network). `stream: true` is rejected with HTTP 422. Full contract: [`docs/api.md`](docs/api.md).
+1. **Look up the cache** — Same messages, temperature, and max tokens? Serve Redis and stop.
+2. **Classify the prompt** — Short and plain stays local; long text or code/reasoning keywords go to the cloud.
+3. **Call one provider** — Local (Ollama by default) or cloud (OpenAI by default).
+4. **Fail over once** — If the primary returns 5xx or times out, try the other tier; both fail → 502.
+5. **Store and observe** — Successful misses are cached; every response carries cache, latency, and provider signals.
 
-## Run locally
+Clients never choose a provider. Streaming is not supported in v1 (`stream: true` → 422). No caller auth at the edge (internal network).
 
-Copy [`.env.example`](.env.example) and set values in the environment (never commit `.env`):
+---
 
-| Variable | Required | Default |
-| --- | --- | --- |
-| `REDIS_URL` | yes | — |
-| `OLLAMA_BASE_URL` | yes | — |
-| `OPENAI_API_KEY` | yes | — |
-| `OPENAI_MODEL` | no | `gpt-4o-mini` |
-| `CACHE_TTL_SECONDS` | no | `3600` |
-| `COMPLEXITY_WORD_THRESHOLD` | no | `150` |
-| `UPSTREAM_TIMEOUT_SECONDS` | no | `30` |
+## Quick start
+
+Requires Docker Compose, a reachable Ollama at `OLLAMA_BASE_URL` (not bundled), and an OpenAI API key.
 
 ```bash
-pip install -e ".[dev]"
-pytest
+cp .env.example .env
+# Set OPENAI_API_KEY. Point OLLAMA_BASE_URL at your Ollama (Compose default is http://ollama:11434).
+
 docker compose up --build
 ```
 
-Compose starts `api` on port 8000 and `redis` on 6379. Ollama is expected at `OLLAMA_BASE_URL` (not bundled in Compose).
-
-## Documentation policy
-
-Every pull request updates this README when status, setup, API, or links change, and keeps [`docs/`](docs/README.md) aligned with what the PR actually ships. See [`docs/development.md`](docs/development.md#documentation-on-every-pr).
-
-## Spec-driven workflow
-
-This repo uses [Spec Guardrails](https://github.com/luizssantiago92/spec-guardrails) (`python-platform` preset). Chat with the agent; do not memorize CLI.
-
-```
-/elicit → /specify → /discuss? → /plan → /tasks → /loop → /verify → /archive
+```bash
+curl -s http://localhost:8000/health
 ```
 
-- Hub: [`.cursor/skills/agent-architecture.md`](.cursor/skills/agent-architecture.md)
-- Session state: [`.specs/STATE.md`](.specs/STATE.md)
-- Install health: `npx @luizsantiago/spec-guardrails doctor`
+```bash
+curl -s http://localhost:8000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"messages":[{"role":"user","content":"Hello"}],"temperature":0.2,"max_tokens":64}'
+```
+
+API surface: `POST /v1/chat/completions` · `GET /health` (`ok` / `degraded` / Redis-down `503`).
+
+---
+
+## Documentation
+
+| Doc | For |
+| --- | --- |
+| [Architecture](docs/architecture.md) | Request path, cache, routing, fallback |
+| [API](docs/api.md) | Contract, headers, status codes |
+| [Development](docs/development.md) | Stack, env vars, tests, Compose, Spec Guardrails |
+
+**Go deeper:** [docs index](docs/README.md) · product kickoff [`prd.md`](prd.md)
+
+---
 
 ## License
 

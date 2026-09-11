@@ -32,4 +32,4 @@ LLM Router Gateway is the single internal facade for chat-completion traffic. It
 
 ## Documentation
 
-Human docs live in `docs/` and the root `README.md`. Every PR that changes product or setup updates those files (see `docs/development.md` and `.cursor/rules/pr-documentation.mdc`).
+Human docs: product-facing root `README.md`; technical depth in `docs/` (architecture, API, development). Every PR that changes product or setup updates those files plus this memory (see `docs/development.md` and `.cursor/rules/pr-documentation.mdc`, C-008).
