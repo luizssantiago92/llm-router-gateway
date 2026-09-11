@@ -6,7 +6,7 @@ Internal applications call a single OpenAI-compatible facade. The gateway applie
 
 ## Status
 
-Execute complete (T1–T13). Independent `/verify` has not run yet.
+Execute complete (T1–T13). Independent `/verify` **PASS** (subagent; 16 mutants killed; `validate_state.py` exit 0). Next is `/archive`.
 
 | Item | Location |
 | --- | --- |
@@ -15,6 +15,7 @@ Execute complete (T1–T13). Independent `/verify` has not run yet.
 | Spec (REQ-001–REQ-018) | [`.specs/features/001-llm-router-gateway/spec.md`](.specs/features/001-llm-router-gateway/spec.md) |
 | Design | [`.specs/features/001-llm-router-gateway/design.md`](.specs/features/001-llm-router-gateway/design.md) |
 | Tasks | [`.specs/features/001-llm-router-gateway/tasks.md`](.specs/features/001-llm-router-gateway/tasks.md) |
+| Validation | [`.specs/features/001-llm-router-gateway/validation.md`](.specs/features/001-llm-router-gateway/validation.md) |
 | Feature dashboard | [`.specs/features/001-llm-router-gateway/overview.md`](.specs/features/001-llm-router-gateway/overview.md) |
 | Project memory | [`.specs/project/PROJECT.md`](.specs/project/PROJECT.md) |
 | Architecture | [`docs/architecture.md`](docs/architecture.md) |
@@ -22,7 +23,7 @@ Execute complete (T1–T13). Independent `/verify` has not run yet.
 | How we work | [`docs/development.md`](docs/development.md) |
 | Docs index | [`docs/README.md`](docs/README.md) |
 
-Next phase: `/verify` in a fresh context (author ≠ verifier).
+Next phase: `/archive` after owner confirmation. Validation report: [`.specs/features/001-llm-router-gateway/validation.md`](.specs/features/001-llm-router-gateway/validation.md).
 
 ## What it does
 

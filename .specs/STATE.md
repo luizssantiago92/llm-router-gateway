@@ -2,11 +2,11 @@
 
 ## Active Feature
 - Feature: 001-llm-router-gateway
-- Phase: Verify
-- Branch: cursor/loop-llm-router-gateway-e287
+- Phase: Archive
+- Branch: cursor/verify-llm-router-gateway-e287
 
 ## Next Step (single item)
-- [ ] `/verify` in a fresh context (this Execute author must not write validation.md)
+- [ ] `/archive` after owner confirms (Verify PASS; `validate_state.py` exit 0)
 
 ## Blockers
 - none

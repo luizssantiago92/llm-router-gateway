@@ -1,17 +1,17 @@
 # Feature overview: 001-llm-router-gateway
 
-> Generated 2026-09-11T00:25:37.425Z. Refresh with `feature-overview 001-llm-router-gateway --write`.
+> Generated 2026-09-11T01:03:37.574Z. Refresh with `feature-overview 001-llm-router-gateway --write`.
 
 ## Summary
 
 | Field | Value |
 | --- | --- |
 | Goal | REQ-001 — - **Acceptance Criteria**: WHEN a client sends `POST /v1/chat/completions` with a body that includes `messages`, `temperature`, and `max_tokens` THEN the system SHALL accept the request using an OpenAI Chat Completions-compatible schema and SHALL return a completion JSON object on success |
-| Phase | Verify |
-| Branch | cursor/loop-llm-router-gateway-e287 |
+| Phase | Archive |
+| Branch | cursor/verify-llm-router-gateway-e287 |
 | Tasks | 13/13 complete (0 open) |
-| Validation | — |
-| Next | npx @luizsantiago/spec-guardrails validate-state 001-llm-router-gateway — tasks look complete; run Validate before /verify |
+| Validation | PASS |
+| Next | npx @luizsantiago/spec-guardrails archive-feature 001-llm-router-gateway — fold into domain memory |
 
 ## Artifacts
 
@@ -20,7 +20,7 @@
 | spec | present |
 | tasks | present |
 | design | present |
-| validation | missing |
+| validation | present |
 | taskGraph | present |
 
 ## Tasks
@@ -45,25 +45,25 @@
 
 | REQ | Task(s) | Test evidence |
 | --- | --- | --- |
-| REQ-001 | T3, T10 | — |
-| REQ-002 | T3, T10 | — |
-| REQ-003 | T3, T10 | — |
-| REQ-004 | T11 | — |
-| REQ-005 | T5 | — |
-| SHA-256 | — | — |
-| REQ-006 | T5, T10 | — |
-| REQ-007 | T5, T10 | — |
-| REQ-008 | T5 | — |
-| REQ-009 | T6 | — |
-| REQ-010 | T7, T9 | — |
-| REQ-011 | T8, T9 | — |
-| REQ-012 | T9 | — |
-| REQ-013 | T9 | — |
-| REQ-014 | T10 | — |
-| REQ-015 | T1, T4, T10 | — |
-| REQ-016 | T2 | — |
-| REQ-017 | T12 | — |
-| REQ-018 | T1, T13 | — |
+| REQ-001 | T3, T10 | tests/test_chat_completions.py:77 |
+| REQ-002 | T3, T10 | tests/test_chat_completions.py:114 |
+| REQ-003 | T3, T10 | tests/test_chat_completions.py:134 |
+| REQ-004 | T11 | tests/test_health.py:55 |
+| REQ-005 | T5 | tests/test_cache.py:32 |
+| SHA-256 | — | tests/test_cache.py:32 |
+| REQ-006 | T5, T10 | tests/test_chat_completions.py:102 |
+| REQ-007 | T5, T10 | tests/test_chat_completions.py:80 |
+| REQ-008 | T5 | tests/test_chat_completions.py:155 |
+| REQ-009 | T6 | tests/test_evaluator.py:10 |
+| REQ-010 | T7, T9 | tests/test_routing.py:15 |
+| REQ-011 | T8, T9 | tests/test_routing.py:30 |
+| REQ-012 | T9 | tests/test_fallback.py:16 |
+| REQ-013 | T9 | tests/test_chat_completions.py:154 |
+| REQ-014 | T10 | tests/test_chat_completions.py:51 |
+| REQ-015 | T1, T4, T10 | tests/test_harness_imports.py:33 |
+| REQ-016 | T2 | tests/test_settings.py:22 |
+| REQ-017 | T12 | tests/test_compose_config.py:9 |
+| REQ-018 | T1, T13 | tests/eval/test_routing_eval.py:26 |
 | RNF-02 | — | — |
 
 ## Operational traceability (Ship Surface)
