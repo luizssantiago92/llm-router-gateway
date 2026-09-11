@@ -1,6 +1,6 @@
 # API (v1, planned)
 
-Internal facade. No caller authentication in v1. Streaming is out of scope. Implementation follows this contract after `/specify`.
+Internal facade. No caller authentication in v1. Streaming is rejected with HTTP 422 (`stream: true`). Binding criteria: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md) REQ-001–REQ-004, REQ-014.
 
 ## `POST /v1/chat/completions`
 
@@ -12,7 +12,7 @@ Gateway-specific response fields (in addition to a standard completion payload):
 | --- | --- | --- |
 | `cached` | boolean | Redis exact-match hit |
 | `latency_ms` | number | Gateway hop latency |
-| provider/model origin | string | Which adapter served the completion |
+| `provider` | string | Adapter that served the completion |
 
 Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
 
@@ -23,9 +23,9 @@ Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
 | Cache hit | Stored completion, `cached: true`, target latency <10 ms |
 | Cache miss, success | Upstream completion, write Redis, `cached: false` |
 | Primary 5xx or timeout | One retry on the secondary provider; success is cached |
-| Both providers fail | HTTP 502 or 504; **not** cached |
+| Both providers fail | HTTP 502; **not** cached |
 | Invalid body | HTTP 422 (Pydantic) |
-| `stream` present | Rejected or ignored (non-streaming JSON only) |
+| `stream: true` | HTTP 422 |
 
 Cache key: SHA-256 of a canonical serialization of `messages` + `temperature` + `max_tokens`. The routed model name is not part of the key.
 

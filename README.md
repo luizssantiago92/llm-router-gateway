@@ -6,19 +6,21 @@ Internal applications call a single OpenAI-compatible facade. The gateway applie
 
 ## Status
 
-Specification in progress. Elicitation is complete; implementation has not started.
+Spec drafted for owner approval. Implementation has not started.
 
 | Item | Location |
 | --- | --- |
 | Product kickoff | [`prd.md`](prd.md) |
-| Approved requirements brief | [`.specs/features/llm-router-gateway/brief.md`](.specs/features/llm-router-gateway/brief.md) |
+| Requirements brief | [`.specs/features/llm-router-gateway/brief.md`](.specs/features/llm-router-gateway/brief.md) |
+| Spec (REQ-001–REQ-018) | [`.specs/features/001-llm-router-gateway/spec.md`](.specs/features/001-llm-router-gateway/spec.md) |
+| Design | [`.specs/features/001-llm-router-gateway/design.md`](.specs/features/001-llm-router-gateway/design.md) |
 | Project memory | [`.specs/project/PROJECT.md`](.specs/project/PROJECT.md) |
 | Architecture | [`docs/architecture.md`](docs/architecture.md) |
 | API contract (v1) | [`docs/api.md`](docs/api.md) |
 | How we work | [`docs/development.md`](docs/development.md) |
 | Docs index | [`docs/README.md`](docs/README.md) |
 
-Next phase: `/specify` → Discuss → Design → Tasks (Complex tier).
+Next phase: owner approves `spec.md`, then `/tasks`.
 
 ## What it does
 
@@ -41,7 +43,7 @@ Business goals from the PRD: cut paid-token volume by at least 30% via local rou
 | Ship unit | Docker Compose (app + Redis) |
 | Tests | pytest-asyncio (routing, cache hit/miss, fallback) |
 
-Application source, Compose, and tests will land in later PRs after `spec.md` is approved.
+Application source, Compose, and tests land after the spec is approved and tasks exist.
 
 ## API (planned)
 
@@ -50,7 +52,7 @@ POST /v1/chat/completions
 GET  /health
 ```
 
-Request body follows OpenAI Chat Completions (`messages`, `temperature`, `max_tokens`). There is no caller authentication in v1 (internal network). Streaming is out of scope. Full contract: [`docs/api.md`](docs/api.md).
+Request body follows OpenAI Chat Completions (`messages`, `temperature`, `max_tokens`). There is no caller authentication in v1 (internal network). `stream: true` is rejected with HTTP 422. Full contract: [`docs/api.md`](docs/api.md).
 
 ## Documentation policy
 

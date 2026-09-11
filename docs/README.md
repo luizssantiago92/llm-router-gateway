@@ -16,5 +16,7 @@ Human-facing project docs. Spec artifacts (requirements, tasks, validation) live
 | [`.specs/project/ROADMAP.md`](../.specs/project/ROADMAP.md) | Milestones |
 | [`.specs/project/CONSTITUTION.md`](../.specs/project/CONSTITUTION.md) | Standing principles |
 | [`.specs/features/llm-router-gateway/brief.md`](../.specs/features/llm-router-gateway/brief.md) | Elicited requirements brief |
+| [`.specs/features/001-llm-router-gateway/spec.md`](../.specs/features/001-llm-router-gateway/spec.md) | Testable REQs (v1) |
+| [`.specs/features/001-llm-router-gateway/design.md`](../.specs/features/001-llm-router-gateway/design.md) | Components, Ship Surface, AI Surface |
 
 When a pull request changes behavior, setup, or status, update the matching page **and** the root [README](../README.md). Policy: [Development → Documentation on every PR](development.md#documentation-on-every-pr).
