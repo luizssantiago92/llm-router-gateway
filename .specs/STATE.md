@@ -6,7 +6,7 @@
 - Branch: —
 
 ## Next Step (single item)
-- [ ] Install/start Docker Desktop (Compose not on PATH on this machine), then `docker compose up --build` and smoke `/health` + chat
+- [ ] No active feature — demo shipped. Next work only via `feature-init`, or reuse patterns in Gold Queen / a future company chatbot (see README **Still open**)
 
 ## Blockers
 - none
@@ -15,8 +15,10 @@
 - Streaming completions (D-009)
 - Full multi-tenant auth (beyond shared `GATEWAY_API_KEY`)
 - Semantic cache, multi-tenancy UI, RAG/tool-use
-- Paid OpenAI happy path (separate product)
+- Paid OpenAI happy path (separate product / real company chatbot)
 - vLLM and Anthropic happy-path adapters
+- Hosted deploy; Ollama in Compose; chat UI
+- Authoritative list: root `README.md` → **Still open (agents: read this)**
 
 ## Decisions
 
@@ -49,3 +51,9 @@
 - **Context**: `gemini-2.0-flash` shut down; Google migration points to 3.x Flash
 - **Decision**: Default `GEMINI_MODEL` is `gemini-3.5-flash`; operators may override to `gemini-3.6-flash` via env when listed in AI Studio
 - **Consequences**: Compose and settings defaults updated; `.env` may override without code change
+
+### AD-006: This repo stays demonstrative
+- **Date**: 2026-09-11
+- **Context**: Owner will reuse interesting pieces in Gold Queen and later build a real company chatbot elsewhere
+- **Decision**: Keep llm-router-gateway as the academic / zero-cost demo reference; do not grow production chatbot scope here without explicit `feature-init`
+- **Consequences**: README **Still open** is the agent-facing backlog; production work belongs in other repos unless the owner says otherwise

@@ -23,7 +23,7 @@ Application source lives in `app/`. Tests live in `tests/`. Work stays spec-firs
 | API | Python 3.10+, FastAPI, asyncio, Pydantic v2 |
 | HTTP client | httpx (async) |
 | Cache | Redis via redis-py async |
-| Local LLM | Ollama (optional; falha → fallback Gemini) |
+| Local LLM | Ollama (optional; unreachable → one-hop fallback to Gemini) |
 | Cloud LLM | Google Gemini (demo / free-tier default) |
 | Ship unit | Docker Compose (`api` + `redis`) |
 | Tests | pytest-asyncio (routing, cache hit/miss, fallback, quota) |
@@ -98,6 +98,6 @@ Skip README edits only when the diff is purely internal (for example a typo in a
 
 This policy is also an always-on Cursor rule: `.cursor/rules/pr-documentation.mdc` (C-008).
 
-## Out of scope (still)
+## Out of scope / deferred
 
-Streaming, semantic cache, multi-tenancy, RAG/tool-use, Kubernetes, paid OpenAI happy path. Minimal `X-API-Key` + daily quota are in for the zero-cost demo.
+See the root [README → Still open (agents: read this)](../README.md#still-open-agents-read-this) for the authoritative backlog. In short: streaming, production multi-tenant auth, semantic cache, RAG/tools, paid OpenAI happy path, K8s, and hosted deploy are **not** in this demo unless the owner starts a new feature.
