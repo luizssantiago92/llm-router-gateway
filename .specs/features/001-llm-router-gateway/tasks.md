@@ -6,12 +6,12 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 
 ### T1: Scaffold async Python project harness
 - **Requirement**: REQ-015, REQ-018
-- **Files**: pyproject.toml, app/__init__.py, tests/conftest.py
+- **Files**: pyproject.toml, app/__init__.py, tests/conftest.py, tests/test_harness_imports.py
 - **Depends on**: —
 - **Tests**: tests/test_harness_imports.py
 - **Gate**: pytest tests/test_harness_imports.py
 - **Done when**: `pyproject.toml` declares FastAPI, httpx, redis, pydantic v2, and pytest-asyncio, and `pytest tests/test_harness_imports.py` imports the `app` package
-- [ ] complete
+- [x] complete
 
 ### Phase 2
 
