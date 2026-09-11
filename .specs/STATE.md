@@ -2,11 +2,11 @@
 
 ## Active Feature
 - Feature: 001-llm-router-gateway
-- Phase: Tasks
-- Branch: cursor/tasks-llm-router-gateway-e287
+- Phase: Execute
+- Branch: cursor/loop-llm-router-gateway-e287
 
 ## Next Step (single item)
-- [ ] Owner approves `.specs/features/001-llm-router-gateway/tasks.md`, then `/loop`
+- [ ] `/loop` T1 (scaffold async Python harness)
 
 ## Blockers
 - none

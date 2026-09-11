@@ -6,7 +6,7 @@ Internal applications call a single OpenAI-compatible facade. The gateway applie
 
 ## Status
 
-Tasks drafted for owner approval. Implementation starts after `/loop`.
+Execute in progress (`/loop` T1 complete). Remaining tasks T2–T13.
 
 | Item | Location |
 | --- | --- |
@@ -21,7 +21,7 @@ Tasks drafted for owner approval. Implementation starts after `/loop`.
 | How we work | [`docs/development.md`](docs/development.md) |
 | Docs index | [`docs/README.md`](docs/README.md) |
 
-Next phase: owner approves `tasks.md`, then `/loop` (T1–T13).
+Next phase: `/loop` T2–T13, then `/verify`.
 
 ## What it does
 
