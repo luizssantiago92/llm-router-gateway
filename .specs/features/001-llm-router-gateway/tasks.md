@@ -129,7 +129,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 - **Tests**: tests/test_compose_config.py
 - **Gate**: pytest tests/test_compose_config.py
 - **Done when**: Compose defines isolated `api` and `redis` services and the Dockerfile runs the FastAPI app
-- [ ] complete
+- [x] complete
 
 ## Test Coverage Matrix
 
