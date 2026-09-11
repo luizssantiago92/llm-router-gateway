@@ -2,11 +2,11 @@
 
 ## Active Feature
 - Feature: 001-llm-router-gateway
-- Phase: Verify
+- Phase: Execute
 - Branch: cursor/loop-llm-router-gateway-e287
 
 ## Next Step (single item)
-- [ ] `/verify` in a fresh context (this Execute author must not write validation.md)
+- [ ] Strengthen REQ-006 / REQ-014 / REQ-015 tests after Verify FAIL (fix round 1 of 3)
 
 ## Blockers
 - none
