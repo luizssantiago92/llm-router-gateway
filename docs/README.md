@@ -12,7 +12,7 @@ Product overview and quick start live in the root [README](../README.md). This f
 
 - Product kickoff: [`prd.md`](../prd.md)
 - Project memory: [`.specs/project/PROJECT.md`](../.specs/project/PROJECT.md) · [`ROADMAP.md`](../.specs/project/ROADMAP.md)
-- Domain truth (v1): [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md)
+- Domain truth (REQ-001–REQ-022): [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md)
 - Feature history: [`.specs/features/001-llm-router-gateway/`](../.specs/features/001-llm-router-gateway/spec.md)
 - Session state: [`.specs/STATE.md`](../.specs/STATE.md)
 

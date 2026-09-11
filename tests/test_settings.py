@@ -62,8 +62,19 @@ def test_env_example_lists_keys_without_values() -> None:
 
 
 def test_settings_do_not_read_committed_secret_files() -> None:
+    import subprocess
+
     source = (ROOT / "app" / "settings.py").read_text(encoding="utf-8")
     assert "load_dotenv" not in source
     assert 'open(".env"' not in source
     assert 'Path(".env")' not in source
-    assert (ROOT / ".env").exists() is False
+    gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+    assert ".env" in gitignore
+    # Local `.env` is expected for operators; it must never be git-tracked.
+    result = subprocess.run(
+        ["git", "ls-files", "--error-unmatch", ".env"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode != 0, ".env must not be tracked by git"
