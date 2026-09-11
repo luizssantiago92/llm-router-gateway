@@ -31,7 +31,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 - **Tests**: tests/test_schemas.py
 - **Gate**: pytest tests/test_schemas.py
 - **Done when**: a valid `messages` + `temperature` + `max_tokens` body parses, invalid bodies raise ValidationError, and `stream=true` is rejected
-- [ ] complete
+- [x] complete
 
 ### T4: Add Provider protocol with fakes
 - **Requirement**: REQ-015
