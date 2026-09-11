@@ -17,16 +17,16 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 
 ### T2: Add environment-backed settings module
 - **Requirement**: REQ-016
-- **Files**: app/settings.py, .env.example
+- **Files**: app/settings.py, .env.example, tests/test_settings.py
 - **Depends on**: T1
 - **Tests**: tests/test_settings.py
 - **Gate**: pytest tests/test_settings.py
 - **Done when**: settings load `REDIS_URL`, `OLLAMA_BASE_URL`, `OPENAI_API_KEY`, `CACHE_TTL_SECONDS`, `COMPLEXITY_WORD_THRESHOLD`, and `UPSTREAM_TIMEOUT_SECONDS` from the environment, `.env.example` lists keys without values, and tests fail if those keys are read from a committed secrets file
-- [ ] complete
+- [x] complete
 
 ### T3: Add Pydantic chat request schemas
 - **Requirement**: REQ-001, REQ-002, REQ-003
-- **Files**: app/schemas/chat.py
+- **Files**: app/schemas/chat.py, app/schemas/__init__.py, tests/test_schemas.py
 - **Depends on**: T1
 - **Tests**: tests/test_schemas.py
 - **Gate**: pytest tests/test_schemas.py
@@ -35,7 +35,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 
 ### T4: Add Provider protocol with fakes
 - **Requirement**: REQ-015
-- **Files**: app/providers/base.py, app/providers/fake.py
+- **Files**: app/providers/base.py, app/providers/fake.py, app/providers/__init__.py, tests/test_provider_protocol.py
 - **Depends on**: T1
 - **Tests**: tests/test_provider_protocol.py
 - **Gate**: pytest tests/test_provider_protocol.py
