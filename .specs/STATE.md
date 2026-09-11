@@ -2,11 +2,11 @@
 
 ## Active Feature
 - Feature: 001-llm-router-gateway
-- Phase: Execute
+- Phase: Verify
 - Branch: cursor/loop-llm-router-gateway-e287
 
 ## Next Step (single item)
-- [ ] `/loop` T1 (scaffold async Python harness)
+- [ ] `/verify` in a fresh context (this Execute author must not write validation.md)
 
 ## Blockers
 - none

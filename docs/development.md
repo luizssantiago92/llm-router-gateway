@@ -1,23 +1,33 @@
 # Development
 
-Greenfield service. There is no application package yet. Work proceeds spec-first under Spec Guardrails (`python-platform`).
+Application source lives in `app/`. Tests live in `tests/`. Work stays spec-first under Spec Guardrails (`python-platform`).
 
 ## Repository map
 
 | Path | Purpose |
 | --- | --- |
 | `prd.md` | Product requirements (owner kickoff) |
+| `app/` | FastAPI gateway (settings, schemas, cache, routing, providers, routes) |
+| `tests/` | pytest-asyncio suite; `tests/eval/` golden routing harness |
+| `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + `redis` |
+| `.env.example` | Required env keys with empty values |
 | `docs/` | Human documentation (this tree) |
 | `.specs/` | Specs, briefs, gates, session state |
 | `.cursor/skills/` | Agent hub and phase procedures |
 | `AGENTS.md` | Agent-agnostic execution contract |
 
-## Planned toolchain
+## Toolchain
 
 - Python 3.10+, FastAPI, asyncio, httpx, redis-py async, Pydantic v2
-- pytest-asyncio for routing, cache hit/miss, and fallback
+- pytest-asyncio for routing, cache hit/miss, and fallback (`pytest -m "not live"` by default)
 - Docker Compose for the app and Redis
 - Conventional Commits; `python3 .specs/guardrails/scripts/check_commit.py --message "…"`
+
+```bash
+pip install -e ".[dev]"
+pytest
+npx @luizsantiago/spec-guardrails doctor
+```
 
 Install health:
 
@@ -30,10 +40,12 @@ npx @luizsantiago/spec-guardrails doctor
 Typical order for this product (Complex):
 
 ```
-/elicit (done) → /specify (done) → /discuss (done) → /plan (done) → /tasks (done) → /loop (in progress) → /verify → /archive
+/elicit (done) → /specify (done) → /discuss (done) → /plan (done) → /tasks (done) → /loop (done) → /verify → /archive
 ```
 
 Active spec: [`.specs/features/001-llm-router-gateway/spec.md`](../.specs/features/001-llm-router-gateway/spec.md). Tasks: [`.specs/features/001-llm-router-gateway/tasks.md`](../.specs/features/001-llm-router-gateway/tasks.md). Do not re-ask **D-001–D-012**. Session pointer: [`.specs/STATE.md`](../.specs/STATE.md).
+
+Execute author must not write `validation.md`. Next phase is `/verify` in a fresh context.
 
 ## Documentation on every PR
 

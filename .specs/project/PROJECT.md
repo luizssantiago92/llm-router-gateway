@@ -6,7 +6,7 @@ LLM Router Gateway is the single internal facade for chat-completion traffic. It
 
 ## Stack
 
-- Python 3.10+, FastAPI, asyncio, httpx, Pydantic v2 (planned)
+- Python 3.10+, FastAPI, asyncio, httpx, Pydantic v2
 - Redis (exact-match cache) via redis-py async
 - Local default: Ollama (Llama 3 8B class); cloud default: OpenAI
 - Docker Compose (app + Redis)
