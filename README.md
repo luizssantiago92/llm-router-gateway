@@ -6,7 +6,7 @@ Internal applications call a single OpenAI-compatible facade. The gateway applie
 
 ## Status
 
-Spec drafted for owner approval. Implementation has not started.
+Tasks drafted for owner approval. Implementation starts after `/loop`.
 
 | Item | Location |
 | --- | --- |
@@ -14,13 +14,14 @@ Spec drafted for owner approval. Implementation has not started.
 | Requirements brief | [`.specs/features/llm-router-gateway/brief.md`](.specs/features/llm-router-gateway/brief.md) |
 | Spec (REQ-001–REQ-018) | [`.specs/features/001-llm-router-gateway/spec.md`](.specs/features/001-llm-router-gateway/spec.md) |
 | Design | [`.specs/features/001-llm-router-gateway/design.md`](.specs/features/001-llm-router-gateway/design.md) |
+| Tasks | [`.specs/features/001-llm-router-gateway/tasks.md`](.specs/features/001-llm-router-gateway/tasks.md) |
 | Project memory | [`.specs/project/PROJECT.md`](.specs/project/PROJECT.md) |
 | Architecture | [`docs/architecture.md`](docs/architecture.md) |
 | API contract (v1) | [`docs/api.md`](docs/api.md) |
 | How we work | [`docs/development.md`](docs/development.md) |
 | Docs index | [`docs/README.md`](docs/README.md) |
 
-Next phase: owner approves `spec.md`, then `/tasks`.
+Next phase: owner approves `tasks.md`, then `/loop` (T1–T13).
 
 ## What it does
 
@@ -43,7 +44,7 @@ Business goals from the PRD: cut paid-token volume by at least 30% via local rou
 | Ship unit | Docker Compose (app + Redis) |
 | Tests | pytest-asyncio (routing, cache hit/miss, fallback) |
 
-Application source, Compose, and tests land after the spec is approved and tasks exist.
+Application source, Compose, and tests land in Execute (`/loop`) after `tasks.md` is approved.
 
 ## API (planned)
 

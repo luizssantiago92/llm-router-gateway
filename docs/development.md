@@ -30,10 +30,10 @@ npx @luizsantiago/spec-guardrails doctor
 Typical order for this product (Complex):
 
 ```
-/elicit (done) → /specify (drafted) → /discuss (recorded) → /plan (drafted) → /tasks → /analyze → /loop → /verify → /archive
+/elicit (done) → /specify (done) → /discuss (done) → /plan (done) → /tasks (drafted) → /analyze → /loop → /verify → /archive
 ```
 
-Active spec: [`.specs/features/001-llm-router-gateway/spec.md`](../.specs/features/001-llm-router-gateway/spec.md). Do not re-ask **D-001–D-012**. Session pointer: [`.specs/STATE.md`](../.specs/STATE.md).
+Active spec: [`.specs/features/001-llm-router-gateway/spec.md`](../.specs/features/001-llm-router-gateway/spec.md). Tasks: [`.specs/features/001-llm-router-gateway/tasks.md`](../.specs/features/001-llm-router-gateway/tasks.md). Do not re-ask **D-001–D-012**. Session pointer: [`.specs/STATE.md`](../.specs/STATE.md).
 
 ## Documentation on every PR
 
