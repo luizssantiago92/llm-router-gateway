@@ -109,7 +109,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 - **Tests**: tests/eval/test_routing_eval.py
 - **Gate**: pytest tests/eval/test_routing_eval.py -m "not live"
 - **Done when**: a golden prompt set records simple vs complex destination counts without live provider calls
-- [ ] complete
+- [x] complete
 
 ### Phase 6
 
