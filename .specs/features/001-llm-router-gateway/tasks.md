@@ -40,7 +40,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 - **Tests**: tests/test_provider_protocol.py
 - **Gate**: pytest tests/test_provider_protocol.py
 - **Done when**: `Provider.complete` is an async protocol, the fake adapter returns a completion, and the fake can raise a 5xx-equivalent or timeout error for fallback tests
-- [ ] complete
+- [x] complete
 
 ### Phase 3
 
