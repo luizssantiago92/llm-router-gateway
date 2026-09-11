@@ -9,7 +9,7 @@
 | Discuss + Design | done | `context.md` (D-001–D-012) + `design.md` (Ship + AI surfaces) |
 | `/tasks` | done | T1–T13 + `task-graph.md` |
 | Execute (`/loop`) | done | T1–T13; `app/` + Compose + pytest-asyncio |
-| `/verify` | FAIL | Weak assertions on REQ-006 / REQ-014 / REQ-015; Execute fix round 1 of 3 |
+| `/verify` | FAIL → re-verify | Fix round 1: stronger tests for REQ-006 / REQ-014 / REQ-015 |
 | Compose app + Redis | done | `docker-compose.yml` services `api` + `redis` (RNF-03) |
 
 ## Feature candidates

@@ -6,7 +6,7 @@ Internal applications call a single OpenAI-compatible facade. The gateway applie
 
 ## Status
 
-Execute complete (T1–T13). Independent `/verify` returned **FAIL** (weak assertions on cache-hit body, observability headers/JSON, and async Redis I/O). Fix round 1 of 3 is next.
+Execute complete (T1–T13). Independent `/verify` returned **FAIL** on weak assertions; Execute fix round 1 added discriminating tests for cache-hit body, observability JSON/headers, and async Redis/httpx. Re-verify is next.
 
 | Item | Location |
 | --- | --- |
@@ -22,7 +22,7 @@ Execute complete (T1–T13). Independent `/verify` returned **FAIL** (weak asser
 | How we work | [`docs/development.md`](docs/development.md) |
 | Docs index | [`docs/README.md`](docs/README.md) |
 
-Next phase: Execute fix for Verify gaps (REQ-006, REQ-014, REQ-015), then re-verify in a fresh context.
+Next phase: re-run `/verify` in a fresh context (author ≠ verifier).
 
 ## What it does
 

@@ -45,7 +45,7 @@ Typical order for this product (Complex):
 
 Active spec: [`.specs/features/001-llm-router-gateway/spec.md`](../.specs/features/001-llm-router-gateway/spec.md). Tasks: [`.specs/features/001-llm-router-gateway/tasks.md`](../.specs/features/001-llm-router-gateway/tasks.md). Do not re-ask **D-001–D-012**. Session pointer: [`.specs/STATE.md`](../.specs/STATE.md).
 
-Independent `/verify` recorded FAIL in [validation.md](../.specs/features/001-llm-router-gateway/validation.md). Next is an Execute fix round for weak assertions, then a fresh-context re-verify. The Execute author still must not write `validation.md`.
+Independent `/verify` recorded FAIL in [validation.md](../.specs/features/001-llm-router-gateway/validation.md). Execute fix round 1 strengthened cache-hit, observability, and async-stack tests. Next is a fresh-context re-verify. The Execute author still must not write `validation.md`.
 
 ## Documentation on every PR
 
