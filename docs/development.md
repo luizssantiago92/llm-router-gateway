@@ -23,10 +23,10 @@ Application source lives in `app/`. Tests live in `tests/`. Work stays spec-firs
 | API | Python 3.10+, FastAPI, asyncio, Pydantic v2 |
 | HTTP client | httpx (async) |
 | Cache | Redis via redis-py async |
-| Local LLM | Ollama (vLLM adapter-ready) |
-| Cloud LLM | OpenAI (Anthropic adapter-ready) |
+| Local LLM | Ollama (optional; falha → fallback Gemini) |
+| Cloud LLM | Google Gemini (demo / free-tier default) |
 | Ship unit | Docker Compose (`api` + `redis`) |
-| Tests | pytest-asyncio (routing, cache hit/miss, fallback) |
+| Tests | pytest-asyncio (routing, cache hit/miss, fallback, quota) |
 
 ## Environment
 
@@ -34,15 +34,17 @@ Copy [`.env.example`](../.env.example) to `.env` (never commit `.env`):
 
 | Variable | Required | Default |
 | --- | --- | --- |
-| `REDIS_URL` | yes | — (Compose sets `redis://redis:6379/0`) |
-| `OLLAMA_BASE_URL` | yes | — (Compose default `http://ollama:11434`; override to your host Ollama) |
-| `OPENAI_API_KEY` | yes | — |
-| `OPENAI_MODEL` | no | `gpt-4o-mini` |
+| `REDIS_URL` | yes | Compose: `redis://redis:6379/0` |
+| `OLLAMA_BASE_URL` | yes | Compose default `http://host.docker.internal:11434` (placeholder OK if Ollama is not installed) |
+| `GEMINI_API_KEY` | yes | — |
+| `GEMINI_MODEL` | no | `gemini-3.5-flash` (or `gemini-3.6-flash` if listed in AI Studio) |
+| `GATEWAY_API_KEY` | yes | — (value callers send as `X-API-Key`) |
+| `CHAT_DAILY_LIMIT` | no | `5` |
 | `CACHE_TTL_SECONDS` | no | `3600` |
 | `COMPLEXITY_WORD_THRESHOLD` | no | `150` |
 | `UPSTREAM_TIMEOUT_SECONDS` | no | `30` |
 
-Secrets and upstream URLs come from the environment only (no `load_dotenv` in the app).
+Never commit `.env`. Secrets are env-only (no `load_dotenv` in the app).
 
 ## Tests
 
@@ -61,7 +63,7 @@ docker compose up --build
 
 - `api` on port **8000**
 - `redis` on port **6379**
-- Ollama is **not** in Compose — it must be reachable at `OLLAMA_BASE_URL` (on Windows/Docker Desktop, `host.docker.internal:11434` is a common host override)
+- Ollama is **not** in Compose. If the host cannot run Ollama, leave the default URL: health reports `degraded` and the router falls back to Gemini after one local failure.
 
 ## Spec Guardrails
 
@@ -77,7 +79,7 @@ Typical Complex order:
 /elicit → /specify → /discuss? → /plan → /tasks → /loop → /verify → /archive
 ```
 
-v1 (`001-llm-router-gateway`) is archived. Independent `/verify` PASS: [validation.md](../.specs/features/001-llm-router-gateway/validation.md). Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md). Do not re-ask **D-001–D-012**. Next product change starts with `feature-init` against the domain. Session pointer: [`.specs/STATE.md`](../.specs/STATE.md).
+v1 (`001-llm-router-gateway`) is archived. Independent `/verify` PASS: [validation.md](../.specs/features/001-llm-router-gateway/validation.md). Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md). Do not re-ask **D-001–D-012**. Session pointer: [`.specs/STATE.md`](../.specs/STATE.md).
 
 Hub: [`.cursor/skills/agent-architecture.md`](../.cursor/skills/agent-architecture.md). Conventional Commits; optional gate: `python .specs/guardrails/scripts/check_commit.py --message "…"`.
 
@@ -94,6 +96,6 @@ Skip README edits only when the diff is purely internal (for example a typo in a
 
 This policy is also an always-on Cursor rule: `.cursor/rules/pr-documentation.mdc` (C-008).
 
-## Out of scope for v1
+## Out of scope (still)
 
-Streaming, edge auth, semantic cache, admin UI, rate limits, multi-tenancy, RAG/tool-use, Kubernetes. Full list: brief § Constraints.
+Streaming, semantic cache, multi-tenancy, RAG/tool-use, Kubernetes, paid OpenAI happy path. Minimal `X-API-Key` + daily quota are in for the zero-cost demo.

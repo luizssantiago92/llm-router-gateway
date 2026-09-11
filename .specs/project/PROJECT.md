@@ -8,18 +8,19 @@ LLM Router Gateway is the single internal facade for chat-completion traffic. It
 
 - Python 3.10+, FastAPI, asyncio, httpx, Pydantic v2
 - Redis (exact-match cache) via redis-py async
-- Local default: Ollama (Llama 3 8B class); cloud default: OpenAI
+- Local default: Ollama when available (optional on light machines); cloud default: Google Gemini (demo / free tier)
 - Docker Compose (app + Redis)
 - Spec Guardrails with preset `python-platform`
 
 ## Constraints
 
 - No secrets in git; upstream keys and local URLs via environment variables
-- OpenAI-compatible public contract only in v1 (no native Anthropic Messages schema)
-- No caller authentication at the gateway edge in v1
+- OpenAI-compatible public contract only (facade); cloud upstream is Gemini for the zero-cost demo
+- Demo edge auth: shared `GATEWAY_API_KEY` via `X-API-Key` + daily chat quota (default 5)
 - Non-streaming JSON only
-- Exact-match cache only (no embeddings)
+- Exact-match cache only (no embeddings); cache hits do not consume quota
 - Compose is the ship unit; no Kubernetes/Helm/Terraform in v1
+- Paid OpenAI path deferred to a separate product/project
 
 ## Domain map
 

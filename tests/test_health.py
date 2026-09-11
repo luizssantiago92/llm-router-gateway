@@ -28,7 +28,8 @@ def _client_app(redis, local, cloud):
     settings = Settings(
         redis_url="redis://localhost:6379/0",
         ollama_base_url="http://ollama",
-        openai_api_key="sk-test",
+        gemini_api_key="gemini-test",
+        gateway_api_key="gateway-test",
         cache_ttl_seconds=60,
         complexity_word_threshold=150,
         upstream_timeout_seconds=30,

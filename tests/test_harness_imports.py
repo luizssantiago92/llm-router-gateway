@@ -28,14 +28,15 @@ def test_production_factory_uses_async_redis_and_httpx() -> None:
     from redis.asyncio.client import Redis as AsyncRedis
 
     from app import main as main_mod
-    from app.providers import ollama, openai
+    from app.providers import gemini, ollama
 
     assert main_mod.Redis is AsyncRedis
     factory_src = inspect.getsource(main_mod.build_default_app)
     assert "Redis.from_url" in factory_src
+    assert "GeminiProvider" in factory_src
     ollama_src = inspect.getsource(ollama)
-    openai_src = inspect.getsource(openai)
+    gemini_src = inspect.getsource(gemini)
     assert "httpx.AsyncClient" in ollama_src
-    assert "httpx.AsyncClient" in openai_src
+    assert "httpx.AsyncClient" in gemini_src
     assert "httpx.Client(" not in ollama_src
-    assert "httpx.Client(" not in openai_src
+    assert "httpx.Client(" not in gemini_src

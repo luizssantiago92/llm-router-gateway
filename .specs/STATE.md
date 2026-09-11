@@ -1,21 +1,22 @@
 # Project State & Decisions
 
 ## Active Feature
-- Feature: —
-- Phase: —
-- Branch: —
+- Feature: gemini-free-demo
+- Phase: execute
+- Branch: cursor/gemini-free-demo
 
 ## Next Step (single item)
-- [ ] Start the next change with `feature-init` (v1 `001-llm-router-gateway` is archived)
+- [ ] Land Gemini + demo quota PR; then archive/domain delta as needed
 
 ## Blockers
 - none
 
 ## Deferred Ideas
-- Streaming completions (D-009 — out of scope for v1)
-- Edge authentication / API keys for callers (D-002)
-- Semantic cache, rate limiting, multi-tenancy, RAG/tool-use
-- vLLM and Anthropic happy-path adapters (protocol only in this design)
+- Streaming completions (D-009)
+- Full multi-tenant auth (beyond shared `GATEWAY_API_KEY`)
+- Semantic cache, multi-tenancy UI, RAG/tool-use
+- Paid OpenAI happy path (separate product)
+- vLLM and Anthropic happy-path adapters
 
 ## Decisions
 
@@ -34,5 +35,11 @@
 ### AD-003: In-process Provider protocol
 - **Date**: 2026-09-11
 - **Context**: Design for 001-llm-router-gateway
-- **Decision**: Routes call a Provider protocol; Ollama and OpenAI are adapters; unit tests use fakes
+- **Decision**: Routes call a Provider protocol; adapters implement the same seam; unit tests use fakes
 - **Consequences**: Tasks must not call vendor SDKs from route modules
+
+### AD-004: Zero-cost demo cloud = Gemini + quota
+- **Date**: 2026-09-11
+- **Context**: Owner wants a Gold-Queen-style zero-cost demo; paid OpenAI path deferred to another project
+- **Decision**: Default cloud adapter is Gemini (`GEMINI_API_KEY`); callers send `X-API-Key` (`GATEWAY_API_KEY`); Redis daily quota (`CHAT_DAILY_LIMIT`, default 5); cache hits do not consume; Ollama + exact-match cache remain first line
+- **Consequences**: OpenAI removed from happy path; docs and Compose updated; 401/429 added to API contract

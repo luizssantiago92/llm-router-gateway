@@ -33,7 +33,7 @@ Status: **archived v1** (implemented, independently verified, folded into domain
                       v                                             v
            +--------------------+                        +--------------------+
            | Local provider     |                        | Cloud provider     |
-           | (Ollama; vLLM-ready)|                       | (OpenAI; Anthropic-ready)
+           | (Ollama; vLLM-ready)|                       | (Gemini; free-tier demo)
            +---------+----------+                        +---------+----------+
                      |                                             |
                      +----------------------+----------------------+
@@ -56,10 +56,11 @@ On cache miss, a **5xx or timeout** on the primary provider triggers **one** hop
 | Evaluator | `app/routing/evaluator.py` | Word-count **or** keyword match → simple vs complex |
 | Router | `app/routing/router.py` | Primary provider then one opposite-tier hop |
 | Local adapter | `app/providers/ollama.py` | Default Ollama (Llama 3 8B class); `name="local"` |
-| Cloud adapter | `app/providers/openai.py` | Default OpenAI; `name="cloud"` |
+| Cloud adapter | `app/providers/gemini.py` | Default Gemini (`GEMINI_API_KEY`); `name="cloud"` |
+| Quota | `app/quota/daily.py` | Redis daily bucket per `X-API-Key` (cache hits free) |
 | Health | `app/api/health.py` | Process + Redis + each configured upstream |
 
-vLLM and Anthropic happy-path adapters stay protocol-only in v1 (deferred).
+Demo posture: Gemini free tier + daily quota + shared gateway API key. Paid OpenAI path is deferred to a later product.
 
 ## Observability
 
@@ -70,7 +71,7 @@ Every completion returns:
 
 ## Ship unit
 
-Docker Compose runs the FastAPI service (`api`) and Redis (`redis`) in isolation. Kubernetes, Helm, and Terraform are out of scope for v1. Secrets (cloud API keys, local runtime URLs) come from environment variables only. Ollama is an external runtime referenced by `OLLAMA_BASE_URL`.
+Docker Compose runs the FastAPI service (`api`) and Redis (`redis`) in isolation. Kubernetes, Helm, and Terraform are out of scope for v1. Secrets (cloud API keys, local runtime URLs) come from environment variables only. Ollama is an optional external runtime referenced by `OLLAMA_BASE_URL`; when it is unreachable, health is `degraded` and simple prompts fall back to Gemini.
 
 ## Surfaces
 
