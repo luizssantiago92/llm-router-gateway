@@ -120,7 +120,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 - **Tests**: tests/test_health.py
 - **Gate**: pytest tests/test_health.py
 - **Done when**: `GET /health` returns HTTP 200 `status=ok` when Redis and both upstreams are up, HTTP 200 `status=degraded` when Redis is up and an upstream is down, and HTTP 503 when Redis is down
-- [ ] complete
+- [x] complete
 
 ### T12: Add Docker Compose ship unit
 - **Requirement**: REQ-017

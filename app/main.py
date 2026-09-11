@@ -3,6 +3,7 @@ from __future__ import annotations
 from redis.asyncio import Redis
 
 from app.api.completions import router as completions_router
+from app.api.health import router as health_router
 from app.cache.service import CacheService
 from app.providers.ollama import OllamaProvider
 from app.providers.openai import OpenAIProvider
@@ -28,6 +29,7 @@ def create_app(
     app.state.cloud = cloud
     app.state.redis = redis
     app.include_router(completions_router)
+    app.include_router(health_router)
     return app
 
 
