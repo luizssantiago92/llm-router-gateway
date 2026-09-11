@@ -6,7 +6,7 @@ Internal applications call a single OpenAI-compatible facade. The gateway applie
 
 ## Status
 
-Tasks drafted for owner approval. Implementation starts after `/loop`.
+Execute complete (T1–T13). Independent `/verify` has not run yet.
 
 | Item | Location |
 | --- | --- |
@@ -15,13 +15,14 @@ Tasks drafted for owner approval. Implementation starts after `/loop`.
 | Spec (REQ-001–REQ-018) | [`.specs/features/001-llm-router-gateway/spec.md`](.specs/features/001-llm-router-gateway/spec.md) |
 | Design | [`.specs/features/001-llm-router-gateway/design.md`](.specs/features/001-llm-router-gateway/design.md) |
 | Tasks | [`.specs/features/001-llm-router-gateway/tasks.md`](.specs/features/001-llm-router-gateway/tasks.md) |
+| Feature dashboard | [`.specs/features/001-llm-router-gateway/overview.md`](.specs/features/001-llm-router-gateway/overview.md) |
 | Project memory | [`.specs/project/PROJECT.md`](.specs/project/PROJECT.md) |
 | Architecture | [`docs/architecture.md`](docs/architecture.md) |
 | API contract (v1) | [`docs/api.md`](docs/api.md) |
 | How we work | [`docs/development.md`](docs/development.md) |
 | Docs index | [`docs/README.md`](docs/README.md) |
 
-Next phase: owner approves `tasks.md`, then `/loop` (T1–T13).
+Next phase: `/verify` in a fresh context (author ≠ verifier).
 
 ## What it does
 
@@ -32,7 +33,7 @@ Next phase: owner approves `tasks.md`, then `/loop` (T1–T13).
 
 Business goals from the PRD: cut paid-token volume by at least 30% via local routing, and remove a single cloud provider as a hard dependency.
 
-## Planned stack
+## Stack
 
 | Layer | Choice |
 | --- | --- |
@@ -44,9 +45,9 @@ Business goals from the PRD: cut paid-token volume by at least 30% via local rou
 | Ship unit | Docker Compose (app + Redis) |
 | Tests | pytest-asyncio (routing, cache hit/miss, fallback) |
 
-Application source, Compose, and tests land in Execute (`/loop`) after `tasks.md` is approved.
+Application source lives in `app/`. Default test command: `pytest` (`-m "not live"`). Local ship unit: `docker compose up --build`.
 
-## API (planned)
+## API
 
 ```http
 POST /v1/chat/completions
@@ -54,6 +55,28 @@ GET  /health
 ```
 
 Request body follows OpenAI Chat Completions (`messages`, `temperature`, `max_tokens`). There is no caller authentication in v1 (internal network). `stream: true` is rejected with HTTP 422. Full contract: [`docs/api.md`](docs/api.md).
+
+## Run locally
+
+Copy [`.env.example`](.env.example) and set values in the environment (never commit `.env`):
+
+| Variable | Required | Default |
+| --- | --- | --- |
+| `REDIS_URL` | yes | — |
+| `OLLAMA_BASE_URL` | yes | — |
+| `OPENAI_API_KEY` | yes | — |
+| `OPENAI_MODEL` | no | `gpt-4o-mini` |
+| `CACHE_TTL_SECONDS` | no | `3600` |
+| `COMPLEXITY_WORD_THRESHOLD` | no | `150` |
+| `UPSTREAM_TIMEOUT_SECONDS` | no | `30` |
+
+```bash
+pip install -e ".[dev]"
+pytest
+docker compose up --build
+```
+
+Compose starts `api` on port 8000 and `redis` on 6379. Ollama is expected at `OLLAMA_BASE_URL` (not bundled in Compose).
 
 ## Documentation policy
 

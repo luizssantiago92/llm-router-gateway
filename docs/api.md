@@ -1,6 +1,8 @@
-# API (v1, planned)
+# API (v1)
 
 Internal facade. No caller authentication in v1. Streaming is rejected with HTTP 422 (`stream: true`). Binding criteria: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md) REQ-001–REQ-004, REQ-014.
+
+Process factory: `app.main:build_default_app` (Uvicorn `--factory`). Routes are registered on `create_app(...)` for tests that inject fakes.
 
 ## `POST /v1/chat/completions`
 
@@ -12,7 +14,7 @@ Gateway-specific response fields (in addition to a standard completion payload):
 | --- | --- | --- |
 | `cached` | boolean | Redis exact-match hit |
 | `latency_ms` | number | Gateway hop latency |
-| `provider` | string | Adapter that served the completion |
+| `provider` | string | Adapter that served the completion (`local`, `cloud`, or `cache`) |
 
 Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
 
@@ -31,10 +33,10 @@ Cache key: SHA-256 of a canonical serialization of `messages` + `temperature` + 
 
 ## `GET /health`
 
-| Redis | Upstreams | HTTP | Payload |
+| Redis | Upstreams | HTTP | Payload `status` |
 | --- | --- | --- | --- |
 | Up | All reachable | 200 | `ok` |
 | Up | At least one down | 200 | `degraded` |
-| Down | — | 503 | Redis unavailable |
+| Down | — | 503 | `down` |
 
 The process can still serve cache hits when a single upstream is down, as long as Redis is healthy.

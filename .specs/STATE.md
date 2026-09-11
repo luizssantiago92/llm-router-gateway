@@ -2,11 +2,11 @@
 
 ## Active Feature
 - Feature: 001-llm-router-gateway
-- Phase: Tasks
-- Branch: cursor/tasks-llm-router-gateway-e287
+- Phase: Verify
+- Branch: cursor/loop-llm-router-gateway-e287
 
 ## Next Step (single item)
-- [ ] Owner approves `.specs/features/001-llm-router-gateway/tasks.md`, then `/loop`
+- [ ] `/verify` in a fresh context (this Execute author must not write validation.md)
 
 ## Blockers
 - none

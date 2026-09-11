@@ -7,9 +7,10 @@
 | Project docs + README | done | Policy: update on every later PR (C-008) |
 | `/specify` (`spec.md`) | done | `.specs/features/001-llm-router-gateway/spec.md` |
 | Discuss + Design | done | `context.md` (D-001–D-012) + `design.md` (Ship + AI surfaces) |
-| `/tasks` | done | T1–T13 + `task-graph.md` (awaiting owner approval) |
-| Execute → Verify | planned | `/loop` then `/verify` with pytest-asyncio |
-| Compose app + Redis | planned | RNF-03 |
+| `/tasks` | done | T1–T13 + `task-graph.md` |
+| Execute (`/loop`) | done | T1–T13; `app/` + Compose + pytest-asyncio |
+| `/verify` | next | Fresh context; this Execute author must not write `validation.md` |
+| Compose app + Redis | done | `docker-compose.yml` services `api` + `redis` (RNF-03) |
 
 ## Feature candidates
 
