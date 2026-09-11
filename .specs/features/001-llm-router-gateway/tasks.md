@@ -78,7 +78,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 - **Tests**: tests/test_openai_adapter.py
 - **Gate**: pytest tests/test_openai_adapter.py
 - **Done when**: the adapter calls OpenAI Chat Completions with `OPENAI_API_KEY` over async httpx and maps the reply to the shared Completion type (HTTP faked in tests)
-- [ ] complete
+- [x] complete
 
 ### Phase 4
 
