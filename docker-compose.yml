@@ -5,8 +5,11 @@ services:
       - "8000:8000"
     environment:
       REDIS_URL: redis://redis:6379/0
-      OLLAMA_BASE_URL: http://ollama:11434
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.0-flash}
+      GATEWAY_API_KEY: ${GATEWAY_API_KEY}
+      CHAT_DAILY_LIMIT: ${CHAT_DAILY_LIMIT:-5}
       CACHE_TTL_SECONDS: "3600"
       COMPLEXITY_WORD_THRESHOLD: "150"
       UPSTREAM_TIMEOUT_SECONDS: "30"

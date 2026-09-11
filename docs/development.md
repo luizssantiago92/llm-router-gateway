@@ -19,19 +19,29 @@ Application source lives in `app/`. Tests live in `tests/`. Work stays spec-firs
 ## Toolchain
 
 - Python 3.10+, FastAPI, asyncio, httpx, redis-py async, Pydantic v2
-- pytest-asyncio for routing, cache hit/miss, and fallback (`pytest -m "not live"` by default)
+- pytest-asyncio for routing, cache hit/miss, fallback, and quota (`pytest -m "not live"` by default)
 - Docker Compose for the app and Redis
 - Conventional Commits; `python3 .specs/guardrails/scripts/check_commit.py --message "…"`
+
+## Environment
+
+| Variable | Required | Default |
+| --- | --- | --- |
+| `REDIS_URL` | yes | Compose: `redis://redis:6379/0` |
+| `OLLAMA_BASE_URL` | yes | Compose default `http://host.docker.internal:11434` |
+| `GEMINI_API_KEY` | yes | — |
+| `GEMINI_MODEL` | no | `gemini-2.0-flash` |
+| `GATEWAY_API_KEY` | yes | — (value callers send as `X-API-Key`) |
+| `CHAT_DAILY_LIMIT` | no | `5` |
+| `CACHE_TTL_SECONDS` | no | `3600` |
+| `COMPLEXITY_WORD_THRESHOLD` | no | `150` |
+| `UPSTREAM_TIMEOUT_SECONDS` | no | `30` |
+
+Never commit `.env`. Secrets are env-only (no `load_dotenv` in the app).
 
 ```bash
 pip install -e ".[dev]"
 pytest
-npx @luizsantiago/spec-guardrails doctor
-```
-
-Install health:
-
-```bash
 npx @luizsantiago/spec-guardrails doctor
 ```
 
@@ -60,6 +70,6 @@ Skip README edits only when the diff is purely internal (for example a typo in a
 
 This policy is also an always-on Cursor rule: `.cursor/rules/pr-documentation.mdc`.
 
-## Out of scope for v1
+## Out of scope (still)
 
-Streaming, edge auth, semantic cache, admin UI, rate limits, multi-tenancy, RAG/tool-use, Kubernetes. Full list: brief § Constraints.
+Streaming, semantic cache, multi-tenancy, RAG/tool-use, Kubernetes, paid OpenAI happy path. Minimal `X-API-Key` + daily quota are in for the zero-cost demo.

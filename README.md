@@ -29,8 +29,9 @@ Next work starts with `feature-init` (delta specs against the domain). Do not re
 ## What it does
 
 - **Cache first** — SHA-256 exact match in Redis; cache hits target **<10 ms** with `cached: true` and `latency_ms`.
-- **Route by complexity** — short/simple prompts go to a local model (Ollama / Llama 3 8B class by default); code, long, or structured-reasoning prompts go to the cloud (OpenAI by default).
+- **Route by complexity** — short/simple prompts go to a local model (Ollama / Llama 3 8B class by default); code, long, or structured-reasoning prompts go to the cloud (**Gemini** free-tier default).
 - **Fail over once** — HTTP 5xx or timeout on the primary provider retries the other tier, then fails the request.
+- **Demo cost guard** — callers send `X-API-Key`; cache misses consume a daily quota (default 5); cache hits do not.
 - **Stay observable** — provider origin, cache status, and latency on both JSON fields and response headers.
 
 Business goals from the PRD: cut paid-token volume by at least 30% via local routing, and remove a single cloud provider as a hard dependency.
@@ -43,9 +44,9 @@ Business goals from the PRD: cut paid-token volume by at least 30% via local rou
 | HTTP client | httpx (async) |
 | Cache | Redis via redis-py async |
 | Local LLM | Ollama (vLLM adapter-ready) |
-| Cloud LLM | OpenAI (Anthropic adapter-ready) |
+| Cloud LLM | Google Gemini (demo / free-tier default) |
 | Ship unit | Docker Compose (app + Redis) |
-| Tests | pytest-asyncio (routing, cache hit/miss, fallback) |
+| Tests | pytest-asyncio (routing, cache hit/miss, fallback, quota) |
 
 Application source lives in `app/`. Default test command: `pytest` (`-m "not live"`). Local ship unit: `docker compose up --build`.
 
@@ -56,7 +57,7 @@ POST /v1/chat/completions
 GET  /health
 ```
 
-Request body follows OpenAI Chat Completions (`messages`, `temperature`, `max_tokens`). There is no caller authentication in v1 (internal network). `stream: true` is rejected with HTTP 422. Full contract: [`docs/api.md`](docs/api.md).
+Request body follows OpenAI Chat Completions (`messages`, `temperature`, `max_tokens`). Callers must send header `X-API-Key` matching `GATEWAY_API_KEY`. `stream: true` is rejected with HTTP 422. Full contract: [`docs/api.md`](docs/api.md).
 
 ## Run locally
 
@@ -64,10 +65,12 @@ Copy [`.env.example`](.env.example) and set values in the environment (never com
 
 | Variable | Required | Default |
 | --- | --- | --- |
-| `REDIS_URL` | yes | — |
-| `OLLAMA_BASE_URL` | yes | — |
-| `OPENAI_API_KEY` | yes | — |
-| `OPENAI_MODEL` | no | `gpt-4o-mini` |
+| `REDIS_URL` | yes | — (Compose sets Redis) |
+| `OLLAMA_BASE_URL` | yes | Compose default `host.docker.internal:11434` |
+| `GEMINI_API_KEY` | yes | — (Google AI Studio) |
+| `GEMINI_MODEL` | no | `gemini-2.0-flash` |
+| `GATEWAY_API_KEY` | yes | — (shared demo secret for `X-API-Key`) |
+| `CHAT_DAILY_LIMIT` | no | `5` |
 | `CACHE_TTL_SECONDS` | no | `3600` |
 | `COMPLEXITY_WORD_THRESHOLD` | no | `150` |
 | `UPSTREAM_TIMEOUT_SECONDS` | no | `30` |
@@ -76,6 +79,13 @@ Copy [`.env.example`](.env.example) and set values in the environment (never com
 pip install -e ".[dev]"
 pytest
 docker compose up --build
+```
+
+```bash
+curl -s http://localhost:8000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: $GATEWAY_API_KEY" \
+  -d '{"messages":[{"role":"user","content":"Hello"}],"temperature":0.2,"max_tokens":64}'
 ```
 
 Compose starts `api` on port 8000 and `redis` on 6379. Ollama is expected at `OLLAMA_BASE_URL` (not bundled in Compose).

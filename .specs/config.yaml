@@ -4,6 +4,7 @@ extends: python-platform
 context: |
   Product: LLM Router Gateway (FastAPI reverse gateway for multi-provider LLM traffic).
   Kickoff: prd.md
+  Demo posture: Gemini free-tier cloud + Ollama local + Redis cache; X-API-Key + daily quota.
   Test command: pytest
   Branch prefix: feat
   Docs: README.md + docs/ must stay current on every PR (C-008).
