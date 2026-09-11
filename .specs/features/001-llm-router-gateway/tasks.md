@@ -60,7 +60,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 - **Tests**: tests/test_evaluator.py
 - **Gate**: pytest tests/test_evaluator.py
 - **Done when**: word count above `COMPLEXITY_WORD_THRESHOLD` (default 150) or a case-insensitive keyword match (`code`, `algorithm`, `implement`, `debug`, `function`, `class`, `step by step`, `reason`) returns complex, and other prompts return simple
-- [ ] complete
+- [x] complete
 
 ### T7: Implement Ollama local provider adapter
 - **Requirement**: REQ-010
