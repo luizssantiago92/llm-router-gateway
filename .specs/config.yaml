@@ -2,9 +2,11 @@
 extends: python-platform
 
 context: |
-  Product: LLM Router Gateway (FastAPI reverse gateway for multi-provider LLM traffic).
+  Product: LLM Router Gateway — demonstrative FastAPI facade (cache, routing, Gemini free-tier demo).
   Kickoff: prd.md
-  Demo posture: Gemini free-tier cloud + Ollama local + Redis cache; X-API-Key + daily quota.
+  Demo posture: Gemini + X-API-Key + daily quota; Ollama optional. Not the production company chatbot.
+  Agent backlog: README.md section "Still open (agents: read this)".
+  Reuse: Gold Queen / future company chatbot may lift patterns; keep this repo as the lab demo.
   Test command: pytest
   Branch prefix: feat
   Docs: README.md + docs/ must stay current on every PR (C-008).

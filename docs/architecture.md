@@ -2,7 +2,7 @@
 
 LLM Router Gateway is an async FastAPI reverse proxy in front of local and cloud chat models. Clients never pick a provider; the gateway caches, classifies, routes, and fails over. For a product overview and quick start, see the root [README](../README.md).
 
-Status: **archived v1** (implemented, independently verified, folded into domain truth). Binding requirements: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md) (historical) and [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md). How: [`design.md`](../.specs/features/001-llm-router-gateway/design.md). Verification: [`validation.md`](../.specs/features/001-llm-router-gateway/validation.md). Product kickoff: [`prd.md`](../prd.md).
+Status: **demo shipped** on Compose (Gemini + optional Ollama + quota). Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md) (REQ-001–REQ-022). Historical v1 feature: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md) · [`design.md`](../.specs/features/001-llm-router-gateway/design.md) · [`validation.md`](../.specs/features/001-llm-router-gateway/validation.md). Product kickoff: [`prd.md`](../prd.md). Explicit backlog: root [README → Still open](../README.md#still-open-agents-read-this).
 
 ## Request path
 
@@ -55,12 +55,12 @@ On cache miss, a **5xx or timeout** on the primary provider triggers **one** hop
 | Cache layer | `app/cache/service.py` | SHA-256 key over canonical `messages` + `temperature` + `max_tokens`; Redis TTL (default 3600s) |
 | Evaluator | `app/routing/evaluator.py` | Word-count **or** keyword match → simple vs complex |
 | Router | `app/routing/router.py` | Primary provider then one opposite-tier hop |
-| Local adapter | `app/providers/ollama.py` | Default Ollama (Llama 3 8B class); `name="local"` |
+| Local adapter | `app/providers/ollama.py` | Optional Ollama (Llama 3 8B class); `name="local"` |
 | Cloud adapter | `app/providers/gemini.py` | Default Gemini (`GEMINI_API_KEY`); `name="cloud"` |
 | Quota | `app/quota/daily.py` | Redis daily bucket per `X-API-Key` (cache hits free) |
 | Health | `app/api/health.py` | Process + Redis + each configured upstream |
 
-Demo posture: Gemini free tier + daily quota + shared gateway API key. Paid OpenAI path is deferred to a later product.
+Demo posture: Gemini free tier + daily quota + shared gateway API key. This repository is demonstrative; see README **Still open** for deferred production work.
 
 ## Observability
 
