@@ -9,12 +9,17 @@
 | Discuss + Design | done | `context.md` (D-001–D-012) + `design.md` (Ship + AI surfaces) |
 | `/tasks` | done | T1–T13 + `task-graph.md` |
 | Execute (`/loop`) | done | T1–T13; `app/` + Compose + pytest-asyncio |
-| `/verify` | done | PASS after fix round 1 (M10–M14 killed); report in `validation.md` |
-| `/archive` | next | Owner confirm; fold into domain truth |
+| `/verify` | done | PASS after fix round 1; `.specs/features/001-llm-router-gateway/validation.md` |
+| `/archive` | done | Domain truth: `.specs/domains/llm-router-gateway/spec.md` |
 | Compose app + Redis | done | `docker-compose.yml` services `api` + `redis` (RNF-03) |
 
 ## Feature candidates
 
 | Slug | Goal |
 | --- | --- |
-| 001-llm-router-gateway | v1 facade: cache, complexity routing, one-hop fallback, health |
+| 001-llm-router-gateway | archived — v1 facade: cache, complexity routing, one-hop fallback, health |
+
+## Completed
+
+- **2026-09-11** `001-llm-router-gateway` — archived. Validation: `.specs/features/001-llm-router-gateway/validation.md`
+  - Merged → `.specs/domains/llm-router-gateway/spec.md` (copied 18 requirement(s) from full spec)

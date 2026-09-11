@@ -15,6 +15,7 @@ Human-facing project docs. Spec artifacts (requirements, tasks, validation) live
 | [`.specs/project/PROJECT.md`](../.specs/project/PROJECT.md) | Vision, stack, constraints |
 | [`.specs/project/ROADMAP.md`](../.specs/project/ROADMAP.md) | Milestones |
 | [`.specs/project/CONSTITUTION.md`](../.specs/project/CONSTITUTION.md) | Standing principles |
+| [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md) | Archived v1 domain truth (REQ-001–REQ-018) |
 | [`.specs/features/llm-router-gateway/brief.md`](../.specs/features/llm-router-gateway/brief.md) | Elicited requirements brief |
 | [`.specs/features/001-llm-router-gateway/spec.md`](../.specs/features/001-llm-router-gateway/spec.md) | Testable REQs (v1) |
 | [`.specs/features/001-llm-router-gateway/design.md`](../.specs/features/001-llm-router-gateway/design.md) | Components, Ship Surface, AI Surface |

@@ -1,14 +1,14 @@
 # Feature overview: 001-llm-router-gateway
 
-> Generated 2026-09-11T01:03:37.574Z. Refresh with `feature-overview 001-llm-router-gateway --write`.
+> Generated 2026-09-11T01:21:32.777Z. Refresh with `feature-overview 001-llm-router-gateway --write`.
 
 ## Summary
 
 | Field | Value |
 | --- | --- |
 | Goal | REQ-001 — - **Acceptance Criteria**: WHEN a client sends `POST /v1/chat/completions` with a body that includes `messages`, `temperature`, and `max_tokens` THEN the system SHALL accept the request using an OpenAI Chat Completions-compatible schema and SHALL return a completion JSON object on success |
-| Phase | Archive |
-| Branch | cursor/verify-llm-router-gateway-e287 |
+| Phase | — |
+| Branch | — |
 | Tasks | 13/13 complete (0 open) |
 | Validation | PASS |
 | Next | npx @luizsantiago/spec-guardrails archive-feature 001-llm-router-gateway — fold into domain memory |
