@@ -89,7 +89,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 - **Tests**: tests/test_routing.py, tests/test_fallback.py
 - **Gate**: pytest tests/test_routing.py tests/test_fallback.py
 - **Done when**: simple prompts call the local provider first, complex prompts call the cloud provider first, a primary 5xx or timeout retries the opposite-tier provider once, a second failure returns a 502-equivalent error, and no third attempt is made (providers injected as fakes)
-- [ ] complete
+- [x] complete
 
 ### Phase 5
 
