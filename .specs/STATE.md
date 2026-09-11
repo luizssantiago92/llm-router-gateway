@@ -1,12 +1,12 @@
 # Project State & Decisions
 
 ## Active Feature
-- Feature: llm-router-gateway
-- Phase: Elicit
-- Branch: cursor/spec-guardrails-elicit-brief-e287
+- Feature: 001-llm-router-gateway
+- Phase: Specify
+- Branch: cursor/specify-llm-router-gateway-e287
 
 ## Next Step (single item)
-- [ ] Owner reviews `.specs/features/llm-router-gateway/brief.md`, then `/specify`
+- [ ] Owner approves `.specs/features/001-llm-router-gateway/spec.md`, then `/tasks`
 
 ## Blockers
 - none
@@ -15,6 +15,7 @@
 - Streaming completions (D-009 — out of scope for v1)
 - Edge authentication / API keys for callers (D-002)
 - Semantic cache, rate limiting, multi-tenancy, RAG/tool-use
+- vLLM and Anthropic happy-path adapters (protocol only in this design)
 
 ## Decisions
 
@@ -29,3 +30,9 @@
 - **Context**: Owner asked that each PR update the README and keep project documentation current
 - **Decision**: Standing policy C-008 — README + `docs/` + PROJECT/ROADMAP travel with every product/setup/status change
 - **Consequences**: Agents follow `.cursor/rules/pr-documentation.mdc`; skip README only for purely internal diffs with no stale public status
+
+### AD-003: In-process Provider protocol
+- **Date**: 2026-09-11
+- **Context**: Design for 001-llm-router-gateway
+- **Decision**: Routes call a Provider protocol; Ollama and OpenAI are adapters; unit tests use fakes
+- **Consequences**: Tasks must not call vendor SDKs from route modules
