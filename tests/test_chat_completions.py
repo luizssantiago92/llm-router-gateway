@@ -45,6 +45,18 @@ def _app(local: FakeProvider, cloud: FakeProvider) -> tuple:
     return app, local, cloud, redis
 
 
+def _assert_observability(response) -> dict:
+    body = response.json()
+    assert isinstance(body["cached"], bool)
+    assert isinstance(body["latency_ms"], (int, float))
+    assert not isinstance(body["latency_ms"], bool)
+    assert isinstance(body["provider"], str) and body["provider"]
+    assert response.headers["x-cache"] == ("true" if body["cached"] else "false")
+    assert response.headers["x-latency-ms"] == str(body["latency_ms"])
+    assert response.headers["x-provider"] == body["provider"]
+    return body
+
+
 @pytest.mark.asyncio
 async def test_valid_completion_cache_miss_calls_local() -> None:
     app, local, cloud, redis = _app(FakeProvider("local", content="hello"), FakeProvider("cloud"))
@@ -59,7 +71,7 @@ async def test_valid_completion_cache_miss_calls_local() -> None:
             },
         )
     assert response.status_code == 200
-    body = response.json()
+    body = _assert_observability(response)
     assert body["cached"] is False
     assert body["provider"] == "local"
     assert body["choices"][0]["message"]["content"] == "hello"
@@ -80,12 +92,17 @@ async def test_cache_hit_skips_providers() -> None:
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         first = await client.post("/v1/chat/completions", json=payload)
         second = await client.post("/v1/chat/completions", json=payload)
-    assert first.json()["cached"] is False
-    assert second.json()["cached"] is True
-    assert second.headers["x-cache"] == "true"
-    assert second.headers["x-provider"] == "local"
-    assert "x-latency-ms" in second.headers
+    assert first.status_code == 200
+    assert second.status_code == 200
+    first_body = _assert_observability(first)
+    second_body = _assert_observability(second)
+    assert first_body["cached"] is False
+    assert first_body["choices"][0]["message"]["content"] == "hello"
+    assert second_body["cached"] is True
+    assert second_body["choices"][0]["message"]["content"] == "hello"
+    assert second_body["provider"] == "local"
     assert local.calls == 1
+    assert cloud.calls == 0
 
 
 @pytest.mark.asyncio
