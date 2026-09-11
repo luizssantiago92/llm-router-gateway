@@ -100,7 +100,7 @@ Vertical slices follow `design.md`: settings and schemas first, then cache/evalu
 - **Tests**: tests/test_chat_completions.py
 - **Gate**: pytest tests/test_chat_completions.py
 - **Done when**: `POST /v1/chat/completions` validates with Pydantic, rejects `stream=true` with HTTP 422, serves Redis hits with `cached=true` and no provider call, writes successful misses, returns JSON `cached`/`latency_ms`/`provider` plus headers `X-Cache`/`X-Latency-Ms`/`X-Provider`, and uses async I/O only
-- [ ] complete
+- [x] complete
 
 ### T13: Add offline routing eval harness
 - **Requirement**: REQ-018
