@@ -2,11 +2,11 @@
 
 ## Active Feature
 - Feature: 001-llm-router-gateway
-- Phase: Specify
-- Branch: cursor/specify-llm-router-gateway-e287
+- Phase: Tasks
+- Branch: cursor/tasks-llm-router-gateway-e287
 
 ## Next Step (single item)
-- [ ] Owner approves `.specs/features/001-llm-router-gateway/spec.md`, then `/tasks`
+- [ ] Owner approves `.specs/features/001-llm-router-gateway/tasks.md`, then `/loop`
 
 ## Blockers
 - none

@@ -2,7 +2,7 @@
 
 ## Context
 
-Greenfield FastAPI service. No application package exists yet. The spec requires an OpenAI-shaped HTTP facade, Redis exact-match cache, complexity routing, one-hop fallback, Compose (app + Redis), and pytest-asyncio coverage (REQ-001–REQ-018). The `python-platform` preset requires Ship Surface and AI Surface because Compose and LLM adapters will appear in tasks.
+Greenfield FastAPI service. No application package exists yet. The spec requires an OpenAI-shaped HTTP facade, Redis exact-match cache, complexity routing, one-hop fallback, Compose (app + Redis), and pytest-asyncio coverage (REQ-001–REQ-018). The `python-platform` preset requires Ship Surface and AI Surface because Compose and LLM adapters will appear in tasks. Verification uses `/verify` with pytest-asyncio `file:line` evidence; the default suite is `pytest -m "not live"` (no paid provider calls).
 
 ## Decision
 

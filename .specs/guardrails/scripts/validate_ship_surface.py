@@ -223,7 +223,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     try:
-        feature_dir = resolve_feature_dir(args.feature)
+        feature_dir = resolve_feature_dir(args.feature, GATE)
     except SystemExit as exc:
         print(exc, file=sys.stderr)
         return 2
