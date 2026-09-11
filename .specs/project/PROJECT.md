@@ -25,6 +25,7 @@ LLM Router Gateway is the single internal facade for chat-completion traffic. It
 
 | Domain | Notes |
 | --- | --- |
+| llm-router-gateway | Archived v1 truth (REQ-001–REQ-018) in `.specs/domains/llm-router-gateway/spec.md` |
 | gateway | HTTP facade, validation, observability headers |
 | cache | Redis SHA-256 identity, TTL, hit/miss semantics |
 | routing | Complexity evaluator, local vs cloud adapters, fallback |

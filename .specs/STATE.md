@@ -1,12 +1,12 @@
 # Project State & Decisions
 
 ## Active Feature
-- Feature: 001-llm-router-gateway
-- Phase: Archive
-- Branch: cursor/verify-llm-router-gateway-e287
+- Feature: —
+- Phase: —
+- Branch: —
 
 ## Next Step (single item)
-- [ ] `/archive` after owner confirms (Verify PASS; `validate_state.py` exit 0)
+- [ ] Start the next change with `feature-init` (v1 `001-llm-router-gateway` is archived)
 
 ## Blockers
 - none

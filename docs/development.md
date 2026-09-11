@@ -12,7 +12,7 @@ Application source lives in `app/`. Tests live in `tests/`. Work stays spec-firs
 | `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + `redis` |
 | `.env.example` | Required env keys with empty values |
 | `docs/` | Human documentation (this tree) |
-| `.specs/` | Specs, briefs, gates, session state |
+| `.specs/` | Specs, briefs, gates, session state, archived domain truth |
 | `.cursor/skills/` | Agent hub and phase procedures |
 | `AGENTS.md` | Agent-agnostic execution contract |
 
@@ -40,12 +40,12 @@ npx @luizsantiago/spec-guardrails doctor
 Typical order for this product (Complex):
 
 ```
-/elicit (done) → /specify (done) → /discuss (done) → /plan (done) → /tasks (done) → /loop (done) → /verify (PASS) → /archive
+/elicit (done) → /specify (done) → /discuss (done) → /plan (done) → /tasks (done) → /loop (done) → /verify (PASS) → /archive (done)
 ```
 
-Active spec: [`.specs/features/001-llm-router-gateway/spec.md`](../.specs/features/001-llm-router-gateway/spec.md). Tasks: [`.specs/features/001-llm-router-gateway/tasks.md`](../.specs/features/001-llm-router-gateway/tasks.md). Do not re-ask **D-001–D-012**. Session pointer: [`.specs/STATE.md`](../.specs/STATE.md).
+Historical feature: [`.specs/features/001-llm-router-gateway/spec.md`](../.specs/features/001-llm-router-gateway/spec.md). Tasks: [`.specs/features/001-llm-router-gateway/tasks.md`](../.specs/features/001-llm-router-gateway/tasks.md). Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md). Do not re-ask **D-001–D-012**. Session pointer: [`.specs/STATE.md`](../.specs/STATE.md).
 
-Independent `/verify` PASS is in [validation.md](../.specs/features/001-llm-router-gateway/validation.md). Next phase is `/archive` after owner confirmation.
+v1 is archived. Independent `/verify` PASS: [validation.md](../.specs/features/001-llm-router-gateway/validation.md). Next work is `feature-init` against the domain spec.
 
 ## Documentation on every PR
 

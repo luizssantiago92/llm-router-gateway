@@ -6,13 +6,14 @@ Internal applications call a single OpenAI-compatible facade. The gateway applie
 
 ## Status
 
-Execute complete (T1–T13). Independent `/verify` **PASS** (subagent; 16 mutants killed; `validate_state.py` exit 0). Next is `/archive`.
+v1 is **archived**. Independent `/verify` PASS; domain truth is [`.specs/domains/llm-router-gateway/spec.md`](.specs/domains/llm-router-gateway/spec.md). Feature history stays under [`.specs/features/001-llm-router-gateway/`](.specs/features/001-llm-router-gateway/spec.md).
 
 | Item | Location |
 | --- | --- |
 | Product kickoff | [`prd.md`](prd.md) |
 | Requirements brief | [`.specs/features/llm-router-gateway/brief.md`](.specs/features/llm-router-gateway/brief.md) |
-| Spec (REQ-001–REQ-018) | [`.specs/features/001-llm-router-gateway/spec.md`](.specs/features/001-llm-router-gateway/spec.md) |
+| Domain truth (v1) | [`.specs/domains/llm-router-gateway/spec.md`](.specs/domains/llm-router-gateway/spec.md) |
+| Feature spec (historical) | [`.specs/features/001-llm-router-gateway/spec.md`](.specs/features/001-llm-router-gateway/spec.md) |
 | Design | [`.specs/features/001-llm-router-gateway/design.md`](.specs/features/001-llm-router-gateway/design.md) |
 | Tasks | [`.specs/features/001-llm-router-gateway/tasks.md`](.specs/features/001-llm-router-gateway/tasks.md) |
 | Validation | [`.specs/features/001-llm-router-gateway/validation.md`](.specs/features/001-llm-router-gateway/validation.md) |
@@ -23,7 +24,7 @@ Execute complete (T1–T13). Independent `/verify` **PASS** (subagent; 16 mutant
 | How we work | [`docs/development.md`](docs/development.md) |
 | Docs index | [`docs/README.md`](docs/README.md) |
 
-Next phase: `/archive` after owner confirmation. Validation report: [`.specs/features/001-llm-router-gateway/validation.md`](.specs/features/001-llm-router-gateway/validation.md).
+Next work starts with `feature-init` (delta specs against the domain). Do not re-ask **D-001–D-012**.
 
 ## What it does
 
