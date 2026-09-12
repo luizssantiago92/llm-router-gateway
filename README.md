@@ -80,7 +80,8 @@ Health does **not** need the gateway key:
 
 ```bash
 curl -s http://localhost:8000/health
-# Expect: "ok" if Ollama and Gemini are both up; "degraded" if only Gemini is up.
+# Expect HTTP 200: "ok" if Ollama and Gemini are both up; "degraded" if only Gemini is up.
+# Redis down → HTTP 503, status "down".
 ```
 
 Chat **does**. Use the same `GATEWAY_API_KEY` value you wrote in `.env` (Compose injects it into the `api` container; an unset shell `$GATEWAY_API_KEY` will 401):
@@ -103,7 +104,7 @@ Interactive contract: [http://localhost:8000/docs](http://localhost:8000/docs).
 | `401` | `X-API-Key` missing or not equal to `GATEWAY_API_KEY` |
 | `429` | Daily cache-miss quota exhausted (default 5; resets at UTC midnight) |
 | `422` | Invalid body or `stream: true` |
-| `502` | Both providers failed (or the remaining hop failed after fallback) |
+| `502` | Both hops failed, or the primary returned a non-retryable 4xx (no second hop). Quota unit refunded |
 
 Full env table and pytest: [`docs/development.md`](docs/development.md). Contract detail: [`docs/api.md`](docs/api.md).
 
@@ -111,20 +112,21 @@ Full env table and pytest: [`docs/development.md`](docs/development.md). Contrac
 
 ## Environment (Compose)
 
-Compose always sets `REDIS_URL` for the `api` service. You fill `.env`:
+Compose loads `.env` for substitution. Fill the secrets; leave the rest blank to use defaults.
 
-| Variable | Required | Default |
+| Variable | Required in `.env` | What Compose does |
 | --- | --- | --- |
-| `GEMINI_API_KEY` | yes | — |
-| `GATEWAY_API_KEY` | yes | — (value callers send as `X-API-Key`) |
-| `GEMINI_MODEL` | no | `gemini-3.5-flash` |
-| `CHAT_DAILY_LIMIT` | no | `5` |
-| `OLLAMA_BASE_URL` | no (Compose fills it) | `http://host.docker.internal:11434` |
-| `CACHE_TTL_SECONDS` | no | `3600` |
-| `COMPLEXITY_WORD_THRESHOLD` | no | `150` |
-| `UPSTREAM_TIMEOUT_SECONDS` | no | `30` |
+| `GEMINI_API_KEY` | yes | Passed through |
+| `GATEWAY_API_KEY` | yes | Passed through (callers send it as `X-API-Key`) |
+| `GEMINI_MODEL` | no | Default `gemini-3.5-flash` |
+| `CHAT_DAILY_LIMIT` | no | Default `5` |
+| `OLLAMA_BASE_URL` | no | Default `http://host.docker.internal:11434` |
+| `CACHE_TTL_SECONDS` | no | Default `3600` |
+| `COMPLEXITY_WORD_THRESHOLD` | no | Default `150` |
+| `UPSTREAM_TIMEOUT_SECONDS` | no | Default `30` |
+| `REDIS_URL` | no (leave blank) | Hardcoded `redis://redis:6379/0` inside `api` — `.env` does not override it |
 
-Never commit `.env`. The app reads the environment only (no `load_dotenv`).
+Never commit `.env`. The app reads the process environment only (no `load_dotenv`).
 
 **Ollama on Linux Docker Engine:** Compose maps `host.docker.internal` → `host-gateway` so an optional host Ollama is reachable. Docker Desktop (Mac/Windows) already provides that hostname. If you skip Ollama entirely, you can leave the default URL; the demo still works via Gemini fallback.
 
@@ -132,11 +134,11 @@ Never commit `.env`. The app reads the environment only (no `load_dotenv`).
 
 ## Tests
 
-Default gate skips live upstreams:
+Default gate skips live upstreams (`pyproject.toml` `addopts` already applies `-m "not live"`):
 
 ```bash
 pip install -e ".[dev]"
-pytest -m "not live"
+pytest
 ```
 
 ---
@@ -180,4 +182,4 @@ Session pointer: [`.specs/STATE.md`](.specs/STATE.md). Milestones: [`.specs/proj
 
 ## License
 
-See repository settings. Do not commit secrets, API keys, or `.env` files.
+No `LICENSE` file is published on this repository. Do not assume reuse rights. Do not commit secrets, API keys, or `.env` files.

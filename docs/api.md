@@ -18,7 +18,7 @@ Gateway-specific response fields (in addition to a standard completion payload):
 | --- | --- | --- |
 | `cached` | boolean | Redis exact-match hit |
 | `latency_ms` | number | Gateway hop latency |
-| `provider` | string | Adapter that served the completion (`local`, `cloud`, or `cache`) |
+| `provider` | string | Adapter that produced the completion (`local` or `cloud`). Cache hits reuse the stored origin; they do not set `provider` to `cache`. |
 
 Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
 

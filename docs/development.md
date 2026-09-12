@@ -34,8 +34,8 @@ Copy [`.env.example`](../.env.example) to `.env` (never commit `.env`):
 
 | Variable | Required | Default |
 | --- | --- | --- |
-| `REDIS_URL` | yes | Compose: `redis://redis:6379/0` |
-| `OLLAMA_BASE_URL` | yes (process); Compose always sets it | `http://host.docker.internal:11434` (OK if Ollama is not installed) |
+| `REDIS_URL` | yes in-process; leave blank in `.env` for Compose | Compose hardcodes `redis://redis:6379/0` |
+| `OLLAMA_BASE_URL` | yes in-process; Compose fills a default | `http://host.docker.internal:11434` (OK if Ollama is not installed) |
 | `GEMINI_API_KEY` | yes | — |
 | `GEMINI_MODEL` | no | `gemini-3.5-flash` (or `gemini-3.6-flash` if listed in AI Studio) |
 | `GATEWAY_API_KEY` | yes | — (value callers send as `X-API-Key`) |
@@ -50,10 +50,10 @@ Never commit `.env`. Secrets are env-only (no `load_dotenv` in the app).
 
 ```bash
 pip install -e ".[dev]"
-pytest -m "not live"
+pytest
 ```
 
-Default CI/local gate skips live upstream markers. Full suite without the exclude: `pytest`.
+`pyproject.toml` `addopts` already applies `-m "not live"`. Live upstream tests stay opt-in via their marker; do not expect `pytest` (no extra `-m`) to call Gemini or Ollama.
 
 ## Compose
 
@@ -65,6 +65,8 @@ docker compose up --build
 
 - `api` on port **8000** (OpenAPI UI: `/docs`)
 - `redis` on port **6379**
+- `REDIS_URL` inside the `api` container is always `redis://redis:6379/0` (not taken from `.env`)
+- Optional tunables (`CACHE_TTL_SECONDS`, `COMPLEXITY_WORD_THRESHOLD`, `UPSTREAM_TIMEOUT_SECONDS`, `CHAT_DAILY_LIMIT`, `GEMINI_MODEL`, `OLLAMA_BASE_URL`) are interpolated from `.env` with the defaults above
 - Ollama is **not** in Compose. If the host cannot run Ollama, leave the default URL: health reports `degraded` and the router falls back to Gemini after one local failure.
 - Compose sets `extra_hosts: host.docker.internal:host-gateway` so Linux Docker Engine can reach an optional **host** Ollama the same way Docker Desktop does. That mapping is unused when Ollama is not installed.
 
