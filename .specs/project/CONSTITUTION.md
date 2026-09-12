@@ -28,6 +28,9 @@ Governing principles for LLM Router Gateway. Feature-local decisions stay in the
 ### C-008: Documentation travels with the change
 - Every pull request that changes product, setup, or status MUST update `README.md` and the matching `docs/` pages (see `docs/development.md`).
 
+### C-009: Significant PRs ship README and guide docs together
+- Extends C-008. Every pull request that changes product behavior, API, setup, architecture, or public status MUST update root `README.md` **in that same PR** (not a follow-up) and the matching pages under `docs/guide/`. Skip README only for purely internal diffs with no stale operator-facing text. Procedure: `CONTRIBUTING.md` and `docs/guide/Development.md`.
+
 ## Non-Negotiables
 
 - No secrets in git

@@ -20,6 +20,7 @@
 | Operator README sync | done | Quick start matches Gemini/quota/auth; Linux `host.docker.internal` |
 | README accuracy pass | done | Compose interpolates tunables from `.env`; license/env/502 wording matches code |
 | README Spec Guardrails layout | done | What it is, Quick start, problem, three pillars, how it works, limitations |
+| docs/guide + C-009 | done | Spec Guardrails-style guide tree; significant PRs update README in the same PR |
 
 ## Feature candidates
 
@@ -39,3 +40,4 @@ Deferred candidates (do not start without owner `feature-init`): streaming, prod
 - **2026-09-12** Operator README — env, auth, quota, `/docs`, and optional Ollama notes aligned with the shipped demo
 - **2026-09-12** README accuracy pass — Compose interpolates tunables from `.env`; license and 502 wording match code
 - **2026-09-12** README layout — Spec Guardrails section order (What it is, Quick start, pillars, Limitations)
+- **2026-09-12** `docs/guide/` — Overview, Quick-start, How-it-works, Architecture, API, Development, concepts, FAQ, Glossary, Limitations; C-009
