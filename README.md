@@ -6,10 +6,12 @@ Internal apps call a single completions endpoint. The gateway caches exact match
 
 | Status | Detail |
 | --- | --- |
-| **Shipped** | Compose demo verified (`api` + `redis`); smoke `/health` + chat via Gemini |
+| **Shipped** | Compose demo (`api` + `redis`); smoke `/health` + chat via Gemini |
 | **Posture** | Academic / demonstrative reference — not a production chatbot |
-| **Cloud** | Google Gemini free tier (`GEMINI_API_KEY`) |
-| **Cost guard** | Shared `X-API-Key` + daily Redis quota (default 5; cache hits free) |
+| **Cloud** | Google Gemini free tier (`GEMINI_API_KEY`, default `GEMINI_MODEL=gemini-3.5-flash`) |
+| **Local** | Optional Ollama (`llama3` class); unreachable → health `degraded`, fallback to Gemini |
+| **Cost guard** | Shared `X-API-Key` (`GATEWAY_API_KEY`) + Redis daily quota (default 5; cache hits free) |
+| **Contract** | `POST /v1/chat/completions` · `GET /health` (no key) · OpenAPI at `/docs` |
 | **Domain** | [`.specs/domains/llm-router-gateway/spec.md`](.specs/domains/llm-router-gateway/spec.md) (REQ-001–REQ-022) |
 
 **Reuse intent:** patterns here (cache, complexity routing, fallback, quota, Gemini adapter) may be lifted into [Gold Queen](https://github.com/luizssantiago92/gold-queen-api) where useful, and later into a **real company chatbot**. This repo stays the **demo / lab** surface.
@@ -38,52 +40,104 @@ You want a stable contract for applications — not a scatter of provider SDKs a
 | Apps pick models and fail over themselves | Simple → local; complex → cloud; one automatic hop |
 | Outage = hard fail | Primary 5xx/timeout retries the other tier once |
 | Opaque origin | `X-Cache` / `X-Latency-Ms` / `X-Provider` on every response |
-
-Demo cost guard: callers send `X-API-Key`; cache misses consume a daily quota (default 5); cache hits do not.
+| Unbounded demo spend | Shared `X-API-Key` + daily quota (cache hits free) |
 
 ---
 
 ## How it works
 
-1. **Look up the cache** — Same messages, temperature, and max tokens? Serve Redis and stop.
-2. **Classify the prompt** — Short and plain prefers local; long text or code/reasoning keywords go to Gemini.
-3. **Call one provider** — Local (Ollama, if running) or cloud (Gemini).
-4. **Fail over once** — If the primary returns 5xx or times out, try the other tier; both fail → 502.
-5. **Store and observe** — Successful misses are cached; every response carries cache, latency, and provider signals.
+1. **Authenticate (chat only)** — `POST /v1/chat/completions` requires `X-API-Key` matching `GATEWAY_API_KEY` (401 if missing/wrong). `GET /health` has no key.
+2. **Look up the cache** — Same messages, temperature, and max tokens? Serve Redis and stop (quota not consumed).
+3. **Classify the prompt** — Short and plain prefers local; long text (>150 words) or code/reasoning keywords go to Gemini.
+4. **Call one provider** — Local (Ollama, if running) or cloud (Gemini). Cache misses consume one daily quota unit first (429 when exhausted).
+5. **Fail over once** — If the primary returns 5xx or times out, try the other tier; both fail → 502 and the quota unit is refunded.
+6. **Store and observe** — Successful misses are cached; every response carries cache, latency, and provider signals.
 
 Clients never choose a provider. Streaming is not supported (`stream: true` → 422).
 
-**Without Ollama:** leave `OLLAMA_BASE_URL` at the Compose default. Health stays `degraded` (local down, cloud up); simple prompts fail locally once and **fall back to Gemini**. That is the supported light-PC demo path.
+**Without Ollama:** leave `OLLAMA_BASE_URL` at the Compose default. Health stays `degraded` (local down, cloud up); simple prompts fail locally once and **fall back to Gemini**. That is the supported light-PC demo path (REQ-022).
 
 ---
 
 ## Quick start
 
-Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (WSL 2 on Windows) and a [Gemini API key](https://aistudio.google.com/apikey). Ollama is optional.
+Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (WSL 2 on Windows) or another Compose-capable Docker, and a [Gemini API key](https://aistudio.google.com/apikey). Ollama is optional.
 
 ```bash
 cp .env.example .env
-# Required: GEMINI_API_KEY, GATEWAY_API_KEY (you invent the gateway secret).
-# Optional: GEMINI_MODEL (default gemini-3.5-flash), CHAT_DAILY_LIMIT (default 5).
+# Required in .env:
+#   GEMINI_API_KEY     — from Google AI Studio
+#   GATEWAY_API_KEY    — any secret you invent; callers send it as X-API-Key
+# Optional:
+#   GEMINI_MODEL       — default gemini-3.5-flash
+#   CHAT_DAILY_LIMIT   — default 5
+#   OLLAMA_BASE_URL    — default http://host.docker.internal:11434
 
 docker compose up --build
 ```
 
+Health does **not** need the gateway key:
+
 ```bash
 curl -s http://localhost:8000/health
-# Expect: status "ok" if Ollama is up, or "degraded" if only Gemini is up.
+# Expect: "ok" if Ollama and Gemini are both up; "degraded" if only Gemini is up.
 ```
+
+Chat **does**. Use the same `GATEWAY_API_KEY` value you wrote in `.env` (Compose injects it into the `api` container; an unset shell `$GATEWAY_API_KEY` will 401):
 
 ```bash
 curl -s http://localhost:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: $GATEWAY_API_KEY" \
+  -H "X-API-Key: YOUR_GATEWAY_KEY" \
   -d '{"messages":[{"role":"user","content":"Hello"}],"temperature":0.2,"max_tokens":64}'
 ```
 
-API surface: `POST /v1/chat/completions` · `GET /health` (`ok` / `degraded` / Redis-down `503`).
+Interactive contract: [http://localhost:8000/docs](http://localhost:8000/docs).
 
-Full env table: [`docs/development.md`](docs/development.md).
+### Expected chat outcomes
+
+| Result | Meaning |
+| --- | --- |
+| `200` + `provider: "cloud"` | Gemini served a cache miss (typical without Ollama) |
+| `200` + `cached: true` | Repeat of the same messages/temperature/max_tokens (quota not consumed) |
+| `401` | `X-API-Key` missing or not equal to `GATEWAY_API_KEY` |
+| `429` | Daily cache-miss quota exhausted (default 5; resets at UTC midnight) |
+| `422` | Invalid body or `stream: true` |
+| `502` | Both providers failed (or the remaining hop failed after fallback) |
+
+Full env table and pytest: [`docs/development.md`](docs/development.md). Contract detail: [`docs/api.md`](docs/api.md).
+
+---
+
+## Environment (Compose)
+
+Compose always sets `REDIS_URL` for the `api` service. You fill `.env`:
+
+| Variable | Required | Default |
+| --- | --- | --- |
+| `GEMINI_API_KEY` | yes | — |
+| `GATEWAY_API_KEY` | yes | — (value callers send as `X-API-Key`) |
+| `GEMINI_MODEL` | no | `gemini-3.5-flash` |
+| `CHAT_DAILY_LIMIT` | no | `5` |
+| `OLLAMA_BASE_URL` | no (Compose fills it) | `http://host.docker.internal:11434` |
+| `CACHE_TTL_SECONDS` | no | `3600` |
+| `COMPLEXITY_WORD_THRESHOLD` | no | `150` |
+| `UPSTREAM_TIMEOUT_SECONDS` | no | `30` |
+
+Never commit `.env`. The app reads the environment only (no `load_dotenv`).
+
+**Ollama on Linux Docker Engine:** Compose maps `host.docker.internal` → `host-gateway` so an optional host Ollama is reachable. Docker Desktop (Mac/Windows) already provides that hostname. If you skip Ollama entirely, you can leave the default URL; the demo still works via Gemini fallback.
+
+---
+
+## Tests
+
+Default gate skips live upstreams:
+
+```bash
+pip install -e ".[dev]"
+pytest -m "not live"
+```
 
 ---
 
@@ -95,7 +149,7 @@ This repo is a **demonstrative** gateway. Do **not** treat the list below as in-
 | --- | --- | --- |
 | Streaming (`stream: true`) | **deferred** | Rejected with 422 today (D-009) |
 | Production edge auth | **deferred** | Only shared `GATEWAY_API_KEY` / `X-API-Key` |
-| Multi-tenancy / per-tenant quotas | **deferred** | Single demo key + daily Redis bucket |
+| Multi-tenancy / per-tenant quotas | **deferred** | Single demo key + daily Redis bucket (UTC midnight) |
 | Semantic / embedding cache | **deferred** | Exact-match SHA-256 only |
 | Rate limits beyond daily quota | **deferred** | — |
 | RAG / tools / function calling | **deferred** | — |

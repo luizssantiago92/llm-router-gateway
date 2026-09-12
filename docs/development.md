@@ -35,7 +35,7 @@ Copy [`.env.example`](../.env.example) to `.env` (never commit `.env`):
 | Variable | Required | Default |
 | --- | --- | --- |
 | `REDIS_URL` | yes | Compose: `redis://redis:6379/0` |
-| `OLLAMA_BASE_URL` | yes | Compose default `http://host.docker.internal:11434` (placeholder OK if Ollama is not installed) |
+| `OLLAMA_BASE_URL` | yes (process); Compose always sets it | `http://host.docker.internal:11434` (OK if Ollama is not installed) |
 | `GEMINI_API_KEY` | yes | — |
 | `GEMINI_MODEL` | no | `gemini-3.5-flash` (or `gemini-3.6-flash` if listed in AI Studio) |
 | `GATEWAY_API_KEY` | yes | — (value callers send as `X-API-Key`) |
@@ -63,9 +63,12 @@ Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or a
 docker compose up --build
 ```
 
-- `api` on port **8000**
+- `api` on port **8000** (OpenAPI UI: `/docs`)
 - `redis` on port **6379**
 - Ollama is **not** in Compose. If the host cannot run Ollama, leave the default URL: health reports `degraded` and the router falls back to Gemini after one local failure.
+- Compose sets `extra_hosts: host.docker.internal:host-gateway` so Linux Docker Engine can reach an optional **host** Ollama the same way Docker Desktop does. That mapping is unused when Ollama is not installed.
+
+Chat callers must send the **same** `GATEWAY_API_KEY` value as `.env`. The shell variable `$GATEWAY_API_KEY` is not set by Compose; substituting an empty header returns HTTP 401. Health probes do not send a key (REQ-020).
 
 ## Spec Guardrails
 

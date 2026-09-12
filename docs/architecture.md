@@ -71,7 +71,7 @@ Every completion returns:
 
 ## Ship unit
 
-Docker Compose runs the FastAPI service (`api`) and Redis (`redis`) in isolation. Kubernetes, Helm, and Terraform are out of scope for v1. Secrets (cloud API keys, local runtime URLs) come from environment variables only. Ollama is an optional external runtime referenced by `OLLAMA_BASE_URL`; when it is unreachable, health is `degraded` and simple prompts fall back to Gemini.
+Docker Compose runs the FastAPI service (`api`) and Redis (`redis`) in isolation. Kubernetes, Helm, and Terraform are out of scope for v1. Secrets (cloud API keys, local runtime URLs) come from environment variables only. Ollama is an optional external runtime referenced by `OLLAMA_BASE_URL`; when it is unreachable, health is `degraded` and simple prompts fall back to Gemini. The `api` service maps `host.docker.internal` to the Docker host gateway so Linux Engine can reach host Ollama; Docker Desktop already provides that hostname.
 
 ## Surfaces
 
