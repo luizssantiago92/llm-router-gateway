@@ -6,9 +6,9 @@ Process factory: `app.main:build_default_app` (Uvicorn `--factory`). Routes are 
 
 ## `POST /v1/chat/completions`
 
-**Auth:** header `X-API-Key` must match `GATEWAY_API_KEY` → otherwise HTTP **401** (`unauthorized`).
+**Auth:** header `X-API-Key` must match `GATEWAY_API_KEY` → otherwise HTTP **401** (`unauthorized`). Health does not use this header.
 
-**Quota:** each cache **miss** consumes one unit of the caller's daily limit (`CHAT_DAILY_LIMIT`, default 5). Cache **hits** do not consume. Exhausted → HTTP **429** (`rate_limit_reached`). Upstream dual-fail refunds the consumed unit.
+**Quota:** each cache **miss** consumes one unit of the caller's daily limit (`CHAT_DAILY_LIMIT`, default 5). Cache **hits** do not consume. Exhausted → HTTP **429** (`rate_limit_reached`). Upstream dual-fail refunds the consumed unit. The Redis bucket resets at **UTC midnight**.
 
 OpenAI Chat Completions-compatible body: `messages`, `temperature`, `max_tokens`. Additional OpenAI fields may be accepted and ignored if unused.
 
@@ -29,7 +29,7 @@ Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
 | Cache hit | Stored completion, `cached: true`, target latency <10 ms |
 | Cache miss, success | Upstream completion, write Redis, `cached: false` |
 | Primary 5xx or timeout | One retry on the secondary provider; success is cached |
-| Both providers fail | HTTP 502; **not** cached; quota refunded |
+| Both providers fail | HTTP 502; **not** cached; quota refunded. Remaining `ProviderError` (including adapter-mapped Gemini 4xx) also surfaces as 502 |
 | Missing/invalid `X-API-Key` | HTTP 401 |
 | Daily quota exhausted | HTTP 429 |
 | Invalid body | HTTP 422 (Pydantic) |
@@ -45,4 +45,6 @@ Cache key: SHA-256 of a canonical serialization of `messages` + `temperature` + 
 | Up | At least one down | 200 | `degraded` |
 | Down | — | 503 | `down` |
 
-The process can still serve cache hits when a single upstream is down, as long as Redis is healthy. Without Ollama, expect `degraded` while Gemini remains up.
+The process can still serve cache hits when a single upstream is down, as long as Redis is healthy. Without Ollama, expect `degraded` while Gemini remains up. `GET /health` does **not** require `X-API-Key`.
+
+Interactive OpenAPI: `GET /docs` (FastAPI default).

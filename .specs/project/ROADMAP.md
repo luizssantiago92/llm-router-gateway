@@ -17,6 +17,7 @@
 | Domain delta REQ-019–REQ-022 | done | Gemini default, demo API key, daily quota, Ollama optional |
 | Demo smoke (Compose + Gemini chat) | done | Health `degraded` without Ollama; chat `provider=cloud` |
 | README backlog for agents | done | **Still open** table + AD-006 demonstrative scope |
+| Operator README sync | done | Quick start matches Gemini/quota/auth; Linux `host.docker.internal` |
 
 ## Feature candidates
 
@@ -33,3 +34,4 @@ Deferred candidates (do not start without owner `feature-init`): streaming, prod
   - Merged → `.specs/domains/llm-router-gateway/spec.md` (copied 18 requirement(s) from full spec)
 - **2026-09-11** `gemini-free-demo` — merged #8; domain updated with REQ-019–REQ-022
 - **2026-09-11** Local Compose smoke — Gemini chat OK; Docker Desktop + WSL2 required on Windows
+- **2026-09-12** Operator README — env, auth, quota, `/docs`, and optional Ollama notes aligned with the shipped demo

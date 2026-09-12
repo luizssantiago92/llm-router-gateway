@@ -10,6 +10,8 @@ def test_compose_defines_isolated_api_and_redis_services() -> None:
     assert "redis" in services
     assert services["api"].get("build") == "."
     assert "redis" in str(services["redis"].get("image", "")).lower()
+    extra_hosts = services["api"].get("extra_hosts") or []
+    assert "host.docker.internal:host-gateway" in extra_hosts
 
 
 def test_dockerfile_runs_fastapi_app() -> None:

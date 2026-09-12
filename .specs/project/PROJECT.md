@@ -9,7 +9,7 @@ LLM Router Gateway is a **demonstrative** internal facade for chat-completion tr
 - Python 3.10+, FastAPI, asyncio, httpx, Pydantic v2
 - Redis (exact-match cache) via redis-py async
 - Local: Ollama when available (optional); cloud: Google Gemini (demo / free tier)
-- Docker Compose (app + Redis)
+- Docker Compose (app + Redis); `host.docker.internal` mapped to the host gateway for optional Ollama
 - Spec Guardrails with preset `python-platform`
 
 ## Constraints

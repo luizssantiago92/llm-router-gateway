@@ -1,6 +1,6 @@
 # Documentation
 
-Product overview, demo status, and the explicit backlog live in the root [README](../README.md) (**Still open (agents: read this)**). This folder holds technical depth.
+Product overview, demo status, operator quick start, and the explicit backlog live in the root [README](../README.md) (**Still open (agents: read this)**). This folder holds technical depth.
 
 | Page | Audience | Contents |
 | --- | --- | --- |
