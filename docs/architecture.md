@@ -2,7 +2,7 @@
 
 LLM Router Gateway is an async FastAPI reverse proxy in front of local and cloud chat models. Clients never pick a provider; the gateway caches, classifies, routes, and fails over. For a product overview and quick start, see the root [README](../README.md).
 
-Status: **demo shipped** on Compose (Gemini + optional Ollama + quota). Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md) (REQ-001–REQ-022). Historical v1 feature: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md) · [`design.md`](../.specs/features/001-llm-router-gateway/design.md) · [`validation.md`](../.specs/features/001-llm-router-gateway/validation.md). Product kickoff: [`prd.md`](../prd.md). Explicit backlog: root [README → Still open](../README.md#still-open-agents-read-this).
+Status: **demo shipped** on Compose (Gemini + optional Ollama + quota). Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](../.specs/domains/llm-router-gateway/spec.md) (REQ-001–REQ-022). Historical v1 feature: [`spec.md`](../.specs/features/001-llm-router-gateway/spec.md) · [`design.md`](../.specs/features/001-llm-router-gateway/design.md) · [`validation.md`](../.specs/features/001-llm-router-gateway/validation.md). Product kickoff: [`prd.md`](../prd.md). Explicit backlog: root [README → Limitations / Still open](../README.md#still-open-agents-read-this).
 
 ## Request path
 

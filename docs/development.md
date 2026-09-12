@@ -94,7 +94,7 @@ Hub: [`.cursor/skills/agent-architecture.md`](../.cursor/skills/agent-architectu
 
 Every pull request that changes the product, process, or operator-facing setup **must**:
 
-1. **Update [`README.md`](../README.md)** — product status, quick start, and doc links stay true.
+1. **Update [`README.md`](../README.md)** — product status, Quick start, pillars, and Limitations / Still open stay true.
 2. **Update or add pages under `docs/`** — architecture, API, and development match what the PR actually ships. Add a page only when an existing one cannot hold the change.
 3. **Keep spec memory in sync** — [`.specs/project/PROJECT.md`](../.specs/project/PROJECT.md) and [`ROADMAP.md`](../.specs/project/ROADMAP.md) reflect current vision and milestones.
 4. **Write artifacts in English** — README, `docs/`, `.specs/`, commits, and PR bodies (see engineering baseline).
@@ -105,4 +105,4 @@ This policy is also an always-on Cursor rule: `.cursor/rules/pr-documentation.md
 
 ## Out of scope / deferred
 
-See the root [README → Still open (agents: read this)](../README.md#still-open-agents-read-this) for the authoritative backlog. In short: streaming, production multi-tenant auth, semantic cache, RAG/tools, paid OpenAI happy path, K8s, and hosted deploy are **not** in this demo unless the owner starts a new feature.
+See the root [README → Limitations / Still open](../README.md#still-open-agents-read-this) for the authoritative backlog. In short: streaming, production multi-tenant auth, semantic cache, RAG/tools, paid OpenAI happy path, K8s, and hosted deploy are **not** in this demo unless the owner starts a new feature.
