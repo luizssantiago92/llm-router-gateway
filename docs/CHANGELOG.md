@@ -2,6 +2,11 @@
 
 Project-level notes (not a library semver). Product page: [README](../README.md). Guide: [docs/guide](guide/README.md).
 
+## 2026-09-14
+
+- Root README uses a numbered operator path (TOC, Prepare / Run / Verify, first-access checks, checklist, command cheat sheet, repo map).
+- Human docs remain under `docs/guide/` (Spec Guardrails-style depth).
+
 ## 2026-09-12
 
 - README follows the [Spec Guardrails](https://github.com/luizssantiago92/spec-guardrails) product layout (What it is, Quick start, problem, three pillars, How it works, contract, limitations).

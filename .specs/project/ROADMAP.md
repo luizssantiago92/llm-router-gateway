@@ -21,6 +21,7 @@
 | README accuracy pass | done | Compose interpolates tunables from `.env`; license/env/502 wording matches code |
 | README Spec Guardrails layout | done | What it is, Quick start, problem, three pillars, how it works, limitations |
 | docs/guide + C-009 | done | Spec Guardrails-style guide tree; significant PRs update README in the same PR |
+| Operator README | done | Numbered Prepare/Run/Verify, checklist, commands, repo map |
 
 ## Feature candidates
 
@@ -41,3 +42,4 @@ Deferred candidates (do not start without owner `feature-init`): streaming, prod
 - **2026-09-12** README accuracy pass — Compose interpolates tunables from `.env`; license and 502 wording match code
 - **2026-09-12** README layout — Spec Guardrails section order (What it is, Quick start, pillars, Limitations)
 - **2026-09-12** `docs/guide/` — Overview, Quick-start, How-it-works, Architecture, API, Development, concepts, FAQ, Glossary, Limitations; C-009
+- **2026-09-14** Operator README — numbered Prepare/Run/Verify, checklist, commands, explore table

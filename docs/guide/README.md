@@ -3,7 +3,7 @@
 Plain-language guides for **LLM Router Gateway**.
 **New here?** Read **[Overview](Overview.md)** first, then [Quick start](Quick-start.md).
 
-The root [README](../../README.md) is the product entry point: **Quick start** → three pillars (**cache**, **routing**, **fallback**) → **contract** → **limitations** — with links back here for technical depth.
+The root [README](../../README.md) is the product entry point: **The gateway** → numbered **Prepare / Run / Verify** → **Checklist** → **Commands** → **Explore** → **Still open** — with links back here for technical depth.
 
 ---
 

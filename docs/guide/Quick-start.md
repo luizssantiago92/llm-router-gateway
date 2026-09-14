@@ -1,6 +1,6 @@
 # Quick start
 
-Get from zero to a Gemini-backed chat response in about ten minutes.
+Get from zero to a Gemini-backed chat response in about ten minutes. The root [README](../../README.md) is the numbered operator path (Prepare → Run → Verify + OS notes). This page is the same sequence with extra env detail.
 
 ## 1. Prerequisites
 

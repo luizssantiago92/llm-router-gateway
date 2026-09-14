@@ -34,4 +34,4 @@ LLM Router Gateway is a **demonstrative** internal facade for chat-completion tr
 
 ## Documentation
 
-Human docs: product-facing root `README.md` (Spec Guardrails-style entry); technical depth in `docs/guide/` (Overview, Quick-start, How-it-works, Architecture, API, Development, concepts, FAQ, Glossary, Limitations). Every **significant** PR updates README + matching guide pages **in that same PR** (C-008 / C-009; see `CONTRIBUTING.md` and `.cursor/rules/pr-documentation.mdc`).
+Human docs: product-facing root `README.md` (numbered operator path plus product sections); technical depth in `docs/guide/`. Every **significant** PR updates README + matching guide pages **in that same PR** (C-008 / C-009; see `CONTRIBUTING.md` and `.cursor/rules/pr-documentation.mdc`).

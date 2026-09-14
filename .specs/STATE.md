@@ -63,3 +63,9 @@
 - **Context**: Owner asked for README structure and a `docs/guide/` tree like Spec Guardrails, plus README updates on every significant PR
 - **Decision**: Human docs live under `docs/guide/` (Overview, Quick-start, How-it-works, Architecture, API, Development, concepts, FAQ, Glossary, Limitations). Root README is the product entry. C-009: significant product/API/setup/architecture/status PRs update README + matching guide pages **in that same PR**
 - **Consequences**: Agents follow `.cursor/rules/pr-documentation.mdc` and `CONTRIBUTING.md`; old `docs/architecture.md` / `api.md` / `development.md` are redirects
+
+### AD-008: Operator README uses a numbered run path
+- **Date**: 2026-09-14
+- **Context**: Owner asked for a professional operator-facing README: jump links, numbered setup, first-success checks, and a repo map
+- **Decision**: Root README uses TOC, numbered Prepare / Run / Verify, first-access checks, checklist, command cheat sheet, and an Explore table. Depth stays in `docs/guide/`
+- **Consequences**: C-009 still applies; Quick-start.md mirrors the numbered path without duplicating OS installers

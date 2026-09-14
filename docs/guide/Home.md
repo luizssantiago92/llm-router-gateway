@@ -5,7 +5,7 @@ Short hub for **LLM Router Gateway**.
 | I want to… | Go |
 | --- | --- |
 | Understand the product | [Overview](Overview.md) |
-| Run Compose in ten minutes | [Quick start](Quick-start.md) |
+| Run Compose in ten minutes | [README Prepare / Run](../../README.md#1-prepare-your-environment) · [Quick start](Quick-start.md) |
 | See the request path | [How it works](How-it-works.md) |
 | Call the API | [API](API.md) |
 | Change code | [Development](Development.md) · [CONTRIBUTING](../../CONTRIBUTING.md) |
