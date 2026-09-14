@@ -12,12 +12,15 @@
 | `/verify` | done | PASS after fix round 1; `.specs/features/001-llm-router-gateway/validation.md` |
 | `/archive` | done | Domain truth: `.specs/domains/llm-router-gateway/spec.md` |
 | Compose app + Redis | done | `docker-compose.yml` services `api` + `redis` (RNF-03) |
-| Product README + docs index | done | Root README product-style; depth in `docs/` (C-008) |
+| Product README + docs index | done | Root README follows Spec Guardrails layout; depth in `docs/` (C-008) |
 | Gemini free-tier cloud + demo quota | done | Gemini adapter; `X-API-Key` + Redis daily quota; Ollama optional |
 | Domain delta REQ-019–REQ-022 | done | Gemini default, demo API key, daily quota, Ollama optional |
 | Demo smoke (Compose + Gemini chat) | done | Health `degraded` without Ollama; chat `provider=cloud` |
 | README backlog for agents | done | **Still open** table + AD-006 demonstrative scope |
 | Operator README sync | done | Quick start matches Gemini/quota/auth; Linux `host.docker.internal` |
+| README accuracy pass | done | Compose interpolates tunables from `.env`; license/env/502 wording matches code |
+| README Spec Guardrails layout | done | What it is, Quick start, problem, three pillars, how it works, limitations |
+| docs/guide + C-009 | done | Spec Guardrails-style guide tree; significant PRs update README in the same PR |
 
 ## Feature candidates
 
@@ -35,3 +38,6 @@ Deferred candidates (do not start without owner `feature-init`): streaming, prod
 - **2026-09-11** `gemini-free-demo` — merged #8; domain updated with REQ-019–REQ-022
 - **2026-09-11** Local Compose smoke — Gemini chat OK; Docker Desktop + WSL2 required on Windows
 - **2026-09-12** Operator README — env, auth, quota, `/docs`, and optional Ollama notes aligned with the shipped demo
+- **2026-09-12** README accuracy pass — Compose interpolates tunables from `.env`; license and 502 wording match code
+- **2026-09-12** README layout — Spec Guardrails section order (What it is, Quick start, pillars, Limitations)
+- **2026-09-12** `docs/guide/` — Overview, Quick-start, How-it-works, Architecture, API, Development, concepts, FAQ, Glossary, Limitations; C-009

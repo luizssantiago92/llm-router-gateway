@@ -7,11 +7,11 @@ alwaysApply: true
 
 When this repository changes in a pull request (product behavior, API, setup, status, architecture, or process):
 
-1. Update root `README.md` so status, stack, API summary, and links match reality.
-2. Update or add pages under `docs/` (`architecture.md`, `api.md`, `development.md`, or a new page linked from `docs/README.md`).
+1. **Update root `README.md` in the same PR** (not a follow-up) so status, Quick start, pillars, contract, and Limitations match reality.
+2. **Update or add pages under `docs/guide/`** (`Overview.md`, `Quick-start.md`, `How-it-works.md`, `Architecture.md`, `API.md`, `Development.md`, `concepts.md`, `FAQ.md`, `Glossary.md`, `Limitations.md`, or a new page linked from `docs/guide/README.md`).
 3. Keep `.specs/project/PROJECT.md` and `.specs/project/ROADMAP.md` aligned with the current milestone.
 4. Write those files in English (engineering baseline).
 
 Skip README only when the diff is purely internal and no published status or link became stale. When in doubt, update the README.
 
-Policy detail: `docs/development.md` (§ Documentation on every PR). Constitution: C-008.
+Policy detail: `docs/guide/Development.md` (§ Documentation on every PR) · `CONTRIBUTING.md`. Constitution: C-008, C-009.

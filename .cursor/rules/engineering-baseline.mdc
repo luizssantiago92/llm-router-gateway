@@ -21,7 +21,7 @@ Chat language is a personal preference. Set it in your own agent settings if you
 
 # Documentation on every PR
 
-Every pull request that changes product, setup, or status MUST update `README.md` and the matching pages under `docs/`, and keep `.specs/project/PROJECT.md` plus `ROADMAP.md` current. See `.cursor/rules/pr-documentation.mdc` and `docs/development.md`.
+Every pull request that changes product behavior, API, setup, architecture, or public status MUST update `README.md` **in that same PR** and the matching pages under `docs/guide/`, and keep `.specs/project/PROJECT.md` plus `ROADMAP.md` current. Skip README only for purely internal diffs with no stale operator-facing text. See `.cursor/rules/pr-documentation.mdc`, `CONTRIBUTING.md`, and `docs/guide/Development.md`.
 
 # Guardrails Skills
 
