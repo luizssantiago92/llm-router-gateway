@@ -34,4 +34,4 @@ LLM Router Gateway is a **demonstrative** internal facade for chat-completion tr
 
 ## Documentation
 
-Human docs: product-facing root `README.md` (includes agent backlog); technical depth in `docs/`. Every PR that changes product or setup updates those files plus this memory (see `docs/development.md` and `.cursor/rules/pr-documentation.mdc`, C-008).
+Human docs: product-facing root `README.md` (numbered operator path plus product sections); technical depth in `docs/guide/`. Every **significant** PR updates README + matching guide pages **in that same PR** (C-008 / C-009; see `CONTRIBUTING.md` and `.cursor/rules/pr-documentation.mdc`).

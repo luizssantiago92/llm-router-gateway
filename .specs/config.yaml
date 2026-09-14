@@ -9,7 +9,7 @@ context: |
   Reuse: Gold Queen / future company chatbot may lift patterns; keep this repo as the lab demo.
   Test command: pytest
   Branch prefix: feat
-  Docs: README.md + docs/ must stay current on every PR (C-008).
+  Docs: README.md + docs/guide/ must stay current on every significant PR (C-008, C-009). Same PR, not a follow-up.
 
 commit:
   # Vendored Spec Guardrails skills + Python gates exceed the 500-line default
