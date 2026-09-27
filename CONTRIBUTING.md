@@ -33,10 +33,13 @@ Cursor rules: `.cursor/rules/pr-documentation.mdc` · `.cursor/rules/engineering
 - Conventional Commits (`feat:`, `fix:`, `docs:`, …); subject lowercase-initial, no trailing period.
 
 ```bash
-pip install -e ".[dev]"
-pytest
+uv sync --frozen --all-extras
+uv run ruff check app tests
+uv run pytest
 python3 .specs/guardrails/scripts/check_commit.py --message "docs: explain quota refund"
 ```
+
+`pip install -e ".[dev]"` still works. CI uses `uv.lock`.
 
 `pytest` already skips `@pytest.mark.live` via `pyproject.toml` `addopts`.
 

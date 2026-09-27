@@ -71,11 +71,11 @@ class GeminiProvider:
             return False
 
     async def _request(self, method: str, url: str, json: dict | None = None) -> dict:
-        params = {"key": self._api_key}
+        headers = {"x-goog-api-key": self._api_key}
         client = self._client or httpx.AsyncClient(timeout=self._timeout)
         owns_client = self._client is None
         try:
-            response = await client.request(method, url, json=json, params=params)
+            response = await client.request(method, url, json=json, headers=headers)
         except httpx.TimeoutException as exc:
             raise ProviderError("gemini timeout", timed_out=True) from exc
         except httpx.HTTPError as exc:

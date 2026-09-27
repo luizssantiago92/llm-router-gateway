@@ -13,7 +13,8 @@ def _transport(handler):
 async def test_gemini_adapter_maps_generate_content() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         assert request.url.path.endswith("/models/gemini-3.5-flash:generateContent")
-        assert request.url.params.get("key") == "gemini-test"
+        assert request.headers["x-goog-api-key"] == "gemini-test"
+        assert "key" not in request.url.params
         return httpx.Response(
             200,
             json={

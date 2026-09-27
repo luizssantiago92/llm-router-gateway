@@ -22,6 +22,7 @@
 | README Spec Guardrails layout | done | What it is, Quick start, problem, three pillars, how it works, limitations |
 | docs/guide + C-009 | done | Spec Guardrails-style guide tree; significant PRs update README in the same PR |
 | Operator README | done | Numbered Prepare/Run/Verify, checklist, commands, repo map |
+| Supply-chain and runtime hardening | done | CI lint+pytest, `uv.lock`, Redis loopback+password, non-root digest-pinned image, Gemini header auth, MIT + `SECURITY.md` |
 
 ## Feature candidates
 
@@ -33,6 +34,8 @@
 Deferred candidates (do not start without owner `feature-init`): streaming, production auth, semantic cache, RAG/tools, paid OpenAI path, K8s, hosted deploy, chat UI — see root README **Still open**.
 
 ## Completed
+
+- **2026-09-27** Supply-chain and runtime hardening — GitHub Actions CI, `uv.lock`, Redis bound to loopback with `REDIS_PASSWORD`, non-root digest-pinned image, Gemini `x-goog-api-key` header, MIT `LICENSE`, `SECURITY.md`
 
 - **2026-09-11** `001-llm-router-gateway` — archived. Validation: `.specs/features/001-llm-router-gateway/validation.md`
   - Merged → `.specs/domains/llm-router-gateway/spec.md` (copied 18 requirement(s) from full spec)

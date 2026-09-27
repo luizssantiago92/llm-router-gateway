@@ -20,7 +20,15 @@ The adapter maps Gemini 4xx to `ProviderError` with that status. That is **not**
 
 ## Does `.env` `REDIS_URL` change Compose?
 
-No. `api` always gets `redis://redis:6379/0`. Fill `REDIS_URL` only if you run the process **outside** Compose (`Settings.from_env` requires it).
+No. `api` always gets `redis://:<REDIS_PASSWORD>@redis:6379/0`. Fill `REDIS_URL` only if you run the process **outside** Compose (`Settings.from_env` requires it). Put the same password in that URL.
+
+## Is Redis published on every interface?
+
+No. Compose binds Redis to **127.0.0.1:6379** and starts it with `--requirepass` from `REDIS_PASSWORD`. An empty password fails Compose interpolation. The `api` container still reaches Redis on the Compose network.
+
+## Where does the Gemini API key go?
+
+The adapter sends `GEMINI_API_KEY` in the `x-goog-api-key` header. It is not placed in the query string.
 
 ## Do `CACHE_TTL_SECONDS` and friends in `.env` work?
 

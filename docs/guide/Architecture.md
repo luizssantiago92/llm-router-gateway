@@ -58,7 +58,7 @@ On cache miss, a **5xx or timeout** on the primary provider triggers **one** hop
 | Evaluator | `app/routing/evaluator.py` | Word-count **or** keyword match → simple vs complex |
 | Router | `app/routing/router.py` | Primary provider then one opposite-tier hop |
 | Local adapter | `app/providers/ollama.py` | Optional Ollama (`llama3` class); `name="local"` |
-| Cloud adapter | `app/providers/gemini.py` | Default Gemini (`GEMINI_API_KEY`); `name="cloud"` |
+| Cloud adapter | `app/providers/gemini.py` | Default Gemini (`GEMINI_API_KEY` in the `x-goog-api-key` header); `name="cloud"` |
 | Quota | `app/quota/daily.py` | Redis daily bucket per `X-API-Key` (cache hits free) |
 | Health | `app/api/health.py` | Process + Redis + each configured upstream |
 
@@ -68,7 +68,7 @@ Every completion returns JSON `cached`, `latency_ms`, `provider` and headers `X-
 
 ## Ship unit
 
-Docker Compose runs `api` and `redis` in isolation. Kubernetes, Helm, and Terraform are out of scope. Secrets come from environment variables only. Ollama is an optional external runtime (`OLLAMA_BASE_URL`). When it is unreachable, health is `degraded` and simple prompts fall back to Gemini. The `api` service maps `host.docker.internal` to the Docker host gateway so Linux Engine can reach host Ollama.
+Docker Compose runs `api` and `redis` in isolation. Kubernetes, Helm, and Terraform are out of scope. Secrets come from environment variables only. Redis requires `REDIS_PASSWORD` and is published on `127.0.0.1:6379` only. The API image runs as non-root user `app` from a digest-pinned `python:3.12-slim` base. Ollama is an optional external runtime (`OLLAMA_BASE_URL`). When it is unreachable, health is `degraded` and simple prompts fall back to Gemini. The `api` service maps `host.docker.internal` to the Docker host gateway so Linux Engine can reach host Ollama.
 
 ## Surfaces
 
