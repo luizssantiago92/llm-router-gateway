@@ -41,7 +41,7 @@ Full story: [How it works](How-it-works.md)
 | Path | You have | Flow |
 | --- | --- | --- |
 | **A — Compose demo** | Docker + Gemini API key | [Quick start](Quick-start.md) — `.env` → `docker compose up --build` |
-| **B — Tests only** | Python 3.10+ | `pip install -e ".[dev]"` → `pytest` (live upstreams skipped) |
+| **B — Tests only** | Python 3.10+ and uv | `uv sync --frozen --all-extras` → `uv run pytest` (live upstreams skipped). `pip install -e ".[dev]"` still works |
 | **C — Change the product** | Spec Guardrails already installed | `/specify` (or `/elicit` if vague) → `/tasks` → `/loop` → `/verify` |
 
 ---
@@ -84,7 +84,7 @@ FastAPI facade, Redis cache, evaluator, Ollama + Gemini adapters, daily quota. T
 
 ### 2. The ship unit
 
-`docker-compose.yml` + `Dockerfile`. Secrets from `.env` (never committed). Compose hardcodes `REDIS_URL` inside `api`.
+`docker-compose.yml` + `Dockerfile`. Secrets from `.env` (never committed). Compose builds `REDIS_URL` from `REDIS_PASSWORD` and publishes Redis on `127.0.0.1` only. The image runs as non-root from a digest-pinned base. CI lints and tests on every pull request.
 
 ### 3. Specs (`.specs/`)
 

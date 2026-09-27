@@ -39,6 +39,8 @@ The root [README](../../README.md) is the product entry point: **The gateway** â
 | [../../README.md](../../README.md) | Product intro and doc links |
 | [../CHANGELOG.md](../CHANGELOG.md) | Version history |
 | [../../CONTRIBUTING.md](../../CONTRIBUTING.md) | Contributing + README-on-PR policy |
+| [../../SECURITY.md](../../SECURITY.md) | Private vulnerability reports |
+| [../../LICENSE](../../LICENSE) | MIT license |
 | [../../prd.md](../../prd.md) | Product kickoff (historical; live cloud default is Gemini) |
 
 When a pull request changes behavior, setup, or status, update the matching guide page **and** the root README in the **same** PR. Policy: [Development â†’ Documentation on every PR](Development.md#documentation-on-every-pr).

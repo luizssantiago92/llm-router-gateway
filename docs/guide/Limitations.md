@@ -26,6 +26,8 @@ Authoritative agent backlog: root [README → Still open](../../README.md#still-
 | First-class Ollama in Compose | **not started** | Ollama stays external; optional on stronger machines |
 | UI / chat frontend | **not started** | API-only demo |
 
+Compose publishes Redis on `127.0.0.1` only and requires `REDIS_PASSWORD`. The API image runs as a non-root user. That is local hardening for this demo, not a production network or identity review.
+
 > A green `pytest` run means the suite passed — it is not proof this demo is a production chatbot.
 
 **Owner roadmap (outside this repo):** (1) reuse interesting bits in [Gold Queen](https://github.com/luizssantiago92/gold-queen-api) → (2) later build a real company chatbot on paid/controlled infra → (3) keep **this** repository as the academic / zero-cost demonstrative reference.

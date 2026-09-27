@@ -1,6 +1,5 @@
 import pytest
 
-from app.providers.base import ProviderError
 from app.providers.fake import FakeProvider
 from app.routing.router import Router
 

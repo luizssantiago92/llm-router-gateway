@@ -2,6 +2,15 @@
 
 Project-level notes (not a library semver). Product page: [README](../README.md). Guide: [docs/guide](guide/README.md).
 
+## 2026-09-27
+
+- GitHub Actions CI runs `ruff` and pytest with least-privilege `contents: read` and SHA-pinned actions.
+- Python dependencies are locked with `uv.lock`. `pyproject.toml` keeps upper bounds and stays pip-compatible.
+- Compose requires `REDIS_PASSWORD` and publishes Redis on `127.0.0.1:6379` only.
+- The API image runs as non-root user `app` from a digest-pinned `python:3.12-slim` base.
+- The Gemini adapter sends the API key in the `x-goog-api-key` header.
+- MIT `LICENSE` (Copyright Luiz Santiago) and `SECURITY.md`.
+
 ## 2026-09-14
 
 - Root README uses a numbered operator path (TOC, Prepare / Run / Verify, first-access checks, checklist, command cheat sheet, repo map).

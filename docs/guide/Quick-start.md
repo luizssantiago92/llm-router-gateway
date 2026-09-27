@@ -14,14 +14,15 @@ Get from zero to a Gemini-backed chat response in about ten minutes. The root [R
 cp .env.example .env
 ```
 
-Fill **only** these two unless you need overrides:
+Fill **only** these three unless you need overrides:
 
 | Variable | What to put |
 | --- | --- |
 | `GEMINI_API_KEY` | From Google AI Studio |
 | `GATEWAY_API_KEY` | Any secret you invent — callers send it as `X-API-Key` |
+| `REDIS_PASSWORD` | A URL-safe secret (for example `openssl rand -hex 24`). Compose requires it |
 
-Leave the rest blank to use Compose defaults (`gemini-3.5-flash`, daily limit `5`, Ollama URL `http://host.docker.internal:11434`, TTL `3600`, word threshold `150`, timeout `30`). Leave `REDIS_URL` blank — Compose sets `redis://redis:6379/0` inside `api` and **does not** read that key from `.env`.
+Leave the rest blank to use Compose defaults (`gemini-3.5-flash`, daily limit `5`, Ollama URL `http://host.docker.internal:11434`, TTL `3600`, word threshold `150`, timeout `30`). Leave `REDIS_URL` blank — Compose sets `redis://:<REDIS_PASSWORD>@redis:6379/0` inside `api` and **does not** read that key from `.env`.
 
 Never commit `.env`. The app does not call `load_dotenv`.
 
@@ -34,7 +35,7 @@ docker compose up --build
 | Service | Port |
 | --- | --- |
 | `api` | **8000** (OpenAPI: `/docs`) |
-| `redis` | **6379** |
+| `redis` | **127.0.0.1:6379** only (password from `REDIS_PASSWORD`) |
 
 Linux Docker Engine: Compose maps `host.docker.internal` → `host-gateway` so optional **host** Ollama is reachable. Docker Desktop already provides that hostname.
 
@@ -84,16 +85,16 @@ Interactive contract: http://localhost:8000/docs
 ## Tests (no live Gemini)
 
 ```bash
-pip install -e ".[dev]"
-pytest
+uv sync --frozen --all-extras
+uv run pytest
 ```
 
-`pyproject.toml` `addopts` already applies `-m "not live"`.
+`pip install -e ".[dev]"` still works. CI installs from `uv.lock`. `pyproject.toml` `addopts` already applies `-m "not live"`.
 
 ## If something feels stuck
 
 - **401 on chat?** The header must match `.env` `GATEWAY_API_KEY` exactly — not an empty `$GATEWAY_API_KEY`.
-- **Container restart loop?** `GEMINI_API_KEY` and `GATEWAY_API_KEY` must be non-empty; `Settings.from_env` refuses blanks.
+- **Container restart loop?** `GEMINI_API_KEY`, `GATEWAY_API_KEY`, and `REDIS_PASSWORD` must be non-empty. `Settings.from_env` refuses blank Gemini and gateway keys. Compose refuses a blank Redis password.
 - **Want the request path?** → [How it works](How-it-works.md)
 - **Want every status code?** → [API](API.md)
 

@@ -11,8 +11,12 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 | `prd.md` | Product requirements (owner kickoff; historical cloud examples) |
 | `app/` | FastAPI gateway (settings, schemas, cache, routing, providers, routes) |
 | `tests/` | pytest-asyncio suite; `tests/eval/` golden routing harness |
-| `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + `redis` |
+| `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + Redis (loopback port, password, non-root image) |
+| `.github/workflows/ci.yml` | Lint (`ruff`) + pytest; actions pinned by commit SHA |
+| `.github/dependabot.yml` | Weekly updates for `uv` (lockfile) and GitHub Actions |
+| `uv.lock` | Locked Python dependencies (`pyproject.toml` stays pip-compatible) |
 | `.env.example` | Required env keys with empty values |
+| `SECURITY.md` | Private vulnerability reports |
 | `docs/guide/` | Human documentation (this tree) |
 | `.specs/` | Specs, briefs, gates, session state, archived domain truth |
 | `.cursor/skills/` | Agent hub and phase procedures |
@@ -29,7 +33,8 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 | Local LLM | Ollama (optional; unreachable → one-hop fallback to Gemini) |
 | Cloud LLM | Google Gemini (demo / free-tier default) |
 | Ship unit | Docker Compose (`api` + `redis`) |
-| Tests | pytest-asyncio (routing, cache hit/miss, fallback, quota) |
+| Tests | pytest-asyncio (routing, cache hit/miss, fallback, quota); CI on GitHub Actions |
+| Packages | `uv.lock` with upper bounds in `pyproject.toml`; `pip install -e ".[dev]"` still works |
 
 ## Environment
 
@@ -37,7 +42,8 @@ Copy [`.env.example`](../../.env.example) to `.env` (never commit `.env`):
 
 | Variable | Required | Default |
 | --- | --- | --- |
-| `REDIS_URL` | yes in-process; leave blank in `.env` for Compose | Compose hardcodes `redis://redis:6379/0` |
+| `REDIS_PASSWORD` | yes for Compose | URL-safe secret; Compose refuses an empty value |
+| `REDIS_URL` | yes in-process; leave blank in `.env` for Compose | Compose sets `redis://:<REDIS_PASSWORD>@redis:6379/0` |
 | `OLLAMA_BASE_URL` | yes in-process; Compose fills a default | `http://host.docker.internal:11434` (OK if Ollama is not installed) |
 | `GEMINI_API_KEY` | yes | — |
 | `GEMINI_MODEL` | no | `gemini-3.5-flash` (override in AI Studio if needed) |
@@ -52,11 +58,12 @@ Never commit `.env`. Secrets are env-only (no `load_dotenv` in the app).
 ## Tests
 
 ```bash
-pip install -e ".[dev]"
-pytest
+uv sync --frozen --all-extras
+uv run ruff check app tests
+uv run pytest
 ```
 
-`pyproject.toml` `addopts` already applies `-m "not live"`. Live upstream tests stay opt-in via their marker; do not expect `pytest` (no extra `-m`) to call Gemini or Ollama.
+`pip install -e ".[dev]"` still works. CI runs the same lint and pytest steps from `uv.lock` (`.github/workflows/ci.yml`). `pyproject.toml` `addopts` already applies `-m "not live"`. Live upstream tests stay opt-in via their marker; do not expect `pytest` (no extra `-m`) to call Gemini or Ollama.
 
 ## Compose
 
@@ -67,8 +74,9 @@ docker compose up --build
 ```
 
 - `api` on port **8000** (OpenAPI UI: `/docs`)
-- `redis` on port **6379**
-- `REDIS_URL` inside the `api` container is always `redis://redis:6379/0` (not taken from `.env`)
+- `redis` on **127.0.0.1:6379** only, with `--requirepass` set from `REDIS_PASSWORD`
+- `REDIS_URL` inside the `api` container is always `redis://:<REDIS_PASSWORD>@redis:6379/0` (not taken from `.env`)
+- The image runs as non-root user `app`; the base image is pinned by digest
 - Optional tunables (`CACHE_TTL_SECONDS`, `COMPLEXITY_WORD_THRESHOLD`, `UPSTREAM_TIMEOUT_SECONDS`, `CHAT_DAILY_LIMIT`, `GEMINI_MODEL`, `OLLAMA_BASE_URL`) are interpolated from `.env` with the defaults above
 - Ollama is **not** in Compose. If the host cannot run Ollama, leave the default URL: health reports `degraded` and the router falls back to Gemini after one local failure.
 - Compose sets `extra_hosts: host.docker.internal:host-gateway` so Linux Docker Engine can reach an optional **host** Ollama the same way Docker Desktop does. That mapping is unused when Ollama is not installed.

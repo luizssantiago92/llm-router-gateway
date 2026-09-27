@@ -29,7 +29,7 @@ The stack is **Python 3.10+ / FastAPI**, **Redis**, **Google Gemini** (default `
 
 | Status | Detail |
 | --- | --- |
-| **Shipped** | Compose demo; `/health` + chat via Gemini |
+| **Shipped** | Compose demo; `/health` + chat via Gemini; CI (lint + pytest) |
 | **Posture** | Academic / demonstrative — not a production chatbot |
 | **Cloud** | Gemini free tier (`GEMINI_API_KEY`) |
 | **Local** | Optional Ollama; unreachable → health `degraded`, fallback to Gemini |
@@ -63,7 +63,7 @@ Set this up **before** the first `docker compose up`.
 | Git | Installed | Clone and version the repo |
 | Editor + terminal | Your usual tools | `.env`, curls, logs |
 | [Ollama](https://ollama.com/) | **Optional** | Local primary for simple prompts (REQ-022) |
-| Python 3.10+ | Optional (tests) | `pytest` without Compose |
+| Python 3.10+ and [uv](https://docs.astral.sh/uv/) | Optional (tests) | Locked `pytest` / lint without Compose (`pip install -e ".[dev]"` still works) |
 
 **Ollama is optional.** If it is not installed, health stays `degraded` and simple prompts fall back to Gemini after one local failure. That is the supported demo path.
 
@@ -127,14 +127,15 @@ cd llm-router-gateway
 cp .env.example .env
 ```
 
-Fill **only** these two unless you need overrides:
+Fill **only** these three unless you need overrides:
 
 | Variable | What to put |
 | --- | --- |
 | `GEMINI_API_KEY` | From Google AI Studio |
 | `GATEWAY_API_KEY` | Any secret you invent — callers send it as `X-API-Key` |
+| `REDIS_PASSWORD` | A URL-safe secret (for example `openssl rand -hex 24`). Compose requires it |
 
-Leave the rest blank for Compose defaults (`gemini-3.5-flash`, daily limit `5`, Ollama URL `http://host.docker.internal:11434`, TTL `3600`). Leave `REDIS_URL` blank — Compose hardcodes `redis://redis:6379/0` inside `api`.
+Leave the rest blank for Compose defaults (`gemini-3.5-flash`, daily limit `5`, Ollama URL `http://host.docker.internal:11434`, TTL `3600`). Leave `REDIS_URL` blank — Compose sets `redis://:<REDIS_PASSWORD>@redis:6379/0` inside `api` and does not read that key from `.env`. Use a URL-safe password so the Redis URL stays valid.
 
 ```bash
 docker compose up --build
@@ -184,9 +185,11 @@ Stuck? [FAQ](docs/guide/FAQ.md) · [Quick start](docs/guide/Quick-start.md)
 The default suite does **not** call live Gemini or Ollama (`pyproject.toml` already applies `-m "not live"`).
 
 ```bash
-pip install -e ".[dev]"
-pytest
+uv sync --frozen --all-extras
+uv run pytest
 ```
+
+`pip install -e ".[dev]"` still works (`pyproject.toml` stays pip-compatible). CI installs from [`uv.lock`](uv.lock).
 
 Expected: **41 passed** (marker-filtered). Compose can keep running; tests use fakes, not the container.
 
@@ -195,14 +198,14 @@ Expected: **41 passed** (marker-filtered). Compose can keep running; tests use f
 ## Checklist
 
 - [ ] Docker Compose responds in the terminal.
-- [ ] `.env` has non-empty `GEMINI_API_KEY` and `GATEWAY_API_KEY`.
-- [ ] `docker compose up --build` stays up (`api` **8000**, `redis` **6379**).
+- [ ] `.env` has non-empty `GEMINI_API_KEY`, `GATEWAY_API_KEY`, and `REDIS_PASSWORD`.
+- [ ] `docker compose up --build` stays up (`api` **8000**; Redis on **127.0.0.1:6379** only).
 - [ ] `GET /health` is `degraded` or `ok`.
 - [ ] Chat curl with `YOUR_GATEWAY_KEY` returns content.
 - [ ] Repeating the same body sets `cached: true`.
 - [ ] `pytest` passes locally (optional if you only want the demo).
 
-Blocked? Show the error and the step number. Common traps: empty `$GATEWAY_API_KEY` in the shell, blank Gemini key (container crash-loop), expecting `"ok"` health without Ollama.
+Blocked? Show the error and the step number. Common traps: empty `$GATEWAY_API_KEY` in the shell, blank Gemini key or `REDIS_PASSWORD` (container fails to start), expecting `"ok"` health without Ollama.
 
 ---
 
@@ -215,7 +218,7 @@ Run from the repository root (where `docker-compose.yml` and `pyproject.toml` li
 | `cp .env.example .env` | Create a local secrets file (never commit it). |
 | `docker compose up --build` | Start `api` + `redis`. |
 | `curl -s http://localhost:8000/health` | Probe Redis and providers (no API key). |
-| `pytest` | Unit/integration suite; live upstreams skipped. |
+| `uv sync --frozen --all-extras && uv run pytest` | Locked unit/integration suite; live upstreams skipped. |
 | `npx @luizsantiago/spec-guardrails doctor` | Spec Guardrails Process / Brakes scores. |
 
 ### Need to reset quota or cache?
@@ -233,8 +236,11 @@ Daily quota lives in Redis and resets at **UTC midnight**. To wipe cache and quo
 | [`app/api/health.py`](app/api/health.py) | `GET /health` |
 | [`app/providers/`](app/providers/) | Ollama (`local`) and Gemini (`cloud`) adapters |
 | [`tests/`](tests/) | pytest-asyncio; [`tests/eval/`](tests/eval/) routing harness |
-| [`docker-compose.yml`](docker-compose.yml) | Ship unit: `api` + `redis` |
+| [`docker-compose.yml`](docker-compose.yml) | Ship unit: `api` + Redis (loopback port, password required) |
 | [`.env.example`](.env.example) | Env keys with empty values |
+| [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Lint + pytest on pull requests and `main` |
+| [`LICENSE`](LICENSE) | MIT |
+| [`SECURITY.md`](SECURITY.md) | How to report a vulnerability |
 | [`docs/guide/`](docs/guide/README.md) | Overview, Quick start, Architecture, API, FAQ |
 | [`AGENTS.md`](AGENTS.md) | Agent execution contract |
 | [`.specs/domains/llm-router-gateway/spec.md`](.specs/domains/llm-router-gateway/spec.md) | Domain truth REQ-001–REQ-022 |
@@ -351,6 +357,8 @@ Full index: [docs/guide/README.md](docs/guide/README.md)
 
 ## License
 
-No `LICENSE` file is published on this repository. Do not assume reuse rights. Do not commit secrets, API keys, or `.env` files.
+[MIT](LICENSE). Copyright (c) 2026 Luiz Santiago.
+
+Report security issues privately — [SECURITY.md](SECURITY.md). Do not commit secrets, API keys, or `.env` files.
 
 [↑ Back to top](#llm-router-gateway)

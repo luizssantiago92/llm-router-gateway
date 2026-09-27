@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=68,<100"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,19 +9,23 @@ description = "Demo FastAPI gateway: OpenAI-shaped chat facade, Redis cache, Gem
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "fastapi>=0.115.0",
-    "httpx>=0.27.0",
-    "redis>=5.0.0",
-    "pydantic>=2.0.0",
-    "uvicorn>=0.32.0",
+    "fastapi>=0.115.0,<1",
+    "httpx>=0.27.0,<1",
+    "redis>=5.0.0,<9",
+    "pydantic>=2.0.0,<3",
+    "uvicorn>=0.32.0,<1",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0.0",
-    "pytest-asyncio>=0.24.0",
-    "PyYAML>=6.0.0",
+    "pytest>=8.0.0,<10",
+    "pytest-asyncio>=0.24.0,<2",
+    "PyYAML>=6.0.0,<7",
+    "ruff>=0.9.0,<1",
 ]
+
+[tool.uv]
+required-version = ">=0.12.19"
 
 [tool.setuptools.packages.find]
 include = ["app*"]
@@ -33,3 +37,13 @@ markers = [
     "live: tests that call real upstream providers",
 ]
 addopts = "-m 'not live'"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["app", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F"]
+# Pre-existing lines exceed 100; do not fail CI on line length.
+ignore = ["E501"]

@@ -64,6 +64,12 @@
 - **Decision**: Human docs live under `docs/guide/` (Overview, Quick-start, How-it-works, Architecture, API, Development, concepts, FAQ, Glossary, Limitations). Root README is the product entry. C-009: significant product/API/setup/architecture/status PRs update README + matching guide pages **in that same PR**
 - **Consequences**: Agents follow `.cursor/rules/pr-documentation.mdc` and `CONTRIBUTING.md`; old `docs/architecture.md` / `api.md` / `development.md` are redirects
 
+### AD-009: Local supply-chain and runtime hardening
+- **Date**: 2026-09-27
+- **Context**: A read-only audit found no CI, an unlocked `>=` dependency set, Redis published on `0.0.0.0:6379` without a password, a root container on a floating base tag, and the Gemini API key in the query string
+- **Decision**: CI is GitHub Actions (`contents: read`, SHA-pinned actions, `persist-credentials: false`) running `ruff` and pytest from `uv.lock`. Dependabot tracks the `uv` ecosystem (pip-compatible `pyproject.toml`; a separate `pip` entry would ignore the lock) and `github-actions`. Compose requires `REDIS_PASSWORD` and publishes Redis on `127.0.0.1:6379` only. The image runs as non-root `app` from digest-pinned `python:3.12-slim`. Gemini uses the `x-goog-api-key` header. License is MIT (Luiz Santiago) with `SECURITY.md`
+- **Consequences**: Operators must set `REDIS_PASSWORD` (URL-safe) before `docker compose up`. In-process runs still pass the password inside `REDIS_URL`. Chat behavior, routes, and status codes are unchanged
+
 ### AD-008: Operator README uses a numbered run path
 - **Date**: 2026-09-14
 - **Context**: Owner asked for a professional operator-facing README: jump links, numbered setup, first-success checks, and a repo map
