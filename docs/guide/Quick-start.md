@@ -85,11 +85,11 @@ Interactive contract: http://localhost:8000/docs
 ## Tests (no live Gemini)
 
 ```bash
-uv sync --frozen --all-extras
+uv sync --frozen
 uv run pytest
 ```
 
-`pip install -e ".[dev]"` still works. CI installs from `uv.lock`. `pyproject.toml` `addopts` already applies `-m "not live"`.
+`uv sync` installs the dev group from `uv.lock`. `pyproject.toml` `addopts` already applies `-m "not live"`.
 
 ## If something feels stuck
 

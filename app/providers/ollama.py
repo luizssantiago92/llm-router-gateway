@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import httpx
 
 from app.providers.base import Completion, ProviderError
@@ -26,14 +28,15 @@ class OllamaProvider:
         temperature: float,
         max_tokens: int | None,
     ) -> Completion:
-        payload = {
+        options: dict[str, float | int] = {"temperature": temperature}
+        if max_tokens is not None:
+            options["num_predict"] = max_tokens
+        payload: dict[str, Any] = {
             "model": self._model,
             "messages": messages,
             "stream": False,
-            "options": {"temperature": temperature},
+            "options": options,
         }
-        if max_tokens is not None:
-            payload["options"]["num_predict"] = max_tokens
         data = await self._post(f"{self._base_url}/api/chat", json=payload)
         message = data.get("message") or {}
         content = str(message.get("content", ""))
@@ -47,13 +50,18 @@ class OllamaProvider:
         except ProviderError:
             return False
 
-    async def _post(self, url: str, json: dict) -> dict:
+    async def _post(self, url: str, json: dict[str, Any]) -> dict[str, Any]:
         return await self._request("POST", url, json=json)
 
-    async def _get(self, url: str) -> dict:
+    async def _get(self, url: str) -> dict[str, Any]:
         return await self._request("GET", url)
 
-    async def _request(self, method: str, url: str, json: dict | None = None) -> dict:
+    async def _request(
+        self,
+        method: str,
+        url: str,
+        json: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         client = self._client or httpx.AsyncClient(timeout=self._timeout)
         owns_client = self._client is None
         try:
@@ -69,4 +77,5 @@ class OllamaProvider:
             raise ProviderError("ollama upstream error", status_code=response.status_code)
         if response.status_code >= 400:
             raise ProviderError("ollama client error", status_code=response.status_code)
-        return response.json()
+        body: dict[str, Any] = response.json()
+        return body

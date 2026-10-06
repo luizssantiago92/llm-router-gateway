@@ -185,7 +185,7 @@ async def test_daily_quota_returns_429() -> None:
 
 @pytest.mark.asyncio
 async def test_invalid_body_returns_422_without_provider_calls() -> None:
-    app, local, cloud, redis = _app(FakeProvider("local"), FakeProvider("cloud"))
+    app, local, cloud, _redis = _app(FakeProvider("local"), FakeProvider("cloud"))
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.post(
@@ -219,7 +219,7 @@ async def test_stream_true_returns_422() -> None:
 
 @pytest.mark.asyncio
 async def test_dual_provider_failure_returns_502_and_refunds_quota() -> None:
-    app, local, cloud, redis = _app(
+    app, _local, _cloud, redis = _app(
         FakeProvider("local", error=ProviderError("down", status_code=500)),
         FakeProvider("cloud", error=ProviderError("down", status_code=500)),
     )

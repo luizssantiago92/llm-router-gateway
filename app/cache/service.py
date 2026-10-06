@@ -4,13 +4,21 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Awaitable
 from typing import Any, Protocol
 
 
 class RedisLike(Protocol):
-    async def get(self, key: str) -> str | None: ...
+    """Subset of ``redis.asyncio.Redis`` used by the exact-match cache."""
 
-    async def set(self, key: str, value: str, ex: int | None = None) -> None: ...
+    def get(self, key: str) -> Awaitable[bytes | str | None]: ...
+
+    def set(
+        self,
+        key: str,
+        value: str,
+        ex: int | None = None,
+    ) -> Awaitable[bool | str | bytes | None]: ...
 
 
 def cache_key(messages: list[dict[str, str]], temperature: float, max_tokens: int | None) -> str:
@@ -37,7 +45,8 @@ class CacheService:
         raw = await self._redis.get(cache_key(messages, temperature, max_tokens))
         if raw is None:
             return None
-        return json.loads(raw)
+        loaded: dict[str, Any] = json.loads(raw)
+        return loaded
 
     async def store(
         self,

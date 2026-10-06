@@ -1,9 +1,42 @@
-# Local secrets and Python artifacts
+# Local secrets
 .env
 .env.*
 !.env.example
+
+# Virtual environments
 .venv/
+venv/
+env/
+
+# Python bytecode and packaging
 __pycache__/
 *.py[cod]
+*$py.class
 *.egg-info/
+.eggs/
+build/
+dist/
+*.egg
+
+# Test, coverage, type-checker, and linter caches
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.hypothesis/
+
+# Local graph output (not part of the repo)
+graphify-out/
+
+# Generated Spec Guardrails indexes, if a local tool recreates them
+.specs/memory/
+.specs/workspaces/
+
+# Editor and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store

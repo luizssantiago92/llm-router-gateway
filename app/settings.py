@@ -44,7 +44,9 @@ class Settings:
             ollama_base_url=_require("OLLAMA_BASE_URL"),
             gemini_api_key=_require("GEMINI_API_KEY"),
             gateway_api_key=_require("GATEWAY_API_KEY"),
-            cache_ttl_seconds=int(os.environ.get("CACHE_TTL_SECONDS", _DEFAULTS["CACHE_TTL_SECONDS"])),
+            cache_ttl_seconds=int(
+                os.environ.get("CACHE_TTL_SECONDS", _DEFAULTS["CACHE_TTL_SECONDS"])
+            ),
             complexity_word_threshold=int(
                 os.environ.get("COMPLEXITY_WORD_THRESHOLD", _DEFAULTS["COMPLEXITY_WORD_THRESHOLD"])
             ),

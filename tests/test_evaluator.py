@@ -11,5 +11,11 @@ def test_word_count_above_threshold_is_complex() -> None:
 
 
 def test_keyword_match_is_complex_case_insensitive() -> None:
-    assert classify([{"role": "user", "content": "Please DEBUG this"}], word_threshold=150) == "complex"
-    assert classify([{"role": "user", "content": "explain step by step"}], word_threshold=150) == "complex"
+    assert (
+        classify([{"role": "user", "content": "Please DEBUG this"}], word_threshold=150)
+        == "complex"
+    )
+    assert (
+        classify([{"role": "user", "content": "explain step by step"}], word_threshold=150)
+        == "complex"
+    )
