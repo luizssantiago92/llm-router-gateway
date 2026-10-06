@@ -1,7 +1,3 @@
-# Generated Spec Guardrails indexes (rebuild with `memory-index rebuild`)
-.specs/memory/
-.specs/workspaces/
-
 # Local secrets and Python artifacts
 .env
 .env.*

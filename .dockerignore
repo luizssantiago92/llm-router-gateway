@@ -1,7 +1,6 @@
 .git
 .github
 .venv
-.specs
 .env
 .env.*
 **/__pycache__

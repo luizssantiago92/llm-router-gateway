@@ -2,7 +2,7 @@
 
 OpenAI-shaped facade. Streaming is rejected with HTTP 422 (`stream: true`). Demo callers must send `X-API-Key`. Cloud upstream is Gemini (free-tier oriented).
 
-Product: [README](../../README.md) · [Overview](Overview.md). Domain: [`.specs/domains/llm-router-gateway/spec.md`](../../.specs/domains/llm-router-gateway/spec.md). Historical feature REQs: [`spec.md`](../../.specs/features/001-llm-router-gateway/spec.md).
+Product: [README](../../README.md) · [Overview](Overview.md). Domain: [domain spec](../history/domain-spec.md).
 
 Process factory: `app.main:build_default_app` (Uvicorn `--factory`). Routes are registered on `create_app(...)` for tests that inject fakes.
 

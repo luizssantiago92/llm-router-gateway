@@ -40,7 +40,7 @@ No. Academic / demonstrative reference. Reuse patterns in Gold Queen or a future
 
 ## Must every PR update the README?
 
-**Significant** product, API, setup, architecture, or status changes: **yes, in the same PR** (C-008 / C-009). Skip only purely internal diffs with no stale operator-facing text. When in doubt, update it. Details: [Development](Development.md#documentation-on-every-pr) · [CONTRIBUTING](../../CONTRIBUTING.md).
+**Significant** product, API, setup, architecture, or status changes: **yes, in the same PR**. Skip only purely internal diffs with no stale operator-facing text. When in doubt, update it. Details: [Development](Development.md#documentation-on-every-pr) · [CONTRIBUTING](../../CONTRIBUTING.md).
 
 ## Where is the OpenAI adapter?
 

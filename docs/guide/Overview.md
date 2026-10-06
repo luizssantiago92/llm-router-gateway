@@ -42,7 +42,7 @@ Full story: [How it works](How-it-works.md)
 | --- | --- | --- |
 | **A — Compose demo** | Docker + Gemini API key | [Quick start](Quick-start.md) — `.env` → `docker compose up --build` |
 | **B — Tests only** | Python 3.10+ and uv | `uv sync --frozen --all-extras` → `uv run pytest` (live upstreams skipped). `pip install -e ".[dev]"` still works |
-| **C — Change the product** | Spec Guardrails already installed | `/specify` (or `/elicit` if vague) → `/tasks` → `/loop` → `/verify` |
+| **C — Change the product** | Python 3.10+ and uv | [CONTRIBUTING](../../CONTRIBUTING.md) — small diffs, tests, docs in the same PR |
 
 ---
 
@@ -58,9 +58,9 @@ Full story: [How it works](How-it-works.md)
 
 Reference: [API](API.md)
 
-### Agent chat — when you change this repo
+### Changing this repo
 
-Use Spec Guardrails commands in Cursor (or your agent): `/specify`, `/tasks`, `/loop`, `/verify`. Significant PRs update the [README](../../README.md) and matching `docs/guide/` pages in the **same** PR ([Development](Development.md#documentation-on-every-pr)).
+Significant PRs update the [README](../../README.md) and matching `docs/guide/` pages in the **same** PR ([Development](Development.md#documentation-on-every-pr) · [CONTRIBUTING](../../CONTRIBUTING.md)).
 
 ---
 
@@ -69,8 +69,8 @@ Use Spec Guardrails commands in Cursor (or your agent): `/specify`, `/tasks`, `/
 | Size | Example | Typical path |
 | --- | --- | --- |
 | **Quick** | README typo, one comment | Edit + commit — still fix stale README links if any |
-| **Simple** | Env default, one adapter field | Spec if behavior changes; always update README/guide if operators see it |
-| **Medium+** | New route, new provider, quota rules | Full SDD (`/specify` → `/tasks` → `/loop` → `/verify`) + README + guide |
+| **Simple** | Env default, one adapter field | Update README/guide when operators see the change |
+| **Medium+** | New route, new provider, quota rules | Tests for the new behavior + README + guide |
 
 **Rule of thumb:** if an operator would copy a different curl, env name, or status code, the README changes in that PR.
 
@@ -86,9 +86,9 @@ FastAPI facade, Redis cache, evaluator, Ollama + Gemini adapters, daily quota. T
 
 `docker-compose.yml` + `Dockerfile`. Secrets from `.env` (never committed). Compose builds `REDIS_URL` from `REDIS_PASSWORD` and publishes Redis on `127.0.0.1` only. The image runs as non-root from a digest-pinned base. CI lints and tests on every pull request.
 
-### 3. Specs (`.specs/`)
+### 3. Archived requirements (`docs/history/`)
 
-Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](../../.specs/domains/llm-router-gateway/spec.md) (REQ-001–REQ-022). Archived v1: `.specs/features/001-llm-router-gateway/`. Session: `.specs/STATE.md`.
+Domain requirements: [domain spec](../history/domain-spec.md) (REQ-001–REQ-022). Feature design: [design.md](../history/design.md). Kickoff: [PRD.pt-BR.md](../history/PRD.pt-BR.md).
 
 ### 4. Human docs (`docs/guide/`)
 
@@ -103,7 +103,7 @@ This tree. The root README stays the product front door.
 - Production auth, streaming, RAG, or paid OpenAI
 - That a green `pytest` run means the product is a company chatbot
 
-See [Limitations](Limitations.md) and [README → Still open](../../README.md#still-open-agents-read-this).
+See [Limitations](Limitations.md).
 
 ---
 
