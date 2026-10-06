@@ -30,7 +30,7 @@ jobs:
           enable-cache: "false"
 
       - name: Sync dependencies
-        run: uv sync --frozen --all-extras
+        run: uv sync --frozen
 
       - name: Lint
         run: uv run ruff check app tests

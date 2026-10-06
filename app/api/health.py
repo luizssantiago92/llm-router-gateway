@@ -35,7 +35,7 @@ async def _redis_ok(redis: object) -> bool:
     try:
         result = await ping()
         return bool(result)
-    except Exception:
+    except Exception:  # noqa: BLE001 — a failed ping means Redis is down
         return False
 
 
@@ -47,5 +47,5 @@ async def _provider_ok(provider: object) -> bool:
         return True
     try:
         return bool(await health())
-    except Exception:
+    except Exception:  # noqa: BLE001 — a failed probe means the provider is down
         return False

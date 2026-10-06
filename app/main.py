@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from fastapi import FastAPI
 from redis.asyncio import Redis
 
 from app.api.completions import router as completions_router
@@ -10,7 +11,6 @@ from app.providers.ollama import OllamaProvider
 from app.quota.daily import DailyQuota
 from app.routing.router import Router
 from app.settings import Settings
-from fastapi import FastAPI
 
 
 def create_app(

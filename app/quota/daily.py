@@ -3,15 +3,29 @@
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Awaitable
 from datetime import date, datetime, time, timedelta, timezone
+from typing import Protocol
 
 
 class QuotaExceededError(Exception):
     """Raised when the caller has exhausted the daily chat quota."""
 
 
+class QuotaRedis(Protocol):
+    """Subset of ``redis.asyncio.Redis`` used by the daily quota counter."""
+
+    def incr(self, key: str) -> Awaitable[int]: ...
+
+    def expire(self, key: str, seconds: int) -> Awaitable[bool]: ...
+
+    def get(self, key: str) -> Awaitable[bytes | str | None]: ...
+
+    def decr(self, key: str) -> Awaitable[int]: ...
+
+
 class DailyQuota:
-    def __init__(self, redis: object, daily_limit: int) -> None:
+    def __init__(self, redis: QuotaRedis, daily_limit: int) -> None:
         self._redis = redis
         self._limit = daily_limit
 

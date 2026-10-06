@@ -22,12 +22,14 @@ Procedure: [docs/guide/Development.md](docs/guide/Development.md#documentation-o
 - Conventional Commits (`feat:`, `fix:`, `docs:`, …); subject lowercase-initial, no trailing period.
 
 ```bash
-uv sync --frozen --all-extras
+uv sync --frozen
 uv run ruff check app tests
+uv run ruff format --check
+uv run mypy
 uv run pytest
 ```
 
-`pip install -e ".[dev]"` still works. CI uses `uv.lock`.
+`uv sync` installs the `dev` dependency group. CI uses `uv.lock` and currently runs `ruff check` plus pytest.
 
 `pytest` already skips `@pytest.mark.live` via `pyproject.toml` `addopts`.
 

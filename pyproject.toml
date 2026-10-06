@@ -16,16 +16,16 @@ dependencies = [
     "uvicorn>=0.32.0,<1",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pytest>=8.0.0,<10",
     "pytest-asyncio>=0.24.0,<2",
+    "pytest-cov>=6.0.0,<8",
+    "mypy>=1.13.0,<2",
+    "pip-audit>=2.7.0,<3",
     "PyYAML>=6.0.0,<7",
     "ruff>=0.9.0,<1",
 ]
-
-[tool.uv]
-required-version = ">=0.12.19"
 
 [tool.setuptools.packages.find]
 include = ["app*"]
@@ -41,9 +41,34 @@ addopts = "-m 'not live'"
 [tool.ruff]
 target-version = "py310"
 line-length = 100
-src = ["app", "tests"]
+src = ["."]
 
 [tool.ruff.lint]
-select = ["E", "F"]
-# Pre-existing lines exceed 100; do not fail CI on line length.
-ignore = ["E501"]
+select = [
+    "E",
+    "F",
+    "W",
+    "I",
+    "B",
+    "UP",
+    "S",
+    "ASYNC",
+    "SIM",
+    "RUF",
+    "BLE",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+packages = ["app"]
+
+[tool.coverage.run]
+source = ["app"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true

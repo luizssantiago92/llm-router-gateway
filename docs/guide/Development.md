@@ -12,9 +12,9 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 | `app/` | FastAPI gateway (settings, schemas, cache, routing, providers, routes) |
 | `tests/` | pytest-asyncio suite; `tests/eval/` golden routing harness |
 | `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + Redis (loopback port, password, non-root image) |
-| `.github/workflows/ci.yml` | Lint (`ruff`) + pytest; actions pinned by commit SHA |
+| `.github/workflows/ci.yml` | Lint (`ruff check`) + pytest; actions pinned by commit SHA |
 | `.github/dependabot.yml` | Weekly updates for `uv` (lockfile) and GitHub Actions |
-| `uv.lock` | Locked Python dependencies (`pyproject.toml` stays pip-compatible) |
+| `uv.lock` | Locked runtime and dev dependencies (`[dependency-groups] dev`) |
 | `.env.example` | Required env keys with empty values |
 | `SECURITY.md` | Private vulnerability reports |
 | `docs/guide/` | Human documentation (this tree) |
@@ -32,7 +32,7 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 | Cloud LLM | Google Gemini (demo / free-tier default) |
 | Ship unit | Docker Compose (`api` + `redis`) |
 | Tests | pytest-asyncio (routing, cache hit/miss, fallback, quota); CI on GitHub Actions |
-| Packages | `uv.lock` with upper bounds in `pyproject.toml`; `pip install -e ".[dev]"` still works |
+| Packages | `uv.lock` with upper bounds; dev tools in the uv `dev` group (`uv sync`) |
 
 ## Environment
 
@@ -56,12 +56,14 @@ Never commit `.env`. Secrets are env-only (no `load_dotenv` in the app).
 ## Tests
 
 ```bash
-uv sync --frozen --all-extras
+uv sync --frozen
 uv run ruff check app tests
+uv run ruff format --check
+uv run mypy
 uv run pytest
 ```
 
-`pip install -e ".[dev]"` still works. CI runs the same lint and pytest steps from `uv.lock` (`.github/workflows/ci.yml`). `pyproject.toml` `addopts` already applies `-m "not live"`. Live upstream tests stay opt-in via their marker; do not expect `pytest` (no extra `-m`) to call Gemini or Ollama.
+`uv sync` installs the `dev` group from `uv.lock` (pytest, ruff, mypy, pip-audit, pytest-cov). CI currently runs `ruff check` and pytest (`.github/workflows/ci.yml`). `pyproject.toml` `addopts` already applies `-m "not live"`. Live upstream tests stay opt-in via their marker; do not expect `pytest` (no extra `-m`) to call Gemini or Ollama. Coverage is configured (`source = app`, branch coverage, missing lines) and is reported with `uv run pytest --cov`.
 
 ## Compose
 

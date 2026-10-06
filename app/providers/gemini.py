@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import httpx
 
 from app.providers.base import Completion, ProviderError
@@ -7,10 +9,10 @@ from app.providers.base import Completion, ProviderError
 
 def _messages_to_gemini(
     messages: list[dict[str, str]],
-) -> tuple[str | None, list[dict]]:
+) -> tuple[str | None, list[dict[str, Any]]]:
     """Split OpenAI-shaped messages into systemInstruction + Gemini contents."""
     system_parts: list[str] = []
-    contents: list[dict] = []
+    contents: list[dict[str, Any]] = []
     for message in messages:
         role = message.get("role", "user")
         text = message.get("content", "")
@@ -49,7 +51,7 @@ class GeminiProvider:
         system_instruction, contents = _messages_to_gemini(messages)
         if not contents:
             contents = [{"role": "user", "parts": [{"text": ""}]}]
-        payload: dict = {
+        payload: dict[str, Any] = {
             "contents": contents,
             "generationConfig": {"temperature": temperature},
         }
@@ -70,7 +72,12 @@ class GeminiProvider:
         except ProviderError:
             return False
 
-    async def _request(self, method: str, url: str, json: dict | None = None) -> dict:
+    async def _request(
+        self,
+        method: str,
+        url: str,
+        json: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         headers = {"x-goog-api-key": self._api_key}
         client = self._client or httpx.AsyncClient(timeout=self._timeout)
         owns_client = self._client is None
@@ -87,10 +94,11 @@ class GeminiProvider:
             raise ProviderError("gemini upstream error", status_code=response.status_code)
         if response.status_code >= 400:
             raise ProviderError("gemini client error", status_code=response.status_code)
-        return response.json()
+        body: dict[str, Any] = response.json()
+        return body
 
 
-def _extract_text(data: dict) -> str:
+def _extract_text(data: dict[str, Any]) -> str:
     candidates = data.get("candidates") or []
     if not candidates:
         return ""

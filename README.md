@@ -62,7 +62,7 @@ Set this up **before** the first `docker compose up`.
 | Git | Installed | Clone and version the repo |
 | Editor + terminal | Your usual tools | `.env`, curls, logs |
 | [Ollama](https://ollama.com/) | **Optional** | Local primary for simple prompts (REQ-022) |
-| Python 3.10+ and [uv](https://docs.astral.sh/uv/) | Optional (tests) | Locked `pytest` / lint without Compose (`pip install -e ".[dev]"` still works) |
+| Python 3.10+ and [uv](https://docs.astral.sh/uv/) | Optional (tests) | Locked pytest and lint without Compose (`uv sync` installs the dev group) |
 
 **Ollama is optional.** If it is not installed, health stays `degraded` and simple prompts fall back to Gemini after one local failure. That is the supported demo path.
 
@@ -184,11 +184,11 @@ Stuck? [FAQ](docs/guide/FAQ.md) · [Quick start](docs/guide/Quick-start.md)
 The default suite does **not** call live Gemini or Ollama (`pyproject.toml` already applies `-m "not live"`).
 
 ```bash
-uv sync --frozen --all-extras
+uv sync --frozen
 uv run pytest
 ```
 
-`pip install -e ".[dev]"` still works (`pyproject.toml` stays pip-compatible). CI installs from [`uv.lock`](uv.lock).
+`uv sync` installs runtime dependencies and the `dev` group (pytest, ruff, mypy, pip-audit, pytest-cov). CI installs from [`uv.lock`](uv.lock).
 
 Expected: **41 passed** (marker-filtered). Compose can keep running; tests use fakes, not the container.
 
@@ -217,7 +217,7 @@ Run from the repository root (where `docker-compose.yml` and `pyproject.toml` li
 | `cp .env.example .env` | Create a local secrets file (never commit it). |
 | `docker compose up --build` | Start `api` + `redis`. |
 | `curl -s http://localhost:8000/health` | Probe Redis and providers (no API key). |
-| `uv sync --frozen --all-extras && uv run pytest` | Locked unit/integration suite; live upstreams skipped. |
+| `uv sync --frozen && uv run pytest` | Locked unit/integration suite; live upstreams skipped. |
 
 ### Need to reset quota or cache?
 

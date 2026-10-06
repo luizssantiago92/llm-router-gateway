@@ -41,7 +41,7 @@ Full story: [How it works](How-it-works.md)
 | Path | You have | Flow |
 | --- | --- | --- |
 | **A — Compose demo** | Docker + Gemini API key | [Quick start](Quick-start.md) — `.env` → `docker compose up --build` |
-| **B — Tests only** | Python 3.10+ and uv | `uv sync --frozen --all-extras` → `uv run pytest` (live upstreams skipped). `pip install -e ".[dev]"` still works |
+| **B — Tests only** | Python 3.10+ and uv | `uv sync --frozen` → `uv run pytest` (live upstreams skipped). `uv sync` installs the dev group |
 | **C — Change the product** | Python 3.10+ and uv | [CONTRIBUTING](../../CONTRIBUTING.md) — small diffs, tests, docs in the same PR |
 
 ---
