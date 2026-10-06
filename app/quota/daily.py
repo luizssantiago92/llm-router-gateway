@@ -26,9 +26,7 @@ class DailyQuota:
             await self._redis.expire(key, _seconds_until_midnight_utc())
         if count > self._limit:
             await self._redis.decr(key)
-            raise QuotaExceededError(
-                f"daily chat quota of {self._limit} requests exhausted"
-            )
+            raise QuotaExceededError(f"daily chat quota of {self._limit} requests exhausted")
 
     async def refund(self, api_key: str) -> None:
         key = self._bucket_key(api_key)
