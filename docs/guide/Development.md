@@ -61,11 +61,11 @@ uv sync --frozen
 uv run ruff check app tests
 uv run ruff format --check
 uv run mypy app
-uv export --frozen --no-hashes --no-emit-project | uv run pip-audit -r /dev/stdin --progress-spinner off
+uv export --frozen --no-emit-project | uv run pip-audit -r /dev/stdin --progress-spinner off --disable-pip
 uv run pytest --cov --cov-report=term-missing --cov-fail-under=85
 ```
 
-`uv sync` installs the `dev` group from `uv.lock` (pytest, ruff, mypy, pip-audit, pytest-cov). CI (`.github/workflows/ci.yml`) runs the same commands on Python 3.10, 3.12, and 3.13. `pyproject.toml` `addopts` already applies `-m "not live"`. Live upstream tests stay opt-in via their marker; do not expect `pytest` (no extra `-m`) to call Gemini or Ollama. Coverage is configured (`source = app`, branch coverage, missing lines). The suite is about 86% branch coverage today, so CI fails under 85%. A later test pass raises that floor to 90%.
+`uv sync` installs the `dev` group from `uv.lock` (pytest, ruff, mypy, pip-audit, pytest-cov). CI (`.github/workflows/ci.yml`) runs the same commands on Python 3.10, 3.12, and 3.13. `pip-audit --disable-pip` reads the hashed lock export directly, so it does not build a temporary virtualenv (that path fails on uv's CPython 3.10). `pyproject.toml` `addopts` already applies `-m "not live"`. Live upstream tests stay opt-in via their marker; do not expect `pytest` (no extra `-m`) to call Gemini or Ollama. Coverage is configured (`source = app`, branch coverage, missing lines). The suite is about 86% branch coverage today, so CI fails under 85%. A later test pass raises that floor to 90%.
 
 ## Compose
 

@@ -50,8 +50,11 @@ jobs:
         run: uv run mypy app
 
       - name: Audit dependencies
-        # Locked runtime + default dev group, without the local project (not on PyPI).
-        run: uv export --frozen --no-hashes --no-emit-project | uv run pip-audit -r /dev/stdin --progress-spinner off
+        # Hashed export of the locked tree (runtime + default dev group), without
+        # the local project. --disable-pip audits those pins directly. The default
+        # pip-audit path builds a temporary venv with ensurepip, which fails on
+        # uv's CPython 3.10.
+        run: uv export --frozen --no-emit-project | uv run pip-audit -r /dev/stdin --progress-spinner off --disable-pip
 
       - name: Test
         # Branch coverage is 86% on 3.10, 3.12, and 3.13 today. The gate is 85

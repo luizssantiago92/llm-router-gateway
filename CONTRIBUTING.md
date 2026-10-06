@@ -26,7 +26,7 @@ uv sync --frozen
 uv run ruff check app tests
 uv run ruff format --check
 uv run mypy app
-uv export --frozen --no-hashes --no-emit-project | uv run pip-audit -r /dev/stdin --progress-spinner off
+uv export --frozen --no-emit-project | uv run pip-audit -r /dev/stdin --progress-spinner off --disable-pip
 uv run pytest --cov --cov-report=term-missing --cov-fail-under=85
 ```
 
