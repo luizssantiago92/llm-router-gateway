@@ -28,7 +28,7 @@ The stack is **Python 3.10+ / FastAPI**, **Redis**, **Google Gemini** (default `
 
 | Status | Detail |
 | --- | --- |
-| **Shipped** | Compose demo; `/health` + chat via Gemini; CI (ruff, mypy, coverage, pip-audit on Python 3.10/3.12/3.13) and CodeQL |
+| **Shipped** | Compose demo; `/health` + chat via Gemini; CI (ruff, mypy, coverage, pip-audit on Python 3.10/3.12/3.13), CodeQL, and a Retornatus pull-request gate |
 | **Posture** | Academic / demonstrative — not a production chatbot |
 | **Cloud** | Gemini free tier (`GEMINI_API_KEY`) |
 | **Local** | Optional Ollama; unreachable → health `degraded`, fallback to Gemini |
@@ -237,6 +237,7 @@ Daily quota lives in Redis and resets at **UTC midnight**. To wipe cache and quo
 | [`docker-compose.yml`](docker-compose.yml) | Ship unit: `api` + Redis (loopback port, password required) |
 | [`.env.example`](.env.example) | Env keys with empty values |
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Ruff, mypy, pytest (85% branch-coverage gate), and pip-audit on Python 3.10, 3.12, and 3.13 |
+| [`.github/workflows/retornatus.yml`](.github/workflows/retornatus.yml) | Retornatus verify and diff gates on pull requests |
 | [`.github/workflows/codeql.yml`](.github/workflows/codeql.yml) | CodeQL for Python and GitHub Actions (weekly schedule) |
 | [`.github/dependabot.yml`](.github/dependabot.yml) | Weekly grouped minor/patch updates for `uv` and GitHub Actions |
 | [`LICENSE`](LICENSE) | MIT |

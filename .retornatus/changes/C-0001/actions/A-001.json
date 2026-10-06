@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "C-0001/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Install Retornatus, wire the pull-request gate, and document the switch away from Spec Guardrails.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "CONTRIBUTING.md documents that contributors use Retornatus Changes",
+    "Human review note for \"retornatus workflow review\": deleting the new workflow file rolls back this gate and leaves the existing lint and coverage jobs in place"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0001/T-001",
+      "description": "Initialize the fastapi preset, add the pull-request workflow, and document Changes for contributors.",
+      "lifecycle": "PENDING",
+      "depends_on": [],
+      "resources": [
+        ".github/workflows/retornatus.yml",
+        ".github/copilot-instructions.md",
+        ".gitignore",
+        "CONTRIBUTING.md",
+        "docs/guide/Development.md",
+        "README.md",
+        ".cursor/**"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
