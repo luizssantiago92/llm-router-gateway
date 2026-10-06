@@ -2,14 +2,11 @@
 
 This demo is documented like a product. That does **not** make it the company chatbot.
 
-Spec Guardrails and `docs/guide/` shape **how work is written down**. They do not:
+These limits stay in force:
 
-- remove Gemini free-tier rate limits
-- turn a shared `X-API-Key` into multi-tenant auth
-- prove semantic test quality beyond what `pytest` asserts
-- authorize production scope in this repository without a new `feature-init`
-
-Authoritative agent backlog: root [README → Still open](../../README.md#still-open-agents-read-this).
+- Gemini free-tier rate limits still apply
+- a shared `X-API-Key` is not multi-tenant auth
+- a green `pytest` run is not proof of production quality
 
 | Item | Status | Notes |
 | --- | --- | --- |

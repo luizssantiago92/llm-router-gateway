@@ -1,6 +1,6 @@
 # Development
 
-Application source lives in `app/`. Tests live in `tests/`. Work stays spec-first under [Spec Guardrails](https://github.com/luizssantiago92/spec-guardrails) with the `python-platform` preset.
+Application source lives in `app/`. Tests live in `tests/`.
 
 Human docs live in this `docs/guide/` tree. The root [README](../../README.md) is the product entry point.
 
@@ -8,7 +8,7 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 
 | Path | Purpose |
 | --- | --- |
-| `prd.md` | Product requirements (owner kickoff; historical cloud examples) |
+| `docs/history/PRD.pt-BR.md` | Product requirements (owner kickoff; historical cloud examples) |
 | `app/` | FastAPI gateway (settings, schemas, cache, routing, providers, routes) |
 | `tests/` | pytest-asyncio suite; `tests/eval/` golden routing harness |
 | `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + Redis (loopback port, password, non-root image) |
@@ -18,9 +18,7 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 | `.env.example` | Required env keys with empty values |
 | `SECURITY.md` | Private vulnerability reports |
 | `docs/guide/` | Human documentation (this tree) |
-| `.specs/` | Specs, briefs, gates, session state, archived domain truth |
-| `.cursor/skills/` | Agent hub and phase procedures |
-| `AGENTS.md` | Agent-agnostic execution contract |
+| `docs/history/` | Archived PRD, domain spec (REQ-001–REQ-022), and feature design |
 | `CONTRIBUTING.md` | How to change this repo, including README-on-PR |
 
 ## Stack
@@ -85,37 +83,20 @@ Chat callers must send the **same** `GATEWAY_API_KEY` value as `.env`. The shell
 
 Operator walkthrough: [Quick start](Quick-start.md).
 
-## Spec Guardrails
-
-```bash
-npx @luizsantiago/spec-guardrails doctor
-```
-
-Preset: `python-platform` (see [`.specs/config.yaml`](../../.specs/config.yaml)). Day to day, work in agent chat; the agent calls the CLI when a phase needs it.
-
-Typical Complex order:
-
-```
-/elicit → /specify → /discuss? → /plan → /tasks → /loop → /verify → /archive
-```
-
-v1 (`001-llm-router-gateway`) is archived. Independent `/verify` PASS: [validation.md](../../.specs/features/001-llm-router-gateway/validation.md). Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](../../.specs/domains/llm-router-gateway/spec.md) (REQ-001–REQ-022). Do not re-ask **D-001–D-012**. Session pointer: [`.specs/STATE.md`](../../.specs/STATE.md).
-
-Hub: [`.cursor/skills/agent-architecture.md`](../../.cursor/skills/agent-architecture.md). Conventional Commits; optional gate: `python .specs/guardrails/scripts/check_commit.py --message "…"`.
+Archived requirements: [domain spec](../history/domain-spec.md) (REQ-001–REQ-022) and [feature design](../history/design.md).
 
 ## Documentation on every PR
 
-**C-008** and **C-009:** every pull request that changes product behavior, API, setup, architecture, or public status **must update documentation in that same PR** — not a follow-up.
+Every pull request that changes product behavior, API, setup, architecture, or public status **must update documentation in that same PR** — not a follow-up.
 
-1. **Update [`README.md`](../../README.md)** — status, Quick start, pillars, contract, and Limitations / Still open stay true.
+1. **Update [`README.md`](../../README.md)** — status, Quick start, contract, and limitations stay true.
 2. **Update matching pages under `docs/guide/`** — Overview, Quick-start, How-it-works, Architecture, API, Development, concepts, FAQ, Glossary, Limitations as needed. Add a page only when an existing one cannot hold the change; link it from [guide README](README.md).
-3. **Keep spec memory in sync** — [`.specs/project/PROJECT.md`](../../.specs/project/PROJECT.md) and [`ROADMAP.md`](../../.specs/project/ROADMAP.md) reflect current vision and milestones.
-4. **Write artifacts in English** — README, `docs/`, `.specs/`, commits, and PR bodies (see engineering baseline).
+3. **Write artifacts in English** — README, `docs/`, commits, and PR bodies.
 
-Skip README only when the diff is purely internal (for example a typo in a gate script) and no operator-facing sentence became stale. When in doubt, update the README.
+Skip README only when the diff is purely internal and no operator-facing sentence became stale. When in doubt, update the README.
 
-Cursor rules: `.cursor/rules/pr-documentation.mdc` · `.cursor/rules/engineering-baseline.mdc`. Also [CONTRIBUTING.md](../../CONTRIBUTING.md).
+Also [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## Out of scope / deferred
 
-See [Limitations](Limitations.md) and the root [README → Still open](../../README.md#still-open-agents-read-this). Streaming, production multi-tenant auth, semantic cache, RAG/tools, paid OpenAI happy path, K8s, and hosted deploy are **not** in this demo unless the owner starts a new feature.
+See [Limitations](Limitations.md). Streaming, production multi-tenant auth, semantic cache, RAG/tools, paid OpenAI happy path, Kubernetes, and hosted deploy are **not** in this demo.

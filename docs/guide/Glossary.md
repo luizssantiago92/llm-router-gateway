@@ -12,8 +12,6 @@
 | **Degraded** | `/health` 200 when Redis is up but at least one provider is down |
 | **Demo key** | Shared `GATEWAY_API_KEY` sent as `X-API-Key` — not production auth |
 | **Ship unit** | Docker Compose services `api` + `redis` |
-| **Domain spec** | `.specs/domains/llm-router-gateway/spec.md` (REQ-001–REQ-022) |
-| **C-008 / C-009** | Significant PRs update README + `docs/guide/` in the same PR |
-| **Still open** | Agent-facing deferred backlog in the root README |
+| **Domain spec** | Archived requirements in `docs/history/domain-spec.md` (REQ-001–REQ-022) |
 
 **Go deeper:** [concepts](concepts.md) · [Overview](Overview.md)

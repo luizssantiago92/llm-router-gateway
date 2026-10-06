@@ -2,7 +2,7 @@
 
 LLM Router Gateway is an async FastAPI reverse proxy in front of local and cloud chat models. Clients never pick a provider; the gateway caches, classifies, routes, and fails over.
 
-Product overview: [README](../../README.md) · [Overview](Overview.md). Domain truth: [`.specs/domains/llm-router-gateway/spec.md`](../../.specs/domains/llm-router-gateway/spec.md) (REQ-001–REQ-022). Backlog: [Limitations](Limitations.md) · [Still open](../../README.md#still-open-agents-read-this).
+Product overview: [README](../../README.md) · [Overview](Overview.md). Domain requirements: [domain spec](../history/domain-spec.md) (REQ-001–REQ-022). Backlog: [Limitations](Limitations.md).
 
 Status: **demo shipped** on Compose (Gemini + optional Ollama + quota).
 
@@ -72,7 +72,7 @@ Docker Compose runs `api` and `redis` in isolation. Kubernetes, Helm, and Terraf
 
 ## Surfaces
 
-Declared in archived [`design.md`](../../.specs/features/001-llm-router-gateway/design.md):
+Declared in the archived [feature design](../history/design.md):
 
 - **Ship Surface** — health/OpenAPI, env/secrets, Compose deploy unit, CI (`pytest`), rollback
 - **AI Surface** — chat-routing capability, providers, eval harness (`tests/eval/`), PII policy, fallback/degrade, cost guard

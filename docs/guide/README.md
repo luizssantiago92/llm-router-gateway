@@ -3,7 +3,7 @@
 Plain-language guides for **LLM Router Gateway**.
 **New here?** Read **[Overview](Overview.md)** first, then [Quick start](Quick-start.md).
 
-The root [README](../../README.md) is the product entry point: **The gateway** → numbered **Prepare / Run / Verify** → **Checklist** → **Commands** → **Explore** → **Still open** — with links back here for technical depth.
+The root [README](../../README.md) is the product entry point: **The gateway** → numbered **Prepare / Run / Verify** → **Checklist** → **Commands** → **Explore** — with links back here for technical depth.
 
 ---
 
@@ -27,7 +27,7 @@ The root [README](../../README.md) is the product entry point: **The gateway** �
 | --- | --- |
 | [Architecture.md](Architecture.md) | Components, ship unit, observability |
 | [API.md](API.md) | Completions, health, headers, status codes |
-| [Development.md](Development.md) | Stack, env, pytest, Compose, Spec Guardrails |
+| [Development.md](Development.md) | Stack, env, pytest, Compose |
 | [Limitations.md](Limitations.md) | What this demo does not ship |
 
 ---
@@ -41,6 +41,8 @@ The root [README](../../README.md) is the product entry point: **The gateway** �
 | [../../CONTRIBUTING.md](../../CONTRIBUTING.md) | Contributing + README-on-PR policy |
 | [../../SECURITY.md](../../SECURITY.md) | Private vulnerability reports |
 | [../../LICENSE](../../LICENSE) | MIT license |
-| [../../prd.md](../../prd.md) | Product kickoff (historical; live cloud default is Gemini) |
+| [../history/PRD.pt-BR.md](../history/PRD.pt-BR.md) | Product kickoff (historical; live cloud default is Gemini) |
+| [../history/domain-spec.md](../history/domain-spec.md) | Archived domain requirements (REQ-001–REQ-022) |
+| [../history/design.md](../history/design.md) | Archived feature design |
 
 When a pull request changes behavior, setup, or status, update the matching guide page **and** the root README in the **same** PR. Policy: [Development → Documentation on every PR](Development.md#documentation-on-every-pr).

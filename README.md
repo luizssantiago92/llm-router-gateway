@@ -12,8 +12,7 @@ This repository is the **demo you run locally**: Compose (`api` + `redis`), a Ge
 [Verify](#3-verify) ·
 [Checklist](#checklist) ·
 [Commands](#commands-at-hand) ·
-[Explore](#explore-the-project) ·
-[Still open](#still-open-agents-read-this)
+[Explore](#explore-the-project)
 
 **Docs:** [Overview](docs/guide/Overview.md) · [Quick start](docs/guide/Quick-start.md) · [Full guide](docs/guide/README.md)
 
@@ -34,7 +33,7 @@ The stack is **Python 3.10+ / FastAPI**, **Redis**, **Google Gemini** (default `
 | **Cloud** | Gemini free tier (`GEMINI_API_KEY`) |
 | **Local** | Optional Ollama; unreachable → health `degraded`, fallback to Gemini |
 | **Cost guard** | `X-API-Key` (`GATEWAY_API_KEY`) + Redis daily quota (default 5; cache hits free) |
-| **Domain** | [`.specs/domains/llm-router-gateway/spec.md`](.specs/domains/llm-router-gateway/spec.md) (REQ-001–REQ-022) |
+| **Domain** | [Historical spec](docs/history/domain-spec.md) (REQ-001–REQ-022) |
 
 **Reuse intent:** lift cache, routing, fallback, quota, and the Gemini adapter into [Gold Queen](https://github.com/luizssantiago92/gold-queen-api) where useful. A real company chatbot is a later product. This repo stays the demo.
 
@@ -219,7 +218,6 @@ Run from the repository root (where `docker-compose.yml` and `pyproject.toml` li
 | `docker compose up --build` | Start `api` + `redis`. |
 | `curl -s http://localhost:8000/health` | Probe Redis and providers (no API key). |
 | `uv sync --frozen --all-extras && uv run pytest` | Locked unit/integration suite; live upstreams skipped. |
-| `npx @luizsantiago/spec-guardrails doctor` | Spec Guardrails Process / Brakes scores. |
 
 ### Need to reset quota or cache?
 
@@ -242,11 +240,11 @@ Daily quota lives in Redis and resets at **UTC midnight**. To wipe cache and quo
 | [`LICENSE`](LICENSE) | MIT |
 | [`SECURITY.md`](SECURITY.md) | How to report a vulnerability |
 | [`docs/guide/`](docs/guide/README.md) | Overview, Quick start, Architecture, API, FAQ |
-| [`AGENTS.md`](AGENTS.md) | Agent execution contract |
-| [`.specs/domains/llm-router-gateway/spec.md`](.specs/domains/llm-router-gateway/spec.md) | Domain truth REQ-001–REQ-022 |
-| [`prd.md`](prd.md) | Product kickoff (historical; live cloud default is Gemini) |
+| [`docs/history/domain-spec.md`](docs/history/domain-spec.md) | Archived domain requirements REQ-001–REQ-022 |
+| [`docs/history/design.md`](docs/history/design.md) | Archived feature design |
+| [`docs/history/PRD.pt-BR.md`](docs/history/PRD.pt-BR.md) | Product kickoff (historical; live cloud default is Gemini) |
 
-The target is **one local Compose instance**. JSON files and a shared demo key simplify the lab; production would need its own identity, multi-tenant quotas, and hosting decisions. See [Limitations](docs/guide/Limitations.md).
+The target is **one local Compose instance**. A shared demo key simplifies the lab; production would need its own identity, multi-tenant quotas, and hosting decisions. See [Limitations](docs/guide/Limitations.md).
 
 ---
 
@@ -291,42 +289,7 @@ Streaming is not supported (`stream: true` → 422). Clients never choose a prov
 
 **Go deeper:** [How it works](docs/guide/How-it-works.md) · [Architecture](docs/guide/Architecture.md) · [API](docs/guide/API.md)
 
----
-
-## Spec Guardrails
-
-This repo is governed with [Spec Guardrails](https://github.com/luizssantiago92/spec-guardrails) (`python-platform`). Work in agent chat; the agent calls the CLI when a phase needs it.
-
-```
-/elicit → /specify → /discuss? → /plan → /tasks → /loop → /verify → /archive
-```
-
-v1 is archived. Do not re-ask **D-001–D-012**. Significant PRs update this README and `docs/guide/` **in the same PR** (C-008 / C-009) — [CONTRIBUTING](CONTRIBUTING.md).
-
----
-
-## Still open (agents: read this)
-
-Do **not** treat the list below as in-scope until the owner starts a new `feature-init`. Prefer extracting pieces into Gold Queen or a future production chatbot rather than growing this demo here.
-
-| Item | Status | Notes |
-| --- | --- | --- |
-| Streaming (`stream: true`) | **deferred** | Rejected with 422 today (D-009) |
-| Production edge auth | **deferred** | Only shared `GATEWAY_API_KEY` / `X-API-Key` |
-| Multi-tenancy / per-tenant quotas | **deferred** | Single demo key + daily Redis bucket (UTC midnight) |
-| Semantic / embedding cache | **deferred** | Exact-match SHA-256 only |
-| Rate limits beyond daily quota | **deferred** | — |
-| RAG / tools / function calling | **deferred** | — |
-| Paid OpenAI (or other paid cloud) happy path | **deferred** | Separate product / company chatbot later |
-| vLLM / Anthropic adapters (happy path) | **deferred** | Protocol-ready ideas only |
-| Kubernetes / Helm / Terraform | **deferred** | Compose is the ship unit |
-| Hosted deploy (Render, etc.) | **not started** | Optional for demos; Gold Queen already has deploy patterns |
-| First-class Ollama in Compose | **not started** | Ollama stays external; optional on stronger machines |
-| UI / chat frontend | **not started** | API-only demo |
-
-**Owner roadmap (outside this repo):** (1) reuse interesting bits in Gold Queen → (2) later build a real company chatbot on paid/controlled infra → (3) keep **this** repository as the academic / zero-cost demonstrative reference.
-
-Session: [`.specs/STATE.md`](.specs/STATE.md) · milestones: [`.specs/project/ROADMAP.md`](.specs/project/ROADMAP.md) · full table: [Limitations](docs/guide/Limitations.md)
+Deferred scope (streaming, production auth, hosted deploy, and the rest) lives in [Limitations](docs/guide/Limitations.md).
 
 ---
 
@@ -343,13 +306,12 @@ Session: [`.specs/STATE.md`](.specs/STATE.md) · milestones: [`.specs/project/RO
 
 - [Architecture](docs/guide/Architecture.md) · [API](docs/guide/API.md) · [concepts](docs/guide/concepts.md)
 - [FAQ](docs/guide/FAQ.md) · [Glossary](docs/guide/Glossary.md)
-- [Development](docs/guide/Development.md) — stack, env, pytest, C-008 / C-009
+- [Development](docs/guide/Development.md) — stack, env, pytest
 
 ### Advanced
 
 - [Limitations](docs/guide/Limitations.md) · [CHANGELOG](docs/CHANGELOG.md) · [CONTRIBUTING](CONTRIBUTING.md)
-- Domain [spec.md](.specs/domains/llm-router-gateway/spec.md) · [`prd.md`](prd.md)
-- [PROJECT.md](.specs/project/PROJECT.md) · [ROADMAP.md](.specs/project/ROADMAP.md)
+- [Domain spec](docs/history/domain-spec.md) · [design](docs/history/design.md) · [PRD (pt-BR)](docs/history/PRD.pt-BR.md)
 
 Full index: [docs/guide/README.md](docs/guide/README.md)
 
