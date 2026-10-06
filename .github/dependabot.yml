@@ -1,14 +1,38 @@
 version: 2
 updates:
-  # Pip-compatible project. The uv ecosystem updates uv.lock (and pyproject ranges).
+  # uv.lock is the lockfile. The uv ecosystem updates it and pyproject ranges.
   - package-ecosystem: uv
-    directory: /
+    directory: "/"
     schedule:
       interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Sao_Paulo
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: build(deps)
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: github-actions
-    directory: /
+    directory: "/"
     schedule:
       interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Sao_Paulo
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: ci(deps)
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch

@@ -27,7 +27,7 @@ The root [README](../../README.md) is the product entry point: **The gateway** â
 | --- | --- |
 | [Architecture.md](Architecture.md) | Components, ship unit, observability |
 | [API.md](API.md) | Completions, health, headers, status codes |
-| [Development.md](Development.md) | Stack, env, pytest, Compose |
+| [Development.md](Development.md) | Stack, env, pytest, CI, Compose |
 | [Limitations.md](Limitations.md) | What this demo does not ship |
 
 ---
