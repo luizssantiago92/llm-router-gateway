@@ -31,12 +31,21 @@ htmlcov/
 # Local graph output (not part of the repo)
 graphify-out/
 
-# Generated Spec Guardrails indexes, if a local tool recreates them
-.specs/memory/
-.specs/workspaces/
-
 # Editor and OS
 .idea/
 .vscode/
 *.swp
 .DS_Store
+
+# retornatus-gitignore:begin
+# Local index and cache. Canonical Retornatus artifacts stay tracked.
+.retornatus/index/
+.retornatus/runtime/
+# Private keys and local env files. Public keys stay tracked.
+*.pem
+*.key
+.env
+.env.*
+!.env.example
+!.retornatus/keys/*.pub
+# retornatus-gitignore:end

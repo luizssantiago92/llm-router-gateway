@@ -34,6 +34,21 @@ uv run pytest --cov --cov-report=term-missing --cov-fail-under=85
 
 `pytest` already skips `@pytest.mark.live` via `pyproject.toml` `addopts`.
 
+## Agent governance
+
+This repo uses [Retornatus](https://github.com/luizssantiago92/retornatus) Changes under [`.retornatus/`](.retornatus/config.toml). Spec Guardrails agent packs are not used here.
+
+Retornatus is a CLI tool install, not an application dependency. The package requires Python 3.11+, and CI still syncs this project on Python 3.10, so it stays out of `pyproject.toml`. The pull-request job installs it itself.
+
+```bash
+uv tool install "retornatus==1.9.1"
+retornatus doctor
+```
+
+Create a Change before the work (`retornatus change elicit`, then `retornatus change create`) and keep the Contract active. Record proof with `retornatus checks run` or `retornatus evidence run`, then `retornatus verify`. [`.github/workflows/retornatus.yml`](.github/workflows/retornatus.yml) runs `luizssantiago92/retornatus@v1` on pull requests. Dependabot diffs that only touch dependency manifests warn on the omission gate instead of failing. The ruff, format, mypy, pip-audit, pytest, and CodeQL jobs stay in place.
+
+Cursor reads [`.cursor/rules/retornatus.mdc`](.cursor/rules/retornatus.mdc) and the hub skill at [`.cursor/skills/retornatus/SKILL.md`](.cursor/skills/retornatus/SKILL.md). The preset is `fastapi` (pytest, ruff, ruff format, mypy). `ruff check` lists `app` and `tests` because this repo has no `src/` tree.
+
 ## Layout
 
 | Path | Role |

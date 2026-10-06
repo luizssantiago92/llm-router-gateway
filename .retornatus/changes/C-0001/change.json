@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0001",
+  "title": "Install Retornatus as the agent-governance layer",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Install Retornatus as the agent-governance layer for this FastAPI repo and retire leftover Spec Guardrails agent tooling.",
+    "kind": "MIGRATION"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 2,
+  "relations": [],
+  "created_at": "2026-10-06T23:17:36.454590Z"
+}

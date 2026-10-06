@@ -13,7 +13,9 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 | `tests/` | pytest-asyncio suite; `tests/eval/` golden routing harness |
 | `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + Redis (loopback port, password, non-root image) |
 | `.github/workflows/ci.yml` | Ruff check, ruff format, mypy, pytest with an 85% branch-coverage gate, and pip-audit on Python 3.10, 3.12, and 3.13; actions pinned by commit SHA |
+| `.github/workflows/retornatus.yml` | Retornatus verify and diff gates on pull requests (`luizssantiago92/retornatus@v1`) |
 | `.github/workflows/codeql.yml` | CodeQL analysis for Python and GitHub Actions; weekly schedule |
+| `.retornatus/` | Retornatus Changes, Contracts, and Evidence (agent governance; not Spec Guardrails) |
 | `.github/dependabot.yml` | Weekly grouped minor/patch updates for `uv` (lockfile) and GitHub Actions |
 | `uv.lock` | Locked runtime and dev dependencies (`[dependency-groups] dev`) |
 | `.env.example` | Required env keys with empty values |
@@ -100,6 +102,10 @@ Every pull request that changes product behavior, API, setup, architecture, or p
 Skip README only when the diff is purely internal and no operator-facing sentence became stale. When in doubt, update the README.
 
 Also [CONTRIBUTING.md](../../CONTRIBUTING.md).
+
+## Agent governance
+
+Contributors and coding agents use Retornatus Changes, not Spec Guardrails. The CLI is installed with `uv tool install "retornatus==1.9.1"` (Python 3.11+). It is not a `pyproject.toml` dependency, because this repo's CI still runs on Python 3.10. State lives in [`.retornatus/`](../../.retornatus/config.toml). The pull-request check is [`.github/workflows/retornatus.yml`](../../.github/workflows/retornatus.yml). See [CONTRIBUTING](../../CONTRIBUTING.md#agent-governance).
 
 ## Out of scope / deferred
 
