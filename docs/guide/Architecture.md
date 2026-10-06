@@ -74,7 +74,7 @@ Docker Compose runs `api` and `redis` in isolation. Kubernetes, Helm, and Terraf
 
 Declared in the archived [feature design](../history/design.md):
 
-- **Ship Surface** — health/OpenAPI, env/secrets, Compose deploy unit, CI (`pytest`), rollback
+- **Ship Surface** — health/OpenAPI, env/secrets, Compose deploy unit, CI (ruff, mypy, pytest coverage, pip-audit, CodeQL), rollback
 - **AI Surface** — chat-routing capability, providers, eval harness (`tests/eval/`), PII policy, fallback/degrade, cost guard
 
 **Go deeper:** [How it works](How-it-works.md) · [API](API.md) · [concepts](concepts.md)

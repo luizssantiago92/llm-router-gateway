@@ -25,11 +25,12 @@ Procedure: [docs/guide/Development.md](docs/guide/Development.md#documentation-o
 uv sync --frozen
 uv run ruff check app tests
 uv run ruff format --check
-uv run mypy
-uv run pytest
+uv run mypy app
+uv export --frozen --no-hashes --no-emit-project | uv run pip-audit -r /dev/stdin --progress-spinner off
+uv run pytest --cov --cov-report=term-missing --cov-fail-under=85
 ```
 
-`uv sync` installs the `dev` dependency group. CI uses `uv.lock` and currently runs `ruff check` plus pytest.
+`uv sync` installs the `dev` dependency group. CI uses `uv.lock` and runs those commands on Python 3.10, 3.12, and 3.13. The coverage gate is 85% branch coverage (about 86% today).
 
 `pytest` already skips `@pytest.mark.live` via `pyproject.toml` `addopts`.
 

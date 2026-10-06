@@ -12,8 +12,9 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 | `app/` | FastAPI gateway (settings, schemas, cache, routing, providers, routes) |
 | `tests/` | pytest-asyncio suite; `tests/eval/` golden routing harness |
 | `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + Redis (loopback port, password, non-root image) |
-| `.github/workflows/ci.yml` | Lint (`ruff check`) + pytest; actions pinned by commit SHA |
-| `.github/dependabot.yml` | Weekly updates for `uv` (lockfile) and GitHub Actions |
+| `.github/workflows/ci.yml` | Ruff check, ruff format, mypy, pytest with an 85% branch-coverage gate, and pip-audit on Python 3.10, 3.12, and 3.13; actions pinned by commit SHA |
+| `.github/workflows/codeql.yml` | CodeQL analysis for Python and GitHub Actions; weekly schedule |
+| `.github/dependabot.yml` | Weekly grouped minor/patch updates for `uv` (lockfile) and GitHub Actions |
 | `uv.lock` | Locked runtime and dev dependencies (`[dependency-groups] dev`) |
 | `.env.example` | Required env keys with empty values |
 | `SECURITY.md` | Private vulnerability reports |
@@ -31,7 +32,7 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 | Local LLM | Ollama (optional; unreachable → one-hop fallback to Gemini) |
 | Cloud LLM | Google Gemini (demo / free-tier default) |
 | Ship unit | Docker Compose (`api` + `redis`) |
-| Tests | pytest-asyncio (routing, cache hit/miss, fallback, quota); CI on GitHub Actions |
+| Tests | pytest-asyncio (routing, cache hit/miss, fallback, quota); CI on GitHub Actions (Python 3.10, 3.12, 3.13) |
 | Packages | `uv.lock` with upper bounds; dev tools in the uv `dev` group (`uv sync`) |
 
 ## Environment
@@ -59,11 +60,12 @@ Never commit `.env`. Secrets are env-only (no `load_dotenv` in the app).
 uv sync --frozen
 uv run ruff check app tests
 uv run ruff format --check
-uv run mypy
-uv run pytest
+uv run mypy app
+uv export --frozen --no-hashes --no-emit-project | uv run pip-audit -r /dev/stdin --progress-spinner off
+uv run pytest --cov --cov-report=term-missing --cov-fail-under=85
 ```
 
-`uv sync` installs the `dev` group from `uv.lock` (pytest, ruff, mypy, pip-audit, pytest-cov). CI currently runs `ruff check` and pytest (`.github/workflows/ci.yml`). `pyproject.toml` `addopts` already applies `-m "not live"`. Live upstream tests stay opt-in via their marker; do not expect `pytest` (no extra `-m`) to call Gemini or Ollama. Coverage is configured (`source = app`, branch coverage, missing lines) and is reported with `uv run pytest --cov`.
+`uv sync` installs the `dev` group from `uv.lock` (pytest, ruff, mypy, pip-audit, pytest-cov). CI (`.github/workflows/ci.yml`) runs the same commands on Python 3.10, 3.12, and 3.13. `pyproject.toml` `addopts` already applies `-m "not live"`. Live upstream tests stay opt-in via their marker; do not expect `pytest` (no extra `-m`) to call Gemini or Ollama. Coverage is configured (`source = app`, branch coverage, missing lines). The suite is about 86% branch coverage today, so CI fails under 85%. A later test pass raises that floor to 90%.
 
 ## Compose
 

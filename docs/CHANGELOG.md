@@ -2,6 +2,12 @@
 
 Project-level notes (not a library semver). Product page: [README](../README.md). Guide: [docs/guide](guide/README.md).
 
+## 2026-10-06
+
+- CI runs `ruff check`, `ruff format --check`, `mypy app`, pytest with an 85% branch-coverage gate, and `pip-audit` on Python 3.10, 3.12, and 3.13. Pushes to `main` are not cancelled by a later push.
+- CodeQL analyzes Python and GitHub Actions on pull requests, pushes to `main`, and a weekly schedule.
+- Dependabot groups minor and patch updates for the `uv` ecosystem and GitHub Actions (Mondays 09:00 America/Sao_Paulo).
+
 ## 2026-09-27
 
 - GitHub Actions CI runs `ruff` and pytest with least-privilege `contents: read` and SHA-pinned actions.
