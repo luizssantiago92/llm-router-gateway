@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "C-0001/E-007",
+  "type": "review_result",
+  "subject": "retornatus workflow review",
+  "source": "Reviewed .github/workflows/retornatus.yml: it adds the Retornatus pull-request gate and does not remove the ruff, mypy, pytest, pip-audit, or CodeQL jobs. Rollback is deleting that workflow file.",
+  "producer": "agent",
+  "observed_at": "2026-10-06T23:19:42.152042Z",
+  "subject_state": null,
+  "provenance": "self_reported",
+  "command": null,
+  "exit_code": null,
+  "started_at": null,
+  "ended_at": null,
+  "duration_ms": null,
+  "output_sha256": null,
+  "output_tail": null,
+  "output_artifact": null,
+  "git_commit": null,
+  "worktree_dirty": null,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0001/claim-done-3",
+      "note": null
+    }
+  ]
+}

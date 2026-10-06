@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "id": "C-0001/E-005",
+  "type": "repository_observation",
+  "subject": "ship rollback",
+  "source": "Rollback is deleting .github/workflows/retornatus.yml. ci.yml and codeql.yml stay, so removing this workflow restores the previous pull-request checks.",
+  "producer": "retornatus",
+  "observed_at": "2026-10-06T23:19:41.704338Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "actionlint"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-06T23:19:41.699181Z",
+  "ended_at": "2026-10-06T23:19:41.701949Z",
+  "duration_ms": 2,
+  "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "output_tail": "",
+  "output_artifact": ".retornatus/changes/C-0001/evidence/E-005.output.txt",
+  "git_commit": "d247b8c4fee0d4088fbdd076723d3c36974d2caa",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": []
+}
