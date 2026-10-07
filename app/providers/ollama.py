@@ -25,12 +25,23 @@ class OllamaProvider:
     async def complete(
         self,
         messages: list[dict[str, str]],
-        temperature: float,
+        temperature: float | None,
         max_tokens: int | None,
+        *,
+        top_p: float | None = None,
+        stop: list[str] | None = None,
+        model: str | None = None,
     ) -> Completion:
-        options: dict[str, float | int] = {"temperature": temperature}
+        del model
+        options: dict[str, Any] = {
+            "temperature": 1.0 if temperature is None else temperature,
+        }
+        if top_p is not None:
+            options["top_p"] = top_p
         if max_tokens is not None:
             options["num_predict"] = max_tokens
+        if stop:
+            options["stop"] = stop
         payload: dict[str, Any] = {
             "model": self._model,
             "messages": messages,

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "C-0007/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Forward Gemini sampling, model choice, and finish reasons",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "An omitted temperature is absent from the Gemini generation config",
+    "A provided top_p is copied into the Gemini generation config as topP",
+    "An omitted top_p keeps the same cache key",
+    "A model name that starts with gemini returns that model in the Gemini request URL",
+    "A non-gemini model name returns the configured cloud model in the Gemini request URL",
+    "A Gemini MAX_TOKENS finish reason returns finish_reason length",
+    "A blocked Gemini prompt with no text returns HTTP 502 and does not call the secondary provider"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0007/T-001",
+      "description": "Forward Gemini sampling and model choice and map finish reasons",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "app/schemas/chat.py",
+        "app/providers/base.py",
+        "app/providers/gemini.py",
+        "app/providers/ollama.py",
+        "app/providers/fake.py",
+        "app/routing/router.py",
+        "app/api/completions.py",
+        "app/cache/service.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0007/T-002",
+      "description": "Cover Gemini request mapping with tests and update the guide pages",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0007/T-001"
+      ],
+      "resources": [
+        "tests/test_gemini_adapter.py",
+        "tests/test_gemini_request.py",
+        "tests/test_cache.py",
+        "tests/test_fallback.py",
+        "tests/test_deps.py",
+        "docs/guide/API.md",
+        "docs/guide/concepts.md",
+        "docs/guide/How-it-works.md",
+        "docs/CHANGELOG.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

@@ -23,9 +23,34 @@ class RedisLike(Protocol):
     ) -> Awaitable[bool | str | bytes | None]: ...
 
 
-def cache_key(messages: list[dict[str, str]], temperature: float, max_tokens: int | None) -> str:
+def cache_key(
+    messages: list[dict[str, str]],
+    temperature: float,
+    max_tokens: int | None,
+    *,
+    top_p: float | None = None,
+    stop: list[str] | None = None,
+    model: str | None = None,
+) -> str:
+    """Hash the prompt identity.
+
+    Omitted sampling and model stay out of the payload so an older key still
+    matches. A caller-selected cloud model is part of the identity because it
+    changes the completion.
+    """
+    identity: dict[str, Any] = {
+        "messages": messages,
+        "max_tokens": max_tokens,
+        "temperature": temperature,
+    }
+    if top_p is not None:
+        identity["top_p"] = top_p
+    if stop:
+        identity["stop"] = stop
+    if model:
+        identity["model"] = model
     payload = json.dumps(
-        {"messages": messages, "max_tokens": max_tokens, "temperature": temperature},
+        identity,
         sort_keys=True,
         separators=(",", ":"),
         ensure_ascii=False,
@@ -43,9 +68,22 @@ class CacheService:
         messages: list[dict[str, str]],
         temperature: float,
         max_tokens: int | None,
+        *,
+        top_p: float | None = None,
+        stop: list[str] | None = None,
+        model: str | None = None,
     ) -> dict[str, Any] | None:
         try:
-            raw = await self._redis.get(cache_key(messages, temperature, max_tokens))
+            raw = await self._redis.get(
+                cache_key(
+                    messages,
+                    temperature,
+                    max_tokens,
+                    top_p=top_p,
+                    stop=stop,
+                    model=model,
+                )
+            )
         except REDIS_FAILURES:
             return None
         if raw is None:
@@ -65,6 +103,9 @@ class CacheService:
         max_tokens: int | None,
         value: dict[str, Any],
         *,
+        top_p: float | None = None,
+        stop: list[str] | None = None,
+        model: str | None = None,
         status_code: int | None = None,
         timed_out: bool = False,
     ) -> None:
@@ -74,7 +115,14 @@ class CacheService:
             return
         try:
             await self._redis.set(
-                cache_key(messages, temperature, max_tokens),
+                cache_key(
+                    messages,
+                    temperature,
+                    max_tokens,
+                    top_p=top_p,
+                    stop=stop,
+                    model=model,
+                ),
                 json.dumps(value, ensure_ascii=False),
                 ex=self._ttl_seconds,
             )

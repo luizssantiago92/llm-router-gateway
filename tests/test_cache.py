@@ -33,6 +33,10 @@ async def test_cache_key_is_sha256_of_canonical_triple() -> None:
     assert "gpt" not in key
     other = cache_key(messages, 0.3, 32)
     assert other != key
+    assert cache_key(messages, 0.2, 32, top_p=None) == key
+    assert cache_key(messages, 0.2, 32, top_p=0.5) != key
+    assert cache_key(messages, 0.2, 32, stop=["END"]) != key
+    assert cache_key(messages, 0.2, 32, model="gemini-2.5-pro") != key
 
 
 @pytest.mark.asyncio

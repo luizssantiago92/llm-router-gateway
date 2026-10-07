@@ -57,6 +57,7 @@ class Completion:
     model: str
     provider: str
     usage: TokenUsage | None = None
+    finish_reason: str = "stop"
 
 
 class ProviderError(Exception):
@@ -86,8 +87,12 @@ class Provider(Protocol):
     async def complete(
         self,
         messages: list[dict[str, str]],
-        temperature: float,
+        temperature: float | None,
         max_tokens: int | None,
+        *,
+        top_p: float | None = None,
+        stop: list[str] | None = None,
+        model: str | None = None,
     ) -> Completion: ...
 
     async def health(self) -> bool: ...

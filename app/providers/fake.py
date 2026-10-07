@@ -15,6 +15,7 @@ class FakeProvider:
         error: ProviderError | None = None,
         healthy: bool = True,
         usage: TokenUsage | None = None,
+        finish_reason: str = "stop",
     ) -> None:
         self.name = name
         self.content = content
@@ -22,14 +23,20 @@ class FakeProvider:
         self.error = error
         self.healthy = healthy
         self.usage = usage
+        self.finish_reason = finish_reason
         self.calls = 0
 
     async def complete(
         self,
         messages: list[dict[str, str]],
-        temperature: float,
+        temperature: float | None,
         max_tokens: int | None,
+        *,
+        top_p: float | None = None,
+        stop: list[str] | None = None,
+        model: str | None = None,
     ) -> Completion:
+        del top_p, stop, model
         self.calls += 1
         if self.error is not None:
             raise self.error
@@ -38,6 +45,7 @@ class FakeProvider:
             model=self.model,
             provider=self.name,
             usage=self.usage,
+            finish_reason=self.finish_reason,
         )
 
     async def health(self) -> bool:

@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from app.settings import (
     MAX_MAX_TOKENS,
@@ -23,7 +23,27 @@ class ChatCompletionRequest(BaseModel):
     messages: list[ChatMessage] = Field(min_length=1, max_length=MAX_MESSAGES)
     temperature: float | None = Field(None, ge=MIN_TEMPERATURE, le=MAX_TEMPERATURE)
     max_tokens: int | None = Field(None, ge=MIN_MAX_TOKENS, le=MAX_MAX_TOKENS)
+    top_p: float | None = Field(None, ge=0, le=1)
+    stop: list[str] | None = Field(None, min_length=1, max_length=5)
+    model: str | None = Field(None, min_length=1, max_length=128)
     stream: bool = False
+
+    @field_validator("stop", mode="before")
+    @classmethod
+    def wrap_stop_string(cls, value: object) -> object:
+        if isinstance(value, str):
+            return [value]
+        return value
+
+    @field_validator("stop")
+    @classmethod
+    def bound_stop_sequences(cls, value: list[str] | None) -> list[str] | None:
+        if value is None:
+            return None
+        for item in value:
+            if not 1 <= len(item) <= 256:
+                raise ValueError("each stop sequence must be 1 to 256 characters")
+        return value
 
     @model_validator(mode="after")
     def reject_streaming(self) -> "ChatCompletionRequest":
