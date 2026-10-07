@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "C-0003/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Authenticate chat with APIKeyHeader and HTTPBearer before body validation.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "A non-ASCII chat credential returns HTTP 401",
+    "Chat returns HTTP 401 before request-body validation when the credential is missing",
+    "The generated schema lists an API key header scheme and an HTTP bearer scheme"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0003/T-001",
+      "description": "Add the security dependency and run it before chat body validation.",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "app/security.py",
+        "app/api/completions.py",
+        "app/main.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0003/T-002",
+      "description": "Prove non-ASCII 401, early 401, and OpenAPI schemes with tests and docs.",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0003/T-001"
+      ],
+      "resources": [
+        "tests/test_api_key.py",
+        "docs/guide/API.md",
+        "docs/guide/Development.md",
+        "docs/CHANGELOG.md",
+        "README.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

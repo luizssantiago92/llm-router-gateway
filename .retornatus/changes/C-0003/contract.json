@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0003",
+  "version": 1,
+  "what": "Replace the inline X-API-Key check on POST /v1/chat/completions with a FastAPI security dependency that accepts APIKeyHeader (X-API-Key) or HTTPBearer (Authorization: Bearer). Compare the presented credential to GATEWAY_API_KEY as UTF-8 bytes with secrets.compare_digest so a non-ASCII value returns 401 instead of 500. Run that check before request-body validation, including invalid JSON. Expose both schemes in the OpenAPI securitySchemes. Keep the 401 JSON body and leave GET /health unauthenticated. Do not add input size limits, OpenAI error mapping, retries, Gemini model changes, structured logs, a coverage-floor change, or a demo mode.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "A non-ASCII chat credential returns HTTP 401",
+    "Chat returns HTTP 401 before request-body validation when the credential is missing",
+    "The generated schema lists an API key header scheme and an HTTP bearer scheme"
+  ],
+  "active": true,
+  "activated_at": "2026-10-07T03:15:01.388064Z"
+}

@@ -48,7 +48,7 @@ Copy [`.env.example`](../../.env.example) to `.env` (never commit `.env`):
 | `OLLAMA_BASE_URL` | yes in-process; Compose fills a default | `http://host.docker.internal:11434` (OK if Ollama is not installed) |
 | `GEMINI_API_KEY` | yes | — |
 | `GEMINI_MODEL` | no | `gemini-3.5-flash` (override in AI Studio if needed) |
-| `GATEWAY_API_KEY` | yes | — (value callers send as `X-API-Key`) |
+| `GATEWAY_API_KEY` | yes | — (callers send it as `X-API-Key` or `Authorization: Bearer`) |
 | `CHAT_DAILY_LIMIT` | no | `5` |
 | `CACHE_TTL_SECONDS` | no | `3600` |
 | `COMPLEXITY_WORD_THRESHOLD` | no | `150` |
@@ -85,7 +85,7 @@ docker compose up --build
 - Ollama is **not** in Compose. If the host cannot run Ollama, leave the default URL: health reports `degraded` and the router falls back to Gemini after one local failure.
 - Compose sets `extra_hosts: host.docker.internal:host-gateway` so Linux Docker Engine can reach an optional **host** Ollama the same way Docker Desktop does. That mapping is unused when Ollama is not installed.
 
-Chat callers must send the **same** `GATEWAY_API_KEY` value as `.env`. The shell variable `$GATEWAY_API_KEY` is not set by Compose; substituting an empty header returns HTTP 401. Health probes do not send a key (REQ-020).
+Chat callers must send the **same** `GATEWAY_API_KEY` value as `.env`, either as `X-API-Key` or `Authorization: Bearer`. The shell variable `$GATEWAY_API_KEY` is not set by Compose; substituting an empty header returns HTTP 401. A non-ASCII credential is also 401. Health probes do not send a key (REQ-020).
 
 Operator walkthrough: [Quick start](Quick-start.md).
 

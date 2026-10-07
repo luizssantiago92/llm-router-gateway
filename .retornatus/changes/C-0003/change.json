@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0003",
+  "title": "Authenticate chat with an API key security dependency",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Make the chat API key a FastAPI security dependency (polish item: API key as a security dependency, finding LLM-A3). One focused change.",
+    "kind": "SECURITY"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-07T03:15:01.378143Z"
+}

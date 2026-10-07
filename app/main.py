@@ -11,7 +11,8 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 from app.api.completions import router as completions_router
 from app.api.health import router as health_router
@@ -20,6 +21,7 @@ from app.providers.base import Provider
 from app.quota.daily import DailyQuota
 from app.routing.router import Router
 from app.runtime import AppRuntime, build_runtime
+from app.security import GatewayUnauthorized
 from app.settings import Settings
 
 _RESOURCE_NAMES = (
@@ -44,6 +46,7 @@ def create_app(
     quota: DailyQuota | None = None,
 ) -> FastAPI:
     app = FastAPI(title="LLM Router Gateway", lifespan=lifespan)
+    app.add_exception_handler(GatewayUnauthorized, _unauthorized)
     app.state.settings = settings
     app.state.cache = cache
     app.state.router = router
@@ -54,6 +57,13 @@ def create_app(
     app.include_router(completions_router)
     app.include_router(health_router)
     return app
+
+
+async def _unauthorized(_request: Request, _exc: Exception) -> JSONResponse:
+    return JSONResponse(
+        {"error": {"message": "missing or invalid X-API-Key", "type": "unauthorized"}},
+        status_code=401,
+    )
 
 
 def build_default_app() -> FastAPI:
