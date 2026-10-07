@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "id": "C-0010/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Add PROVIDER_MODE=demo. Demo providers echo the caller text, pause briefly, and fail on a documented prompt so one hop of fallback is visible. Cache and quota still use Redis. A documented gateway key is used when GATEWAY_API_KEY is absent. Live mode still requires GEMINI_API_KEY and GATEWAY_API_KEY and still calls Ollama and Gemini. Add a compose file and a curl script for that demo.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "pytest with a branch-coverage floor of 90 exits 0",
+    "A demo-mode settings load returns the documented gateway key when GATEWAY_API_KEY is absent",
+    "A live-mode settings load returns an error when GEMINI_API_KEY is absent",
+    "A simple demo prompt that asks the local provider to fail returns a cloud echo",
+    "A repeated demo prompt returns a cache hit"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0010/T-001",
+      "description": "Add demo providers and PROVIDER_MODE settings",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "app/settings.py",
+        "app/runtime.py",
+        "app/providers/demo.py",
+        "tests/test_demo_mode.py",
+        "tests/test_settings.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0010/T-002",
+      "description": "Add the demo compose file, curl script, and operator notes",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0010/T-001"
+      ],
+      "resources": [
+        "compose.demo.yml",
+        "scripts/demo.sh",
+        "docs/guide/Quick-start.md",
+        "docs/CHANGELOG.md",
+        "README.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

@@ -8,6 +8,16 @@ Get from zero to a Gemini-backed chat response in about ten minutes. The root [R
 - A [Gemini API key](https://aistudio.google.com/apikey)
 - Ollama is **optional** (REQ-022). Skip it on a light PC.
 
+## Zero-key local demo
+
+No Gemini key is required:
+
+```bash
+docker compose -f compose.demo.yml up --build
+```
+
+The gateway key is `demo`. In another terminal, `scripts/demo.sh` checks health, sends `hello`, repeats it (cache hit), and sends `simulate-local-failure` so the local demo provider fails and the cloud demo provider answers. `simulate-cloud-failure` fails the cloud provider instead. Leave `PROVIDER_MODE` unset to keep the live Ollama and Gemini adapters (`docker compose up --build`).
+
 ## 2. Configure secrets
 
 ```bash
@@ -95,7 +105,7 @@ uv run pytest
 ## If something feels stuck
 
 - **401 on chat?** The header must match `.env` `GATEWAY_API_KEY` exactly — not an empty `$GATEWAY_API_KEY`.
-- **Container restart loop?** `GEMINI_API_KEY`, `GATEWAY_API_KEY`, and `REDIS_PASSWORD` must be non-empty. `Settings.from_env` refuses blank Gemini and gateway keys. Compose refuses a blank Redis password.
+- **Container restart loop?** In live mode, `GEMINI_API_KEY`, `GATEWAY_API_KEY`, and `REDIS_PASSWORD` must be non-empty. `Settings.from_env` refuses blank Gemini and gateway keys unless `PROVIDER_MODE=demo`. Compose refuses a blank Redis password. The zero-key file is `compose.demo.yml`.
 - **Want the request path?** → [How it works](How-it-works.md)
 - **Want every status code?** → [API](API.md)
 

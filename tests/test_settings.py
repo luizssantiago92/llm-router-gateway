@@ -3,12 +3,13 @@ from pathlib import Path
 
 import pytest
 
-from app.settings import SETTINGS_KEYS, Settings
+from app.settings import DEMO_GATEWAY_API_KEY, SETTINGS_KEYS, Settings
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_settings_load_from_environment(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("PROVIDER_MODE", raising=False)
     monkeypatch.setenv("REDIS_URL", "redis://cache:6379/0")
     monkeypatch.setenv("OLLAMA_BASE_URL", "http://ollama:11434")
     monkeypatch.setenv("GEMINI_API_KEY", "gemini-test")
@@ -113,3 +114,47 @@ def test_settings_do_not_read_committed_secret_files() -> None:
         text=True,
     )
     assert result.returncode != 0, ".env must not be tracked by git"
+
+
+def test_demo_mode_uses_the_documented_gateway_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    for key in ("GEMINI_API_KEY", "GATEWAY_API_KEY", "OLLAMA_BASE_URL"):
+        monkeypatch.delenv(key, raising=False)
+    monkeypatch.setenv("PROVIDER_MODE", "demo")
+    monkeypatch.setenv("REDIS_URL", "redis://localhost:6379/0")
+
+    settings = Settings.from_env()
+
+    assert settings.provider_mode == "demo"
+    assert settings.gateway_api_key == DEMO_GATEWAY_API_KEY
+    assert settings.gemini_api_key == ""
+    assert settings.ollama_base_url == "http://127.0.0.1:11434"
+
+
+def test_demo_mode_keeps_an_explicit_gateway_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("PROVIDER_MODE", "demo")
+    monkeypatch.setenv("REDIS_URL", "redis://localhost:6379/0")
+    monkeypatch.setenv("GATEWAY_API_KEY", "lab-key")
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+
+    settings = Settings.from_env()
+
+    assert settings.gateway_api_key == "lab-key"
+
+
+def test_live_mode_still_requires_a_gemini_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("PROVIDER_MODE", raising=False)
+    monkeypatch.setenv("REDIS_URL", "redis://localhost:6379/0")
+    monkeypatch.setenv("OLLAMA_BASE_URL", "http://ollama:11434")
+    monkeypatch.setenv("GATEWAY_API_KEY", "gateway-test")
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+
+    with pytest.raises(RuntimeError, match="GEMINI_API_KEY"):
+        Settings.from_env()
+
+
+def test_unknown_provider_mode_from_env_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("PROVIDER_MODE", "other")
+    monkeypatch.setenv("REDIS_URL", "redis://localhost:6379/0")
+
+    with pytest.raises(RuntimeError, match="PROVIDER_MODE"):
+        Settings.from_env()

@@ -1,0 +1,26 @@
+# Local zero-key demo. No host environment variables are required.
+# Gateway key is the documented value "demo". Redis password is local-only.
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      PROVIDER_MODE: demo
+      REDIS_URL: "redis://:demo-redis@redis:6379/0"
+      OLLAMA_BASE_URL: http://127.0.0.1:11434
+      GATEWAY_API_KEY: demo
+      CHAT_DAILY_LIMIT: "5"
+      CACHE_TTL_SECONDS: "3600"
+      COMPLEXITY_WORD_THRESHOLD: "150"
+      UPSTREAM_TIMEOUT_SECONDS: "30"
+    depends_on:
+      - redis
+  redis:
+    image: redis:7-alpine
+    command:
+      - redis-server
+      - --requirepass
+      - demo-redis
+    ports:
+      - "127.0.0.1:6379:6379"

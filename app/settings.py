@@ -15,6 +15,10 @@ MIN_MAX_TOKENS = 1
 MAX_MAX_TOKENS = 4096
 MAX_BODY_BYTES = 256 * 1024
 
+# Documented local key for PROVIDER_MODE=demo. Live mode never uses it.
+DEMO_GATEWAY_API_KEY = "demo"
+_DEMO_OLLAMA_BASE_URL = "http://127.0.0.1:11434"
+
 SETTINGS_KEYS = (
     "REDIS_URL",
     "OLLAMA_BASE_URL",
@@ -62,8 +66,11 @@ class Settings:
     min_max_tokens: int = MIN_MAX_TOKENS
     max_max_tokens: int = MAX_MAX_TOKENS
     max_body_bytes: int = MAX_BODY_BYTES
+    provider_mode: str = "live"
 
     def __post_init__(self) -> None:
+        if self.provider_mode not in {"live", "demo"}:
+            raise RuntimeError("PROVIDER_MODE must be live or demo")
         _within("max_message_chars", self.max_message_chars, 1, MAX_MESSAGE_CHARS)
         _within("max_messages", self.max_messages, 1, MAX_MESSAGES)
         _within(
@@ -80,11 +87,24 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> Settings:
+        redis_url = _require("REDIS_URL")
+        mode = os.environ.get("PROVIDER_MODE", "live").strip().lower()
+        if mode not in {"live", "demo"}:
+            raise RuntimeError("PROVIDER_MODE must be live or demo")
+        if mode == "demo":
+            gemini_api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+            gateway_api_key = os.environ.get("GATEWAY_API_KEY", "").strip() or DEMO_GATEWAY_API_KEY
+            ollama_base_url = os.environ.get("OLLAMA_BASE_URL", "").strip() or _DEMO_OLLAMA_BASE_URL
+        else:
+            gemini_api_key = _require("GEMINI_API_KEY")
+            gateway_api_key = _require("GATEWAY_API_KEY")
+            ollama_base_url = _require("OLLAMA_BASE_URL")
         return cls(
-            redis_url=_require("REDIS_URL"),
-            ollama_base_url=_require("OLLAMA_BASE_URL"),
-            gemini_api_key=_require("GEMINI_API_KEY"),
-            gateway_api_key=_require("GATEWAY_API_KEY"),
+            redis_url=redis_url,
+            ollama_base_url=ollama_base_url,
+            gemini_api_key=gemini_api_key,
+            gateway_api_key=gateway_api_key,
+            provider_mode=mode,
             cache_ttl_seconds=int(
                 os.environ.get("CACHE_TTL_SECONDS", _DEFAULTS["CACHE_TTL_SECONDS"])
             ),
