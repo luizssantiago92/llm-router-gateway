@@ -39,8 +39,9 @@ class _Crash:
     async def complete(
         self,
         messages: list[dict[str, str]],
-        temperature: float,
+        temperature: float | None,
         max_tokens: int | None,
+        **_extra: object,
     ) -> None:
         self.calls += 1
         raise RuntimeError("provider crashed")

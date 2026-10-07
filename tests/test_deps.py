@@ -68,6 +68,7 @@ class _HitCache:
         messages: list[dict[str, str]],
         temperature: float,
         max_tokens: int | None,
+        **_extra: object,
     ) -> dict[str, str]:
         return {"content": "from-cache", "provider": "cloud"}
 

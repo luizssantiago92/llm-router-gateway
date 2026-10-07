@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 
 from app.deps import CacheDep, QuotaDep, RouterDep, SettingsDep
 from app.providers.base import ProviderError, TokenUsage
+from app.providers.gemini import caller_gemini_model
 from app.quota.daily import QuotaExceededError, QuotaUnavailableError
 from app.schemas.chat import (
     ChatCompletionRequest,
@@ -20,9 +21,10 @@ from app.schemas.chat import (
 )
 from app.security import AuthFirstRoute, GatewayKeyDep
 
-# Providers still receive a concrete temperature. Omitting the field keeps
-# today's sampling input (1.0) without changing the Gemini adapter.
+# The cache key and the local adapter keep 1.0 when temperature is omitted.
+# Gemini receives None so its generation config leaves the field out.
 _OMITTED_TEMPERATURE = 1.0
+_REPLAY_FINISH = frozenset({"stop", "length", "content_filter"})
 
 router = APIRouter(route_class=AuthFirstRoute)
 
@@ -68,6 +70,12 @@ def _cached_model(value: object) -> str | None:
     return None
 
 
+def _replay_finish_reason(value: object) -> str:
+    if isinstance(value, str) and value in _REPLAY_FINISH:
+        return value
+    return "stop"
+
+
 @router.post(
     "/v1/chat/completions",
     response_model=ChatCompletionResponse,
@@ -100,16 +108,25 @@ async def chat_completions(
                 }
             ]
         )
-    temperature = _OMITTED_TEMPERATURE if body.temperature is None else body.temperature
+    cache_temperature = _OMITTED_TEMPERATURE if body.temperature is None else body.temperature
+    cloud_model = caller_gemini_model(body.model)
     started = time.perf_counter()
     messages = [message.model_dump() for message in body.messages]
-    cached_value = await cache.get(messages, temperature, body.max_tokens)
+    cached_value = await cache.get(
+        messages,
+        cache_temperature,
+        body.max_tokens,
+        top_p=body.top_p,
+        stop=body.stop,
+        model=cloud_model,
+    )
     if cached_value is not None:
         return _completion_response(
             content=str(cached_value.get("content", "")),
             provider=str(cached_value.get("provider", "cache")),
             model=_cached_model(cached_value.get("model")),
             usage=_cached_usage(cached_value.get("usage")),
+            finish_reason=_replay_finish_reason(cached_value.get("finish_reason")),
             cached=True,
             latency_ms=rounded_latency_ms(time.perf_counter() - started),
         )
@@ -133,7 +150,14 @@ async def chat_completions(
             )
 
     try:
-        completion = await gateway.complete(messages, temperature, body.max_tokens)
+        completion = await gateway.complete(
+            messages,
+            body.temperature,
+            body.max_tokens,
+            top_p=body.top_p,
+            stop=body.stop,
+            model=cloud_model,
+        )
     except ProviderError as exc:
         if quota is not None:
             await quota.refund(api_key)
@@ -144,20 +168,25 @@ async def chat_completions(
     usage = _usage_dict(completion.usage)
     await cache.store(
         messages,
-        temperature,
+        cache_temperature,
         body.max_tokens,
         {
             "content": completion.content,
             "provider": completion.provider,
             "model": completion.model,
             "usage": usage,
+            "finish_reason": completion.finish_reason,
         },
+        top_p=body.top_p,
+        stop=body.stop,
+        model=cloud_model,
     )
     return _completion_response(
         content=completion.content,
         provider=completion.provider,
         model=completion.model,
         usage=usage,
+        finish_reason=completion.finish_reason,
         cached=False,
         latency_ms=rounded_latency_ms(time.perf_counter() - started),
     )
@@ -169,6 +198,7 @@ def _completion_response(
     provider: str,
     model: str | None,
     usage: dict[str, int | None],
+    finish_reason: str,
     cached: bool,
     latency_ms: int,
 ) -> JSONResponse:
@@ -181,7 +211,7 @@ def _completion_response(
             {
                 "index": 0,
                 "message": {"role": "assistant", "content": content},
-                "finish_reason": "stop",
+                "finish_reason": finish_reason,
             }
         ],
         "usage": usage,

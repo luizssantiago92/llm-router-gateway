@@ -22,7 +22,7 @@ If both hops fail, the gateway **stops** with HTTP 502 and refunds the quota uni
 
 ### 1. Cache — “Have we answered this exact thing?”
 
-The key is SHA-256 of a canonical JSON of `messages` + `temperature` + `max_tokens`. The model id is **not** in the key. Hits return the stored body with `cached: true` and the stored `provider` (`local` or `cloud` — never `"cache"`). Quota is not consumed. Errors are never stored. If Redis cannot be read, the request continues as a miss. If Redis cannot store the success, the completion is still returned.
+The key is SHA-256 of a canonical JSON of `messages` + `temperature` + `max_tokens`, plus `top_p`, `stop`, or a caller-selected Gemini model id only when that field is set. An omitted temperature is stored as `1.0` and is left out of the Gemini generation config. Hits return the stored body with `cached: true` and the stored `provider` (`local` or `cloud` — never `"cache"`). Quota is not consumed. Errors are never stored. If Redis cannot be read, the request continues as a miss. If Redis cannot store the success, the completion is still returned.
 
 ### 2. Quota — “Misses cost a demo token”
 

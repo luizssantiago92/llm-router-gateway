@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0007",
+  "version": 1,
+  "what": "Forward caller sampling to the Gemini generation config. When temperature is omitted, leave it out of that config; the cache key and the local adapter still use 1.0. When top_p is sent, copy it to Gemini topP and include it in the cache key. When top_p is omitted, the cache key stays the same. A request model whose name starts with gemini selects the cloud model for that call. Any other model name keeps the configured cloud model. Map a Gemini finish reason onto finish_reason. A blocked Gemini prompt with no text is a non-retryable provider failure, so the route returns HTTP 502 and does not call the secondary provider. Do not add structured logs or change the Redis failure policy.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "An omitted temperature is absent from the Gemini generation config",
+    "A provided top_p is copied into the Gemini generation config as topP",
+    "An omitted top_p keeps the same cache key",
+    "A model name that starts with gemini returns that model in the Gemini request URL",
+    "A non-gemini model name returns the configured cloud model in the Gemini request URL",
+    "A Gemini MAX_TOKENS finish reason returns finish_reason length",
+    "A blocked Gemini prompt with no text returns HTTP 502 and does not call the secondary provider"
+  ],
+  "active": true,
+  "activated_at": "2026-10-07T11:33:07.273041Z"
+}

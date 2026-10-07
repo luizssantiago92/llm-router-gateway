@@ -22,20 +22,38 @@ class Router:
     async def complete(
         self,
         messages: list[dict[str, str]],
-        temperature: float,
+        temperature: float | None,
         max_tokens: int | None,
+        *,
+        top_p: float | None = None,
+        stop: list[str] | None = None,
+        model: str | None = None,
     ) -> Completion:
         kind = classify(messages, self._word_threshold)
         primary = self._local if kind == "simple" else self._cloud
         secondary = self._cloud if kind == "simple" else self._local
         try:
-            return await primary.complete(messages, temperature, max_tokens)
+            return await primary.complete(
+                messages,
+                temperature,
+                max_tokens,
+                top_p=top_p,
+                stop=stop,
+                model=model,
+            )
         except ProviderError as exc:
             if not exc.is_retryable:
                 raise
         except _UNEXPECTED:
             pass
         try:
-            return await secondary.complete(messages, temperature, max_tokens)
+            return await secondary.complete(
+                messages,
+                temperature,
+                max_tokens,
+                top_p=top_p,
+                stop=stop,
+                model=model,
+            )
         except _UNEXPECTED as second:
             raise ProviderError("both providers failed", status_code=502) from second

@@ -4,7 +4,7 @@ Short definitions of the moving parts. Narrative: [How it works](How-it-works.md
 
 ## Exact-match cache
 
-Redis stores successful completions keyed by SHA-256 of canonical JSON `{messages, temperature, max_tokens}`. The routed model name is **not** in the key. TTL defaults to `CACHE_TTL_SECONDS=3600`. Hits skip classification, upstreams, and quota. Failures (4xx, 5xx, timeout) are never written. The cache is **fail-open**: a Redis read error or invalid JSON is a miss, and a Redis write error still returns the completion.
+Redis stores successful completions keyed by SHA-256 of canonical JSON `{messages, temperature, max_tokens}`. `top_p`, `stop`, and a caller-selected Gemini model id are added only when the request sets them, so an omitted `top_p` keeps the same key. The routed provider name is **not** in the key. TTL defaults to `CACHE_TTL_SECONDS=3600`. Hits skip classification, upstreams, and quota. Failures (4xx, 5xx, timeout) are never written. The cache is **fail-open**: a Redis read error or invalid JSON is a miss, and a Redis write error still returns the completion. An omitted temperature is stored as `1.0` and is left out of the Gemini generation config.
 
 ## Complexity routing
 

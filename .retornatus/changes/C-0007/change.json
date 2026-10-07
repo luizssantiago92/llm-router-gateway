@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0007",
+  "title": "Forward Gemini sampling, model choice, and finish reasons",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Make the Gemini adapter honor caller sampling and model choice (polish item: Gemini provider support). One focused change.",
+    "kind": "BEHAVIOR"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 2,
+  "relations": [],
+  "created_at": "2026-10-07T11:33:07.264230Z"
+}
