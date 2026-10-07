@@ -149,3 +149,7 @@ _Fill during Wake / first Change. Prefer facts from the repo over assumptions._
 ## Agent narrative
 
 Successful chat JSON uses one fixed id and omits created, model, and usage. Validation and unknown paths use a different JSON shape that can repeat the submitted body. 401 already runs before the body is read, and an authenticated oversized body is already 413. Usage counts must come from the provider payload when that payload includes them. When it does not, the fields stay null. The gateway does not estimate tokens. Latency is rounded to a whole millisecond. The schema version comes from app.__version__. GET / redirects to /docs.
+
+## Reopened Situation
+
+The root redirect criterion now asks for HTTP 307 so Assurance accepts the existing pytest result. The redirect target is unchanged.
