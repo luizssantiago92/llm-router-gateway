@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "id": "C-0011/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Publish the API on 127.0.0.1 port 8000, pin the Redis image by digest, add healthchecks, depend on Redis only when it is healthy, and restart unless stopped. Add an image HEALTHCHECK that probes /health/live. Add a Makefile with dev, test, lint, and demo. Apply the same loopback, digest, health, and restart rules to the zero-key compose file. Do not change chat status codes, request ids, demo provider behavior, or the Redis failure policy.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "pytest with a branch-coverage floor of 90 exits 0",
+    "The compose file returns an API port bound to 127.0.0.1",
+    "The compose file returns a Redis image pinned by digest",
+    "The image healthcheck returns a probe of /health/live",
+    "make test returns a pytest command"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0011/T-001",
+      "description": "Harden the compose files, image healthcheck, and Makefile",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "docker-compose.yml",
+        "compose.demo.yml",
+        "Dockerfile",
+        "Makefile",
+        "tests/test_compose_config.py",
+        "tests/test_demo_mode.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0011/T-002",
+      "description": "Update operator pages that describe ports and the Redis image",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0011/T-001"
+      ],
+      "resources": [
+        "README.md",
+        "docs/CHANGELOG.md",
+        "docs/guide/Quick-start.md",
+        "docs/guide/Development.md",
+        "docs/guide/Architecture.md",
+        "docs/guide/Overview.md",
+        "docs/guide/Limitations.md",
+        "docs/guide/FAQ.md",
+        "CONTRIBUTING.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

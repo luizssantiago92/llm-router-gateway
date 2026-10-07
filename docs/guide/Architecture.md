@@ -68,7 +68,7 @@ Every completion returns JSON `cached`, `latency_ms`, `provider` and headers `X-
 
 ## Ship unit
 
-Docker Compose runs `api` and `redis` in isolation. Kubernetes, Helm, and Terraform are out of scope. Secrets come from environment variables only. Redis requires `REDIS_PASSWORD` and is published on `127.0.0.1:6379` only. The API image runs as non-root user `app` from a digest-pinned `python:3.12-slim` base. Ollama is an optional external runtime (`OLLAMA_BASE_URL`). When it is unreachable, health is `degraded` and simple prompts fall back to Gemini. The `api` service maps `host.docker.internal` to the Docker host gateway so Linux Engine can reach host Ollama.
+Docker Compose runs `api` and `redis` in isolation. Kubernetes, Helm, and Terraform are out of scope. Secrets come from environment variables only. Redis requires `REDIS_PASSWORD` and is published on `127.0.0.1:6379` only. The API is published on `127.0.0.1:8000` only. The API image runs as non-root user `app` from a digest-pinned `python:3.12-slim` base and probes `GET /health/live`. Redis is pinned by digest. Ollama is an optional external runtime (`OLLAMA_BASE_URL`). When it is unreachable, health is `degraded` and simple prompts fall back to Gemini. The `api` service maps `host.docker.internal` to the Docker host gateway so Linux Engine can reach host Ollama.
 
 ## Surfaces
 

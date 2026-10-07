@@ -84,7 +84,7 @@ FastAPI facade, Redis cache, evaluator, Ollama + Gemini adapters, daily quota. T
 
 ### 2. The ship unit
 
-`docker-compose.yml` + `Dockerfile`. Secrets from `.env` (never committed). Compose builds `REDIS_URL` from `REDIS_PASSWORD` and publishes Redis on `127.0.0.1` only. The image runs as non-root from a digest-pinned base. CI lints and tests on every pull request.
+`docker-compose.yml` + `Dockerfile`. Secrets from `.env` (never committed). Compose builds `REDIS_URL` from `REDIS_PASSWORD` and publishes the API and Redis on `127.0.0.1` only. The image runs as non-root from a digest-pinned base and probes `GET /health/live`. CI lints and tests on every pull request.
 
 ### 3. Archived requirements (`docs/history/`)
 

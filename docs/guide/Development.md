@@ -11,7 +11,8 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 | `docs/history/PRD.pt-BR.md` | Product requirements (owner kickoff; historical cloud examples) |
 | `app/` | FastAPI gateway (settings, lifespan-owned Redis and HTTP clients, dependency providers, schemas, cache, routing, providers, routes) |
 | `tests/` | pytest-asyncio suite; `tests/eval/` golden routing harness |
-| `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + Redis (loopback port, password, non-root image) |
+| `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + Redis (loopback ports, password, digest-pinned Redis, non-root image, `/health/live` check) |
+| `Makefile` | `make dev`, `make test`, `make lint`, `make demo` |
 | `.github/workflows/ci.yml` | Ruff check, ruff format, mypy, pytest with a 90% branch-coverage gate, and pip-audit on Python 3.10, 3.12, and 3.13; actions pinned by commit SHA |
 | `.github/workflows/retornatus.yml` | Retornatus verify and diff gates on pull requests (`luizssantiago92/retornatus@v1`) |
 | `.github/workflows/codeql.yml` | CodeQL analysis for Python and GitHub Actions; weekly schedule |
@@ -83,8 +84,9 @@ Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or a
 docker compose up --build
 ```
 
-- `api` on port **8000** (OpenAPI UI: `/docs`)
-- `redis` on **127.0.0.1:6379** only, with `--requirepass` set from `REDIS_PASSWORD`
+- `api` on **127.0.0.1:8000** only (OpenAPI UI: `/docs`)
+- `redis` on **127.0.0.1:6379** only, image pinned by digest, with `--requirepass` set from `REDIS_PASSWORD`
+- Compose waits until Redis answers `PING`, then starts the API. Both services restart unless stopped. The image probes `GET /health/live`.
 - `REDIS_URL` inside the `api` container is always `redis://:<REDIS_PASSWORD>@redis:6379/0` (not taken from `.env`)
 - The image runs as non-root user `app`; the base image is pinned by digest
 - Optional tunables (`CACHE_TTL_SECONDS`, `COMPLEXITY_WORD_THRESHOLD`, `UPSTREAM_TIMEOUT_SECONDS`, `CHAT_DAILY_LIMIT`, `GEMINI_MODEL`, `OLLAMA_BASE_URL`) are interpolated from `.env` with the defaults above

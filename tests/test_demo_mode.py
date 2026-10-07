@@ -246,9 +246,17 @@ def test_demo_compose_file_needs_no_host_keys() -> None:
     assert env["PROVIDER_MODE"] == "demo"
     assert env["GATEWAY_API_KEY"] == DEMO_GATEWAY_API_KEY
     assert "GEMINI_API_KEY" not in env
-    command = compose["services"]["redis"]["command"]
+    api = compose["services"]["api"]
+    redis = compose["services"]["redis"]
+    assert api["ports"] == ["127.0.0.1:8000:8000"]
+    assert api["restart"] == "unless-stopped"
+    assert api["depends_on"]["redis"]["condition"] == "service_healthy"
+    assert "/health/live" in str(api["healthcheck"]["test"])
+    command = redis["command"]
     assert "demo-redis" in command
-    assert compose["services"]["redis"]["ports"] == ["127.0.0.1:6379:6379"]
+    assert redis["ports"] == ["127.0.0.1:6379:6379"]
+    assert str(redis["image"]).startswith("redis:7-alpine@sha256:")
+    assert redis["restart"] == "unless-stopped"
 
 
 def test_demo_script_lists_the_curl_sequence() -> None:

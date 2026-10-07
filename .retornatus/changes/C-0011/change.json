@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0011",
+  "title": "Harden Compose and the API image",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Harden Compose and the API image (cleanup plan item 14). One focused change.",
+    "kind": "BEHAVIOR"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-07T16:22:03.063243Z"
+}

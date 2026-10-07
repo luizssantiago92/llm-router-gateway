@@ -44,7 +44,7 @@ docker compose up --build
 
 | Service | Port |
 | --- | --- |
-| `api` | **8000** (OpenAPI: `/docs`) |
+| `api` | **127.0.0.1:8000** only (OpenAPI: `/docs`) |
 | `redis` | **127.0.0.1:6379** only (password from `REDIS_PASSWORD`) |
 
 Linux Docker Engine: Compose maps `host.docker.internal` → `host-gateway` so optional **host** Ollama is reachable. Docker Desktop already provides that hostname.

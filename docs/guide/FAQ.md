@@ -24,7 +24,7 @@ No. `api` always gets `redis://:<REDIS_PASSWORD>@redis:6379/0`. Fill `REDIS_URL`
 
 ## Is Redis published on every interface?
 
-No. Compose binds Redis to **127.0.0.1:6379** and starts it with `--requirepass` from `REDIS_PASSWORD`. An empty password fails Compose interpolation. The `api` container still reaches Redis on the Compose network.
+No. Compose binds the API to **127.0.0.1:8000** and Redis to **127.0.0.1:6379**, and starts Redis with `--requirepass` from `REDIS_PASSWORD`. An empty password fails Compose interpolation. The `api` container still reaches Redis on the Compose network.
 
 ## Where does the Gemini API key go?
 
