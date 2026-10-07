@@ -1,16 +1,36 @@
+"""FastAPI application factory.
+
+``build_default_app`` is the Uvicorn factory. It does not open sockets.
+The lifespan opens Redis and the upstream HTTP clients, then closes them on
+shutdown. Objects passed into ``create_app`` are test doubles: the lifespan
+does not replace or close them.
+"""
+
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from redis.asyncio import Redis
 
 from app.api.completions import router as completions_router
 from app.api.health import router as health_router
 from app.cache.service import CacheService
-from app.providers.gemini import GeminiProvider
-from app.providers.ollama import OllamaProvider
+from app.providers.base import Provider
 from app.quota.daily import DailyQuota
 from app.routing.router import Router
+from app.runtime import AppRuntime, build_runtime
 from app.settings import Settings
+
+_RESOURCE_NAMES = (
+    "settings",
+    "cache",
+    "router",
+    "redis",
+    "local",
+    "cloud",
+    "quota",
+)
 
 
 def create_app(
@@ -19,17 +39,17 @@ def create_app(
     cache: CacheService | None = None,
     router: Router | None = None,
     redis: object | None = None,
-    local: object | None = None,
-    cloud: object | None = None,
+    local: Provider | None = None,
+    cloud: Provider | None = None,
     quota: DailyQuota | None = None,
 ) -> FastAPI:
-    app = FastAPI(title="LLM Router Gateway")
+    app = FastAPI(title="LLM Router Gateway", lifespan=lifespan)
     app.state.settings = settings
     app.state.cache = cache
     app.state.router = router
+    app.state.redis = redis
     app.state.local = local
     app.state.cloud = cloud
-    app.state.redis = redis
     app.state.quota = quota
     app.include_router(completions_router)
     app.include_router(health_router)
@@ -37,26 +57,40 @@ def create_app(
 
 
 def build_default_app() -> FastAPI:
-    settings = Settings.from_env()
-    redis = Redis.from_url(settings.redis_url, decode_responses=True)
-    cache = CacheService(redis, settings.cache_ttl_seconds)
-    quota = DailyQuota(redis, settings.chat_daily_limit)
-    local = OllamaProvider(
-        settings.ollama_base_url,
-        timeout_seconds=settings.upstream_timeout_seconds,
-    )
-    cloud = GeminiProvider(
-        settings.gemini_api_key,
-        model=settings.gemini_model,
-        timeout_seconds=settings.upstream_timeout_seconds,
-    )
-    router = Router(local, cloud, word_threshold=settings.complexity_word_threshold)
-    return create_app(
-        settings=settings,
-        cache=cache,
-        router=router,
-        redis=redis,
-        local=local,
-        cloud=cloud,
-        quota=quota,
-    )
+    """Uvicorn factory. Resources open in the lifespan, not at import."""
+    return create_app()
+
+
+def _is_unwired(app: FastAPI) -> bool:
+    return all(getattr(app.state, name) is None for name in _RESOURCE_NAMES)
+
+
+def _bind(app: FastAPI, runtime: AppRuntime) -> None:
+    app.state.settings = runtime.settings
+    app.state.cache = runtime.cache
+    app.state.router = runtime.router
+    app.state.redis = runtime.redis
+    app.state.local = runtime.local
+    app.state.cloud = runtime.cloud
+    app.state.quota = runtime.quota
+
+
+def _clear(app: FastAPI) -> None:
+    for name in _RESOURCE_NAMES:
+        setattr(app.state, name, None)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    owned: AppRuntime | None = None
+    if _is_unwired(app):
+        owned = build_runtime()
+        _bind(app, owned)
+    try:
+        yield
+    finally:
+        if owned is not None:
+            try:
+                await owned.aclose()
+            finally:
+                _clear(app)

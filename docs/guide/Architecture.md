@@ -52,7 +52,7 @@ On cache miss, a **5xx or timeout** on the primary provider triggers **one** hop
 
 | Component | Path | Responsibility |
 | --- | --- | --- |
-| FastAPI app | `app/main.py`, `app/api/` | OpenAI-shaped HTTP facade; Pydantic v2 validation |
+| FastAPI app | `app/main.py`, `app/runtime.py`, `app/deps.py`, `app/api/` | OpenAI-shaped HTTP facade; lifespan-owned Redis and upstream HTTP clients; Pydantic v2 validation |
 | Settings | `app/settings.py` | Env-only config; no `load_dotenv` |
 | Cache layer | `app/cache/service.py` | SHA-256 key over canonical `messages` + `temperature` + `max_tokens`; Redis TTL (default 3600s) |
 | Evaluator | `app/routing/evaluator.py` | Word-count **or** keyword match → simple vs complex |

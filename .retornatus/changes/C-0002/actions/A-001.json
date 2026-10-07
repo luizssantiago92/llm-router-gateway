@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "C-0002/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Wire startup, shutdown, and request dependencies without changing the public HTTP API.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "The default FastAPI lifespan opens an async Redis client and httpx.AsyncClient instances and closes them on shutdown",
+    "Chat and health handlers receive settings, Redis, and provider clients through FastAPI dependencies",
+    "POST /v1/chat/completions and GET /health keep their current status codes and payloads when the app is configured"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0002/T-001",
+      "description": "Add a lifespan-owned runtime and FastAPI dependency providers, and switch chat and health handlers to those providers.",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "app/**"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0002/T-002",
+      "description": "Prove startup, shutdown, and dependency injection with tests, and document the factory lifespan.",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0002/T-001"
+      ],
+      "resources": [
+        "tests/test_lifespan.py",
+        "tests/test_deps.py",
+        "tests/test_harness_imports.py",
+        "docs/guide/API.md",
+        "docs/guide/Architecture.md",
+        "docs/guide/Development.md",
+        "docs/CHANGELOG.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

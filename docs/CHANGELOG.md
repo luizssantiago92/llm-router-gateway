@@ -4,6 +4,7 @@ Project-level notes (not a library semver). Product page: [README](../README.md)
 
 ## 2026-10-06
 
+- The Uvicorn factory registers a FastAPI lifespan that opens the async Redis client and the upstream HTTP clients on startup and closes them on shutdown. Chat and health handlers receive those resources through FastAPI dependencies.
 - CI runs `ruff check`, `ruff format --check`, `mypy app`, pytest with an 85% branch-coverage gate, and `pip-audit` on Python 3.10, 3.12, and 3.13. Pushes to `main` are not cancelled by a later push.
 - CodeQL analyzes Python and GitHub Actions on pull requests, pushes to `main`, and a weekly schedule.
 - Dependabot groups minor and patch updates for the `uv` ecosystem and GitHub Actions (Mondays 09:00 America/Sao_Paulo).

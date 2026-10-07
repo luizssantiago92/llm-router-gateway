@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0002",
+  "title": "Open and close gateway resources in the FastAPI lifespan",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Improve FastAPI app startup/shutdown and dependency wiring (polish item: FastAPI lifespan / deps). One focused change. Do not implement later polish items.",
+    "kind": "REFACTOR"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-07T00:06:35.408510Z"
+}

@@ -7,6 +7,7 @@ from typing import Any
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
+from app.deps import CacheDep, QuotaDep, RouterDep, SettingsDep
 from app.providers.base import ProviderError
 from app.quota.daily import QuotaExceededError
 from app.schemas.chat import ChatCompletionRequest
@@ -15,10 +16,16 @@ router = APIRouter()
 
 
 @router.post("/v1/chat/completions")
-async def chat_completions(body: ChatCompletionRequest, request: Request) -> JSONResponse:
-    settings = request.app.state.settings
+async def chat_completions(
+    body: ChatCompletionRequest,
+    request: Request,
+    settings: SettingsDep,
+    cache: CacheDep,
+    gateway: RouterDep,
+    quota: QuotaDep,
+) -> JSONResponse:
     api_key = request.headers.get("x-api-key", "")
-    expected = getattr(settings, "gateway_api_key", "") if settings is not None else ""
+    expected = settings.gateway_api_key
     if not expected or not api_key or not secrets.compare_digest(api_key, expected):
         return JSONResponse(
             {"error": {"message": "missing or invalid X-API-Key", "type": "unauthorized"}},
@@ -26,9 +33,6 @@ async def chat_completions(body: ChatCompletionRequest, request: Request) -> JSO
         )
 
     started = time.perf_counter()
-    cache = request.app.state.cache
-    gateway = request.app.state.router
-    quota = request.app.state.quota
     messages = [message.model_dump() for message in body.messages]
     cached_value = await cache.get(messages, body.temperature, body.max_tokens)
     if cached_value is not None:
