@@ -1,14 +1,16 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+
+from app.deps import CloudDep, LocalDep, RedisDep
 
 router = APIRouter()
 
 
 @router.get("/health")
-async def health(request: Request) -> JSONResponse:
-    redis_ok = await _redis_ok(request.app.state.redis)
-    local_ok = await _provider_ok(request.app.state.local)
-    cloud_ok = await _provider_ok(request.app.state.cloud)
+async def health(redis: RedisDep, local: LocalDep, cloud: CloudDep) -> JSONResponse:
+    redis_ok = await _redis_ok(redis)
+    local_ok = await _provider_ok(local)
+    cloud_ok = await _provider_ok(cloud)
     payload = {
         "status": "ok",
         "redis": "up" if redis_ok else "down",

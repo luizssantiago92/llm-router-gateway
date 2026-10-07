@@ -4,7 +4,7 @@ OpenAI-shaped facade. Streaming is rejected with HTTP 422 (`stream: true`). Demo
 
 Product: [README](../../README.md) · [Overview](Overview.md). Domain: [domain spec](../history/domain-spec.md).
 
-Process factory: `app.main:build_default_app` (Uvicorn `--factory`). Routes are registered on `create_app(...)` for tests that inject fakes.
+Process factory: `app.main:build_default_app` (Uvicorn `--factory`). The factory does not open sockets. A lifespan opens the async Redis client and one HTTP client per upstream on startup, and closes them on shutdown, before the process accepts traffic and after in-flight requests finish. Routes are registered on `create_app(...)` for tests that inject fakes. Injected objects are not replaced or closed by that lifespan. Request handlers receive settings, Redis, and the provider clients through FastAPI dependencies.
 
 ## `POST /v1/chat/completions`
 

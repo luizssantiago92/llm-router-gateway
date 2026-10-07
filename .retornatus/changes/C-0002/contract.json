@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0002",
+  "version": 1,
+  "what": "Replace eager resource construction in the Uvicorn factory with a FastAPI lifespan that opens the async Redis client and the upstream HTTP clients on startup and closes them on shutdown. Expose FastAPI dependency providers for settings, Redis, cache, router, quota, and the local and cloud provider clients so chat and health handlers receive those objects explicitly. Tests may still inject fakes through create_app; the lifespan must not replace or close injected objects. Public HTTP routes, status codes, and response bodies stay the same. Out of scope: an API-key security dependency, input size limits, OpenAI error mapping, retries, Gemini model changes, structured logs, a coverage-floor change, a demo mode, and Dependabot pull requests 17 and 18. Keep the process entrypoint app.main:build_default_app.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "The default FastAPI lifespan opens an async Redis client and httpx.AsyncClient instances and closes them on shutdown",
+    "Chat and health handlers receive settings, Redis, and provider clients through FastAPI dependencies",
+    "POST /v1/chat/completions and GET /health keep their current status codes and payloads when the app is configured"
+  ],
+  "active": true,
+  "activated_at": "2026-10-07T00:06:35.415543Z"
+}

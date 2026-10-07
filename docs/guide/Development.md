@@ -9,7 +9,7 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 | Path | Purpose |
 | --- | --- |
 | `docs/history/PRD.pt-BR.md` | Product requirements (owner kickoff; historical cloud examples) |
-| `app/` | FastAPI gateway (settings, schemas, cache, routing, providers, routes) |
+| `app/` | FastAPI gateway (settings, lifespan-owned Redis and HTTP clients, dependency providers, schemas, cache, routing, providers, routes) |
 | `tests/` | pytest-asyncio suite; `tests/eval/` golden routing harness |
 | `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + Redis (loopback port, password, non-root image) |
 | `.github/workflows/ci.yml` | Ruff check, ruff format, mypy, pytest with an 85% branch-coverage gate, and pip-audit on Python 3.10, 3.12, and 3.13; actions pinned by commit SHA |
