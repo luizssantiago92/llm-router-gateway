@@ -23,6 +23,10 @@ Otherwise **simple**. Simple → local primary (Ollama). Complex → cloud prima
 
 Redis key `quota:{scrypt(api_key)}:{UTC date}`. The digest is scrypt with a fixed salt, so the raw credential is not the Redis key and the same caller keeps one bucket. Each cache **miss** `INCR`s; over `CHAT_DAILY_LIMIT` → 429. Hits do not increment. Dual-fail `DECR`s. Expiry is seconds until UTC midnight (minimum 60s). The quota store is **fail-closed**: if Redis cannot increment the counter, the route returns HTTP 503 and does not call a provider. A failed refund does not replace the HTTP 502.
 
+## Access log and metrics
+
+Every response returns `X-Request-Id`. One JSON line per request records the request id, method, route, status, and latency. The line leaves out the submitted message text and credential headers. `GET /metrics` exposes those request counters without a credential.
+
 ## Health
 
 `GET /health` probes Redis `PING` and each provider’s `health()`. Redis down → HTTP 503 `down`. Redis up and any provider down → 200 `degraded`. All up → 200 `ok`. `GET /health/live` is process liveness and does not probe dependencies. `GET /health/ready` is 200 only when Redis is up and at least one provider is up. No `X-API-Key`.

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0008",
+  "title": "Add request ids, structured access logs, and request metrics",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Add observability for the gateway: structured access logs, request ids, and metrics (audit polish item 11). One focused change.",
+    "kind": "BEHAVIOR"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-07T11:45:04.341781Z"
+}

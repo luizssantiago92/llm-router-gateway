@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "C-0008/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Add request ids, JSON access logs, and a metrics page",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "A chat response returns an X-Request-Id header",
+    "A caller-supplied request id returns that same id",
+    "An access log line returns the request id and the status and leaves out the submitted message text",
+    "GET /metrics returns a request counter that is higher after a chat request"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0008/T-001",
+      "description": "Add request ids, JSON access logs, and a metrics page",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "app/observability.py",
+        "app/api/metrics.py",
+        "app/main.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0008/T-002",
+      "description": "Cover request ids, access logs, and metrics with tests and update the guide pages",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0008/T-001"
+      ],
+      "resources": [
+        "tests/test_observability.py",
+        "docs/guide/API.md",
+        "docs/guide/concepts.md",
+        "docs/guide/How-it-works.md",
+        "docs/guide/Architecture.md",
+        "docs/CHANGELOG.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

@@ -40,7 +40,7 @@ Without Ollama, simple prompts fail locally once (retryable) and **fall back to 
 
 ### 5. Observe — “Who answered?”
 
-JSON and headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`. Streaming is not supported (`stream: true` → 422).
+JSON and headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`, and `X-Request-Id`. One JSON access log line records the request id, method, route, status, and latency, and leaves out the submitted message text. `GET /metrics` returns request counters and latency totals. Streaming is not supported (`stream: true` → 422).
 
 ```text
 POST /v1/chat/completions
