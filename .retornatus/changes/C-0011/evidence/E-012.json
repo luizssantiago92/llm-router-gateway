@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "id": "C-0011/E-012",
+  "type": "review_result",
+  "subject": "ship rollback",
+  "source": "Rollback is restoring the API publish to 8000:8000, the floating redis:7-alpine tag, and removing the image HEALTHCHECK. The Makefile can stay.",
+  "producer": "agent",
+  "observed_at": "2026-10-07T16:24:04.647662Z",
+  "subject_state": null,
+  "provenance": "self_reported",
+  "command": null,
+  "exit_code": null,
+  "started_at": null,
+  "ended_at": null,
+  "duration_ms": null,
+  "output_sha256": null,
+  "output_tail": null,
+  "output_artifact": null,
+  "git_commit": null,
+  "worktree_dirty": null,
+  "timed_out": false,
+  "relations": []
+}

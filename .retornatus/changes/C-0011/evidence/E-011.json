@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "C-0011/E-011",
+  "type": "repository_observation",
+  "subject": "compose config",
+  "source": "docker compose config --quiet",
+  "producer": "retornatus",
+  "observed_at": "2026-10-07T16:24:04.449190Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "docker",
+    "compose",
+    "config",
+    "--quiet"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-07T16:24:04.386507Z",
+  "ended_at": "2026-10-07T16:24:04.445071Z",
+  "duration_ms": 58,
+  "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "output_tail": "",
+  "output_artifact": ".retornatus/changes/C-0011/evidence/E-011.output.txt",
+  "git_commit": "59fbc823e017d6838a14a724df9599f1475d171b",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": []
+}

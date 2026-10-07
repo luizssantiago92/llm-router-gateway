@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0011/E-006",
+  "type": "test_result",
+  "subject": "make test returns a pytest command",
+  "source": "pytest",
+  "producer": "retornatus",
+  "observed_at": "2026-10-07T16:23:59.319179Z",
+  "subject_state": "commit:59fbc823e017d6838a14a724df9599f1475d171b",
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-07T16:23:56.153781Z",
+  "ended_at": "2026-10-07T16:23:59.047781Z",
+  "duration_ms": 2894,
+  "output_sha256": "79cfca036ac3fd4689955fa83f2c67ff1a62089fe86aa57995db584109d15a62",
+  "output_tail": "........................................................................ [ 36%]\n........................................................................ [ 73%]\n.....................................................                    [100%]\n197 passed in 2.59s\n",
+  "output_artifact": ".retornatus/changes/C-0011/evidence/E-006.output.txt",
+  "git_commit": "59fbc823e017d6838a14a724df9599f1475d171b",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0011/claim-done-6",
+      "note": null
+    }
+  ]
+}
