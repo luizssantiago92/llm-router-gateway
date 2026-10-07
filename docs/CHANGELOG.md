@@ -4,6 +4,7 @@ Project-level notes (not a library semver). Product page: [README](../README.md)
 
 ## 2026-10-06
 
+- Chat accepts `X-API-Key` or `Authorization: Bearer` through a FastAPI security dependency. The key is compared as UTF-8 bytes, and a missing or non-ASCII credential is HTTP 401 before the body is validated.
 - The Uvicorn factory registers a FastAPI lifespan that opens the async Redis client and the upstream HTTP clients on startup and closes them on shutdown. Chat and health handlers receive those resources through FastAPI dependencies.
 - CI runs `ruff check`, `ruff format --check`, `mypy app`, pytest with an 85% branch-coverage gate, and `pip-audit` on Python 3.10, 3.12, and 3.13. Pushes to `main` are not cancelled by a later push.
 - CodeQL analyzes Python and GitHub Actions on pull requests, pushes to `main`, and a weekly schedule.

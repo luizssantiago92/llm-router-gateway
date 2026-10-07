@@ -1,37 +1,28 @@
 from __future__ import annotations
 
-import secrets
 import time
 from typing import Any
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from app.deps import CacheDep, QuotaDep, RouterDep, SettingsDep
+from app.deps import CacheDep, QuotaDep, RouterDep
 from app.providers.base import ProviderError
 from app.quota.daily import QuotaExceededError
 from app.schemas.chat import ChatCompletionRequest
+from app.security import AuthFirstRoute, GatewayKeyDep
 
-router = APIRouter()
+router = APIRouter(route_class=AuthFirstRoute)
 
 
 @router.post("/v1/chat/completions")
 async def chat_completions(
     body: ChatCompletionRequest,
-    request: Request,
-    settings: SettingsDep,
+    api_key: GatewayKeyDep,
     cache: CacheDep,
     gateway: RouterDep,
     quota: QuotaDep,
 ) -> JSONResponse:
-    api_key = request.headers.get("x-api-key", "")
-    expected = settings.gateway_api_key
-    if not expected or not api_key or not secrets.compare_digest(api_key, expected):
-        return JSONResponse(
-            {"error": {"message": "missing or invalid X-API-Key", "type": "unauthorized"}},
-            status_code=401,
-        )
-
     started = time.perf_counter()
     messages = [message.model_dump() for message in body.messages]
     cached_value = await cache.get(messages, body.temperature, body.max_tokens)

@@ -1,6 +1,6 @@
 # API (demo + domain REQ-001–REQ-022)
 
-OpenAI-shaped facade. Streaming is rejected with HTTP 422 (`stream: true`). Demo callers must send `X-API-Key`. Cloud upstream is Gemini (free-tier oriented).
+OpenAI-shaped facade. Streaming is rejected with HTTP 422 (`stream: true`). Demo callers authenticate chat with `X-API-Key` or `Authorization: Bearer`. Cloud upstream is Gemini (free-tier oriented).
 
 Product: [README](../../README.md) · [Overview](Overview.md). Domain: [domain spec](../history/domain-spec.md).
 
@@ -8,7 +8,7 @@ Process factory: `app.main:build_default_app` (Uvicorn `--factory`). The factory
 
 ## `POST /v1/chat/completions`
 
-**Auth:** header `X-API-Key` must match `GATEWAY_API_KEY` → otherwise HTTP **401** (`unauthorized`). Health does not use this header.
+**Auth:** `X-API-Key` or `Authorization: Bearer <GATEWAY_API_KEY>` must match `GATEWAY_API_KEY`. Otherwise HTTP **401** (`unauthorized`), including when the body is missing, invalid JSON, or fails validation. The credential is compared as UTF-8 bytes. Health does not use either header. OpenAPI lists both schemes under `securitySchemes`.
 
 **Quota:** each cache **miss** consumes one unit of the caller's daily limit (`CHAT_DAILY_LIMIT`, default 5). Cache **hits** do not consume. Exhausted → HTTP **429** (`rate_limit_reached`). Upstream dual-fail refunds the consumed unit. The Redis bucket resets at **UTC midnight**.
 
@@ -32,7 +32,7 @@ Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
 | Cache miss, success | Upstream completion, write Redis, `cached: false` |
 | Primary 5xx or timeout | One retry on the secondary provider; success is cached |
 | Both providers fail | HTTP 502; **not** cached; quota refunded. Remaining `ProviderError` (including adapter-mapped Gemini 4xx) also surfaces as 502 |
-| Missing/invalid `X-API-Key` | HTTP 401 |
+| Missing/invalid `X-API-Key` or Bearer token, even if the body is invalid | HTTP 401 |
 | Daily quota exhausted | HTTP 429 |
 | Invalid body | HTTP 422 (Pydantic) |
 | `stream: true` | HTTP 422 |
