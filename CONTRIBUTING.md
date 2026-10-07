@@ -30,7 +30,7 @@ uv export --frozen --no-emit-project | uv run pip-audit -r /dev/stdin --progress
 uv run pytest --cov --cov-report=term-missing --cov-fail-under=90
 ```
 
-`uv sync` installs the `dev` dependency group. CI uses `uv.lock` and runs those commands on Python 3.10, 3.12, and 3.13. The coverage gate is 90% branch coverage.
+`uv sync` installs the `dev` dependency group. CI uses `uv.lock` and runs those commands on Python 3.10, 3.12, and 3.13. The coverage gate is 90% branch coverage. `make test` runs pytest, `make lint` runs ruff and mypy, `make dev` starts Compose, and `make demo` starts the zero-key compose file.
 
 `pytest` already skips `@pytest.mark.live` via `pyproject.toml` `addopts`.
 

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0011",
+  "version": 1,
+  "what": "Publish the API on 127.0.0.1 port 8000, pin the Redis image by digest, add healthchecks, depend on Redis only when it is healthy, and restart unless stopped. Add an image HEALTHCHECK that probes /health/live. Add a Makefile with dev, test, lint, and demo. Apply the same loopback, digest, health, and restart rules to the zero-key compose file. Do not change chat status codes, request ids, demo provider behavior, or the Redis failure policy.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "pytest with a branch-coverage floor of 90 exits 0",
+    "The compose file returns an API port bound to 127.0.0.1",
+    "The compose file returns a Redis image pinned by digest",
+    "The image healthcheck returns a probe of /health/live",
+    "make test returns a pytest command"
+  ],
+  "active": true,
+  "activated_at": "2026-10-07T16:22:03.069054Z"
+}

@@ -4,7 +4,7 @@ services:
   api:
     build: .
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
       PROVIDER_MODE: demo
       REDIS_URL: "redis://:demo-redis@redis:6379/0"
@@ -15,12 +15,36 @@ services:
       COMPLEXITY_WORD_THRESHOLD: "150"
       UPSTREAM_TIMEOUT_SECONDS: "30"
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/live')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
   redis:
-    image: redis:7-alpine
+    # redis:7-alpine multi-arch index digest.
+    image: redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
     command:
       - redis-server
       - --requirepass
       - demo-redis
+    environment:
+      REDISCLI_AUTH: demo-redis
     ports:
       - "127.0.0.1:6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s

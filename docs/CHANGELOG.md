@@ -4,6 +4,7 @@ Project-level notes (not a library semver). Product page: [README](../README.md)
 
 ## 2026-10-07
 
+- Compose publishes the API on `127.0.0.1:8000` only and pins `redis:7-alpine` by digest. The API starts after Redis is healthy, and both services restart unless stopped. The image probes `GET /health/live`. `make dev`, `make test`, `make lint`, and `make demo` are the local shortcuts.
 - `PROVIDER_MODE=demo` serves chat without a Gemini key. Demo providers echo the caller text, pause briefly, and fail when the prompt contains `simulate-local-failure` or `simulate-cloud-failure`, so one fallback hop is visible. `compose.demo.yml` and `scripts/demo.sh` use the gateway key `demo`. Live mode still requires the Gemini and gateway keys.
 - The pytest branch-coverage gate is 90%. Adapter and health tests cover Ollama sampling options, Gemini timeouts, and a health probe with no Redis client.
 - Every response returns `X-Request-Id` (a caller token, or a generated id). One JSON access log line records the request id, method, route, status, and latency, and leaves out the submitted message text and credential headers. `GET /metrics` returns Prometheus counters for requests and latency.

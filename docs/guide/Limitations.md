@@ -23,7 +23,7 @@ These limits stay in force:
 | First-class Ollama in Compose | **not started** | Ollama stays external; optional on stronger machines |
 | UI / chat frontend | **not started** | API-only demo |
 
-Compose publishes Redis on `127.0.0.1` only and requires `REDIS_PASSWORD`. The API image runs as a non-root user. That is local hardening for this demo, not a production network or identity review.
+Compose publishes the API and Redis on `127.0.0.1` only and requires `REDIS_PASSWORD`. The API image runs as a non-root user. That is local hardening for this demo, not a production network or identity review.
 
 > A green `pytest` run means the suite passed — it is not proof this demo is a production chatbot.
 

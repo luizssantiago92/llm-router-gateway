@@ -212,7 +212,7 @@ Expected: **41 passed** (marker-filtered). Compose can keep running; tests use f
 
 - [ ] Docker Compose responds in the terminal.
 - [ ] `.env` has non-empty `GEMINI_API_KEY`, `GATEWAY_API_KEY`, and `REDIS_PASSWORD`.
-- [ ] `docker compose up --build` stays up (`api` **8000**; Redis on **127.0.0.1:6379** only).
+- [ ] `docker compose up --build` stays up (API on **127.0.0.1:8000** only; Redis on **127.0.0.1:6379** only).
 - [ ] `GET /health` is `degraded` or `ok`.
 - [ ] Chat curl with `YOUR_GATEWAY_KEY` returns content.
 - [ ] Repeating the same body sets `cached: true`.
