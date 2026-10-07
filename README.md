@@ -162,15 +162,16 @@ curl -s http://localhost:8000/v1/chat/completions \
 1. `GET /health` returns HTTP 200 with `"degraded"` (no Ollama) or `"ok"` (Ollama + Gemini up). Redis down would be HTTP **503**.
 2. The `"Hello"` curl returns assistant content. Without Ollama, expect `provider: "cloud"` on a cache miss.
 3. Repeat the **same** body: `cached: true` and the daily quota is **not** consumed.
-4. A wrong or missing `X-API-Key` or Bearer token returns **401**, including when the body is invalid.
+4. A wrong or missing `X-API-Key` or Bearer token returns **401**, including when the body is invalid or larger than the size cap. A valid key with a body over 256 KiB returns **413**.
 
 | Result | Meaning |
 | --- | --- |
 | `200` + `provider: "cloud"` | Gemini served a cache miss (typical without Ollama) |
 | `200` + `cached: true` | Exact-match repeat (quota not consumed) |
-| `401` | Missing or wrong `X-API-Key` or Bearer token |
+| `401` | Missing or wrong `X-API-Key` or Bearer token, before the body is read |
+| `413` | Authenticated body larger than the size cap (default 256 KiB) |
 | `429` | Daily cache-miss quota exhausted (default 5; UTC midnight) |
-| `422` | Invalid body or `stream: true` |
+| `422` | Invalid body, out-of-range fields, or `stream: true` |
 | `502` | Both hops failed, or primary returned non-retryable 4xx (no second hop). Quota refunded |
 
 Never commit `.env`. The app does not call `load_dotenv`.
@@ -253,7 +254,7 @@ The target is **one local Compose instance**. A shared demo key simplifies the l
 
 ## How it works
 
-1. **Authenticate (chat only)** — `X-API-Key` or `Authorization: Bearer` must match `GATEWAY_API_KEY` (401 if missing/wrong, before body validation). Health has no key.
+1. **Authenticate (chat only)** — `X-API-Key` or `Authorization: Bearer` must match `GATEWAY_API_KEY` (401 if missing/wrong, before the body is read). A valid key then hits the body-size cap (413 over 256 KiB) and the field limits. Health has no key.
 2. **Look up the cache** — Same messages, temperature, and max tokens? Serve Redis (quota not consumed).
 3. **Classify** — Short and plain prefers local; long text (>150 words) or code/reasoning keywords go to Gemini.
 4. **Call one provider** — Ollama if up, else Gemini. Cache misses consume one daily quota unit first (429 when exhausted).

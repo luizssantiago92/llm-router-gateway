@@ -17,6 +17,14 @@ def test_valid_chat_request_parses() -> None:
     assert body.max_tokens == 64
 
 
+def test_omitted_sampling_fields_are_unset() -> None:
+    body = ChatCompletionRequest.model_validate(
+        {"messages": [{"role": "user", "content": "hello"}]}
+    )
+    assert body.temperature is None
+    assert body.max_tokens is None
+
+
 def test_invalid_body_raises_validation_error() -> None:
     with pytest.raises(ValidationError):
         ChatCompletionRequest.model_validate({"temperature": 0.2})

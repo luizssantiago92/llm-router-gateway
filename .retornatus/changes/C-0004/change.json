@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0004",
+  "title": "Cap chat requests and reject oversized bodies",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Cap chat request size and reject out-of-range chat fields (polish item: request limits and body size cap, finding LLM-A2). One focused change.",
+    "kind": "BEHAVIOR"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-07T03:35:57.223862Z"
+}

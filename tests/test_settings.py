@@ -47,6 +47,43 @@ def test_settings_use_documented_defaults(monkeypatch: pytest.MonkeyPatch) -> No
     assert settings.complexity_word_threshold == 150
     assert settings.upstream_timeout_seconds == 30
     assert settings.chat_daily_limit == 5
+    assert settings.max_message_chars == 32_000
+    assert settings.max_messages == 50
+    assert settings.max_total_message_chars == 64_000
+    assert settings.min_temperature == 0
+    assert settings.max_temperature == 2
+    assert settings.min_max_tokens == 1
+    assert settings.max_max_tokens == 4096
+    assert settings.max_body_bytes == 256 * 1024
+
+
+def _required_settings(
+    *,
+    max_temperature: float = 2,
+    max_max_tokens: int = 4096,
+    max_body_bytes: int = 256 * 1024,
+) -> Settings:
+    return Settings(
+        redis_url="redis://localhost:6379/0",
+        ollama_base_url="http://ollama",
+        gemini_api_key="gemini-test",
+        gateway_api_key="gateway-test",
+        cache_ttl_seconds=60,
+        complexity_word_threshold=150,
+        upstream_timeout_seconds=30,
+        max_temperature=max_temperature,
+        max_max_tokens=max_max_tokens,
+        max_body_bytes=max_body_bytes,
+    )
+
+
+def test_limit_settings_cannot_rise_above_the_builtin_ceiling() -> None:
+    with pytest.raises(RuntimeError):
+        _required_settings(max_body_bytes=(256 * 1024) + 1)
+    with pytest.raises(RuntimeError):
+        _required_settings(max_temperature=3)
+    with pytest.raises(RuntimeError):
+        _required_settings(max_max_tokens=4097)
 
 
 def test_env_example_lists_keys_without_values() -> None:
