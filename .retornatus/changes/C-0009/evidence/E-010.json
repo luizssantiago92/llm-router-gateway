@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "id": "C-0009/E-010",
+  "type": "review_result",
+  "subject": "ship rollback",
+  "source": "Rollback is restoring --cov-fail-under=85 in .github/workflows/ci.yml. The added tests can stay. They do not change request handling.",
+  "producer": "agent",
+  "observed_at": "2026-10-07T15:45:04.725378Z",
+  "subject_state": null,
+  "provenance": "self_reported",
+  "command": null,
+  "exit_code": null,
+  "started_at": null,
+  "ended_at": null,
+  "duration_ms": null,
+  "output_sha256": null,
+  "output_tail": null,
+  "output_artifact": null,
+  "git_commit": null,
+  "worktree_dirty": null,
+  "timed_out": false,
+  "relations": []
+}

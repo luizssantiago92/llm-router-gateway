@@ -47,6 +47,46 @@ def _client_app(redis, local, cloud):
     return app
 
 
+class _NoProbe:
+    """A dependency with neither ping nor health is treated as up."""
+
+
+class _BoomProbe:
+    async def health(self) -> bool:
+        raise RuntimeError("probe failed")
+
+
+@pytest.mark.asyncio
+async def test_health_probe_with_no_redis_client_returns_down() -> None:
+    app = create_app()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/health")
+    assert response.status_code == 503
+    body = response.json()
+    assert body["redis"] == "down"
+    assert body["status"] == "down"
+
+
+@pytest.mark.asyncio
+async def test_missing_ping_and_health_count_as_up() -> None:
+    app = _client_app(_NoProbe(), _NoProbe(), _NoProbe())
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
+
+@pytest.mark.asyncio
+async def test_provider_probe_exception_returns_down() -> None:
+    app = _client_app(MemoryRedis(), _BoomProbe(), FakeProvider("cloud"))
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/health")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "degraded"
+    assert body["providers"]["local"] == "down"
+
+
 @pytest.mark.asyncio
 async def test_health_ok_when_redis_and_upstreams_up() -> None:
     app = _client_app(MemoryRedis(), FakeProvider("local"), FakeProvider("cloud"))

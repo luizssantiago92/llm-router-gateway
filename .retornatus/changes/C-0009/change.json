@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0009",
+  "title": "Raise the branch-coverage gate to 90",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Raise the branch-coverage gate from 85 to 90 and add the tests that keep the suite above that floor (cleanup plan item 12). One focused change.",
+    "kind": "BEHAVIOR"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 2,
+  "relations": [],
+  "created_at": "2026-10-07T15:42:51.353283Z"
+}
