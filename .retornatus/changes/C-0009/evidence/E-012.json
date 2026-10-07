@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "C-0009/E-012",
+  "type": "repository_observation",
+  "subject": "routing eval",
+  "source": "uv run pytest tests/eval -m 'not live'",
+  "producer": "retornatus",
+  "observed_at": "2026-10-07T15:48:08.538651Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "tests/eval",
+    "-m",
+    "not live"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-07T15:48:08.308426Z",
+  "ended_at": "2026-10-07T15:48:08.533315Z",
+  "duration_ms": 224,
+  "output_sha256": "33e44e47285c1e5b23117fca2f787748bf32e571e5fbf20c8d41d20abbf6b21d",
+  "output_tail": "============================= test session starts ==============================\nplatform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: cov-7.1.0, asyncio-1.4.0, platformdirs-4.12.3, anyio-4.15.1\nasyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function\ncollected 1 item\n\ntests/eval/test_routing_eval.py .                                        [100%]\n\n============================== 1 passed in 0.01s ===============================\n",
+  "output_artifact": ".retornatus/changes/C-0009/evidence/E-012.output.txt",
+  "git_commit": "ffc1d935980143974751d3ffffe5a280f7b23929",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": []
+}
