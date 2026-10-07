@@ -64,7 +64,7 @@ On cache miss, a **5xx, timeout, or unexpected exception** on the primary provid
 
 ## Observability
 
-Every completion returns JSON `cached`, `latency_ms`, `provider` and headers `X-Cache`, `X-Latency-Ms`, `X-Provider`. Cache hits reuse the stored origin (`local` or `cloud`).
+Every completion returns JSON `cached`, `latency_ms`, `provider` and headers `X-Cache`, `X-Latency-Ms`, `X-Provider`. Cache hits reuse the stored origin (`local` or `cloud`). Every HTTP response also returns `X-Request-Id`. The process writes one JSON access log line per request and exposes unauthenticated counters at `GET /metrics`. The log leaves out the submitted message text and credential headers.
 
 ## Ship unit
 

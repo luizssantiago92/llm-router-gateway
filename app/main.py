@@ -18,7 +18,9 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from app import __version__
 from app.api.completions import router as completions_router
 from app.api.health import router as health_router
+from app.api.metrics import router as metrics_router
 from app.cache.service import CacheService
+from app.observability import AccessMiddleware, RequestMetrics, configure_access_logger
 from app.providers.base import Provider
 from app.quota.daily import DailyQuota
 from app.routing.router import Router
@@ -57,6 +59,9 @@ def create_app(
         ),
         lifespan=lifespan,
     )
+    configure_access_logger()
+    app.state.metrics = RequestMetrics()
+    app.add_middleware(AccessMiddleware)
     app.add_exception_handler(GatewayUnauthorized, _unauthorized)
     app.add_exception_handler(PayloadTooLarge, _payload_too_large)
     app.add_exception_handler(RequestValidationError, _invalid_request)
@@ -71,6 +76,7 @@ def create_app(
     app.state.quota = quota
     app.include_router(completions_router)
     app.include_router(health_router)
+    app.include_router(metrics_router)
     return app
 
 

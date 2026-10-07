@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0008",
+  "version": 1,
+  "what": "Add a request id on every HTTP response. When the caller sends X-Request-Id as 1 to 128 characters of letters, digits, dot, underscore, or hyphen, return that id. Otherwise return a generated id. Write one JSON access log line per request containing the request id, method, route, status, and latency in milliseconds, and leave out the submitted message text and credential headers. Expose unauthenticated GET /metrics as Prometheus text whose request counter increases after a handled request. Do not change chat status codes, the Redis failure policy, or Gemini sampling.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "A chat response returns an X-Request-Id header",
+    "A caller-supplied request id returns that same id",
+    "An access log line returns the request id and the status and leaves out the submitted message text",
+    "GET /metrics returns a request counter that is higher after a chat request"
+  ],
+  "active": true,
+  "activated_at": "2026-10-07T11:45:04.349464Z"
+}

@@ -38,7 +38,7 @@ Errors use one envelope and do not repeat the submitted body:
 {"error": {"message": "...", "type": "...", "param": null, "code": "..."}}
 ```
 
-Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
+Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`. Every response also returns `X-Request-Id`. A caller may send that header when the value is 1–128 characters of letters, digits, `.`, `_`, or `-`. Any other value is replaced with a generated id. The process writes one JSON access log line per request with `request_id`, `method`, `path` (the route template, or `unmatched`), `status`, and `latency_ms`. Chat lines also include `provider` and `cached` when those response headers are present. The line leaves out the submitted message text and credential headers.
 
 ### Behavior
 
@@ -62,6 +62,10 @@ Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
 | Unknown path | HTTP 404 (`not_found`) |
 
 Cache key: SHA-256 of a canonical serialization of `messages` + `temperature` + `max_tokens`. Omitted `temperature` is stored as `1.0`. `top_p`, `stop`, and a caller-selected Gemini model id are added only when the request sets them. The routed provider name is not part of the key.
+
+## `GET /metrics`
+
+Unauthenticated Prometheus text. `gateway_http_requests_total` counts handled requests by method, route, and status. `gateway_http_request_latency_ms_sum` and `gateway_http_request_latency_ms_count` record latency in milliseconds. The page is counters only.
 
 ## `GET /health`
 
