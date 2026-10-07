@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0010",
+  "version": 1,
+  "what": "Add PROVIDER_MODE=demo. Demo providers echo the caller text, pause briefly, and fail on a documented prompt so one hop of fallback is visible. Cache and quota still use Redis. A documented gateway key is used when GATEWAY_API_KEY is absent. Live mode still requires GEMINI_API_KEY and GATEWAY_API_KEY and still calls Ollama and Gemini. Add a compose file and a curl script for that demo.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "pytest with a branch-coverage floor of 90 exits 0",
+    "A demo-mode settings load returns the documented gateway key when GATEWAY_API_KEY is absent",
+    "A live-mode settings load returns an error when GEMINI_API_KEY is absent",
+    "A simple demo prompt that asks the local provider to fail returns a cloud echo",
+    "A repeated demo prompt returns a cache hit"
+  ],
+  "active": true,
+  "activated_at": "2026-10-07T16:13:03.040846Z"
+}

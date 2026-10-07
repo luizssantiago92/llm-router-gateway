@@ -6,6 +6,8 @@ import httpx
 from redis.asyncio import Redis
 
 from app.cache.service import CacheService
+from app.providers.base import Provider
+from app.providers.demo import DEMO_LATENCY_SECONDS, DemoProvider
 from app.providers.gemini import GeminiProvider
 from app.providers.ollama import OllamaProvider
 from app.quota.daily import DailyQuota
@@ -23,8 +25,8 @@ class AppRuntime:
         redis: Redis,
         local_client: httpx.AsyncClient,
         cloud_client: httpx.AsyncClient,
-        local: OllamaProvider,
-        cloud: GeminiProvider,
+        local: Provider,
+        cloud: Provider,
         cache: CacheService,
         quota: DailyQuota,
         router: Router,
@@ -56,17 +58,23 @@ def build_runtime(settings: Settings | None = None) -> AppRuntime:
     timeout = resolved.upstream_timeout_seconds
     local_client = httpx.AsyncClient(timeout=timeout)
     cloud_client = httpx.AsyncClient(timeout=timeout)
-    local = OllamaProvider(
-        resolved.ollama_base_url,
-        timeout_seconds=timeout,
-        client=local_client,
-    )
-    cloud = GeminiProvider(
-        resolved.gemini_api_key,
-        model=resolved.gemini_model,
-        timeout_seconds=timeout,
-        client=cloud_client,
-    )
+    local: Provider
+    cloud: Provider
+    if resolved.provider_mode == "demo":
+        local = DemoProvider("local", delay_seconds=DEMO_LATENCY_SECONDS)
+        cloud = DemoProvider("cloud", delay_seconds=DEMO_LATENCY_SECONDS)
+    else:
+        local = OllamaProvider(
+            resolved.ollama_base_url,
+            timeout_seconds=timeout,
+            client=local_client,
+        )
+        cloud = GeminiProvider(
+            resolved.gemini_api_key,
+            model=resolved.gemini_model,
+            timeout_seconds=timeout,
+            client=cloud_client,
+        )
     cache = CacheService(redis, resolved.cache_ttl_seconds)
     quota = DailyQuota(redis, resolved.chat_daily_limit)
     router = Router(local, cloud, word_threshold=resolved.complexity_word_threshold)

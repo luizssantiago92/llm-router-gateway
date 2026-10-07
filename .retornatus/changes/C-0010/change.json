@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0010",
+  "title": "Zero-key demo mode",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Add a zero-key demo mode (cleanup plan item 13). One focused change.",
+    "kind": "BEHAVIOR"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-07T16:13:03.032251Z"
+}

@@ -4,6 +4,7 @@ Project-level notes (not a library semver). Product page: [README](../README.md)
 
 ## 2026-10-07
 
+- `PROVIDER_MODE=demo` serves chat without a Gemini key. Demo providers echo the caller text, pause briefly, and fail when the prompt contains `simulate-local-failure` or `simulate-cloud-failure`, so one fallback hop is visible. `compose.demo.yml` and `scripts/demo.sh` use the gateway key `demo`. Live mode still requires the Gemini and gateway keys.
 - The pytest branch-coverage gate is 90%. Adapter and health tests cover Ollama sampling options, Gemini timeouts, and a health probe with no Redis client.
 - Every response returns `X-Request-Id` (a caller token, or a generated id). One JSON access log line records the request id, method, route, status, and latency, and leaves out the submitted message text and credential headers. `GET /metrics` returns Prometheus counters for requests and latency.
 - Gemini generation config receives `temperature` only when the caller set it, plus `topP`, `maxOutputTokens`, and `stopSequences` when those fields are set. A Gemini model id on the request selects the cloud model for that call. Gemini `MAX_TOKENS` maps to `finish_reason` `length`. A blocked Gemini prompt with no text returns HTTP 502 and does not call the other provider.

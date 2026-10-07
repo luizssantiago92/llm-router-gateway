@@ -118,6 +118,17 @@ docker compose version
 
 ## 2. Run the demo
 
+### Zero-key local run
+
+```bash
+docker compose -f compose.demo.yml up --build
+scripts/demo.sh
+```
+
+No Gemini key. The gateway key is `demo`. The script checks health, sends `hello`, repeats it (cache hit), and sends `simulate-local-failure` so the answer comes from the cloud demo provider. Leave `PROVIDER_MODE` unset for the live Ollama and Gemini path below.
+
+### Live Gemini run
+
 A **clone** brings the repo to your machine. You do not need a fork unless you intend to open a PR.
 
 ```bash
