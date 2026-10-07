@@ -35,8 +35,7 @@
         "app/settings.py",
         "app/security.py",
         "app/main.py",
-        "app/api/completions.py",
-        ".env.example"
+        "app/api/completions.py"
       ]
     },
     {
@@ -54,6 +53,7 @@
         "docs/guide/API.md",
         "docs/guide/Development.md",
         "docs/CHANGELOG.md",
+        "docs/guide/Quick-start.md",
         "README.md"
       ]
     }
