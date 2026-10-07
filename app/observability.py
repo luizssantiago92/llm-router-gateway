@@ -11,7 +11,6 @@ import logging
 import re
 import threading
 import time
-from typing import TextIO
 from uuid import uuid4
 
 from starlette.datastructures import MutableHeaders
@@ -20,18 +19,16 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 _REQUEST_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}\Z")
 _LOGGER = logging.getLogger("app.access")
 _METRICS_MEDIA_TYPE = "text/plain; version=0.0.4; charset=utf-8"
-
-
-class _AccessLogHandler(logging.StreamHandler[TextIO]):
-    """Writes the JSON access line without a logging prefix."""
+_ACCESS_HANDLER = "gateway-access"
 
 
 def configure_access_logger() -> None:
     """Emit access lines at INFO, including when the root logger is quieter."""
     _LOGGER.setLevel(logging.INFO)
-    if any(isinstance(handler, _AccessLogHandler) for handler in _LOGGER.handlers):
+    if any(handler.name == _ACCESS_HANDLER for handler in _LOGGER.handlers):
         return
-    handler = _AccessLogHandler()
+    handler = logging.StreamHandler()
+    handler.name = _ACCESS_HANDLER
     handler.setFormatter(logging.Formatter("%(message)s"))
     _LOGGER.addHandler(handler)
 
