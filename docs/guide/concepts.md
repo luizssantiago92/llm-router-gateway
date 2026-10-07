@@ -21,7 +21,7 @@ Otherwise **simple**. Simple → local primary (Ollama). Complex → cloud prima
 
 ## Daily quota
 
-Redis key `quota:{sha256(api_key)[:16]}:{UTC date}`. Each cache **miss** `INCR`s; over `CHAT_DAILY_LIMIT` → 429. Hits do not increment. Dual-fail `DECR`s. Expiry is seconds until UTC midnight (minimum 60s). The quota store is **fail-closed**: if Redis cannot increment the counter, the route returns HTTP 503 and does not call a provider. A failed refund does not replace the HTTP 502.
+Redis key `quota:{scrypt(api_key)}:{UTC date}`. The digest is scrypt with a fixed salt, so the raw credential is not the Redis key and the same caller keeps one bucket. Each cache **miss** `INCR`s; over `CHAT_DAILY_LIMIT` → 429. Hits do not increment. Dual-fail `DECR`s. Expiry is seconds until UTC midnight (minimum 60s). The quota store is **fail-closed**: if Redis cannot increment the counter, the route returns HTTP 503 and does not call a provider. A failed refund does not replace the HTTP 502.
 
 ## Health
 

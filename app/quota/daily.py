@@ -38,14 +38,26 @@ class QuotaRedis(Protocol):
     def decr(self, key: str) -> Awaitable[int]: ...
 
 
+# Fixed salt so the same caller maps to the same daily bucket. This is a key
+# id, not a stored password check, and it stays deterministic across processes.
+_QUOTA_SALT = b"llm-router-gateway-quota-v1"
+
+
 class DailyQuota:
     def __init__(self, redis: QuotaRedis, daily_limit: int) -> None:
         self._redis = redis
         self._limit = daily_limit
 
     def _bucket_key(self, api_key: str) -> str:
-        digest = hashlib.sha256(api_key.encode("utf-8")).hexdigest()[:16]
-        return f"quota:{digest}:{date.today().isoformat()}"
+        digest = hashlib.scrypt(
+            api_key.encode("utf-8"),
+            salt=_QUOTA_SALT,
+            n=2**14,
+            r=8,
+            p=1,
+            dklen=16,
+        )
+        return f"quota:{digest.hex()}:{date.today().isoformat()}"
 
     async def consume(self, api_key: str) -> None:
         key = self._bucket_key(api_key)

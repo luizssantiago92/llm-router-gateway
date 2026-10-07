@@ -159,6 +159,14 @@ async def test_non_retryable_primary_returns_502_without_the_secondary() -> None
     assert cloud.calls == 0
 
 
+def test_quota_bucket_hides_the_caller_credential() -> None:
+    quota = DailyQuota(FlakyRedis(), 5)
+    key = quota._bucket_key(API_KEY)
+    assert API_KEY not in key
+    assert key.startswith("quota:")
+    assert quota._bucket_key(API_KEY) == key
+
+
 @pytest.mark.asyncio
 async def test_expire_failure_refuses_the_request() -> None:
     class _ExpireDown(FlakyRedis):
