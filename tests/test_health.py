@@ -75,3 +75,54 @@ async def test_health_503_when_redis_down() -> None:
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/health")
     assert response.status_code == 503
+
+
+@pytest.mark.asyncio
+async def test_live_returns_200_without_probing_redis() -> None:
+    redis = MemoryRedis(fail=True)
+    app = _client_app(
+        redis,
+        FakeProvider("local", healthy=False),
+        FakeProvider("cloud", healthy=False),
+    )
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/health/live")
+    assert response.status_code == 200
+    assert response.json() == {"status": "live"}
+
+
+@pytest.mark.asyncio
+async def test_ready_503_when_redis_down() -> None:
+    app = _client_app(MemoryRedis(fail=True), FakeProvider("local"), FakeProvider("cloud"))
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/health/ready")
+    assert response.status_code == 503
+    body = response.json()
+    assert body["status"] == "not_ready"
+    assert body["redis"] == "down"
+
+
+@pytest.mark.asyncio
+async def test_ready_200_when_redis_up_and_one_provider_up() -> None:
+    app = _client_app(
+        MemoryRedis(),
+        FakeProvider("local", healthy=False),
+        FakeProvider("cloud"),
+    )
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/health/ready")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ready"
+
+
+@pytest.mark.asyncio
+async def test_ready_503_when_both_providers_down() -> None:
+    app = _client_app(
+        MemoryRedis(),
+        FakeProvider("local", healthy=False),
+        FakeProvider("cloud", healthy=False),
+    )
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.get("/health/ready")
+    assert response.status_code == 503
+    assert response.json()["status"] == "not_ready"

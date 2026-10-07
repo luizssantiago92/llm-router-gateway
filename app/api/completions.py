@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 
 from app.deps import CacheDep, QuotaDep, RouterDep, SettingsDep
 from app.providers.base import ProviderError, TokenUsage
-from app.quota.daily import QuotaExceededError
+from app.quota.daily import QuotaExceededError, QuotaUnavailableError
 from app.schemas.chat import (
     ChatCompletionRequest,
     ChatCompletionResponse,
@@ -77,6 +77,7 @@ def _cached_model(value: object) -> str | None:
         422: {"model": ErrorEnvelope},
         429: {"model": ErrorEnvelope},
         502: {"model": ErrorEnvelope},
+        503: {"model": ErrorEnvelope},
     },
 )
 async def chat_completions(
@@ -120,6 +121,15 @@ async def chat_completions(
             return JSONResponse(
                 error_payload(str(exc), "rate_limit_reached", code="rate_limit_reached"),
                 status_code=429,
+            )
+        except QuotaUnavailableError:
+            return JSONResponse(
+                error_payload(
+                    "quota store unavailable",
+                    "service_unavailable",
+                    code="quota_unavailable",
+                ),
+                status_code=503,
             )
 
     try:

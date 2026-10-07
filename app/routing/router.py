@@ -3,6 +3,10 @@ from __future__ import annotations
 from app.providers.base import Completion, Provider, ProviderError
 from app.routing.evaluator import classify
 
+# ProviderError is handled on its own so a non-retryable 4xx is not hopped.
+# Every other Exception from a provider is one hop, then a 502.
+_UNEXPECTED = (Exception,)
+
 
 class Router:
     def __init__(
@@ -29,7 +33,9 @@ class Router:
         except ProviderError as exc:
             if not exc.is_retryable:
                 raise
-            try:
-                return await secondary.complete(messages, temperature, max_tokens)
-            except ProviderError as second:
-                raise ProviderError("both providers failed", status_code=502) from second
+        except _UNEXPECTED:
+            pass
+        try:
+            return await secondary.complete(messages, temperature, max_tokens)
+        except _UNEXPECTED as second:
+            raise ProviderError("both providers failed", status_code=502) from second

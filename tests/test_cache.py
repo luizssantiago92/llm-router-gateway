@@ -46,6 +46,49 @@ async def test_cache_get_returns_stored_completion() -> None:
     assert redis.ttls[cache_key(messages, 0.0, 8)] == 3600
 
 
+class _DownRedis(MemoryRedis):
+    async def get(self, key: str) -> str | None:
+        raise ConnectionError("redis down")
+
+    async def set(self, key: str, value: str, ex: int | None = None) -> None:
+        raise ConnectionError("redis down")
+
+
+@pytest.mark.asyncio
+async def test_cache_read_failure_is_a_miss() -> None:
+    cache = CacheService(_DownRedis(), ttl_seconds=60)
+    assert await cache.get([{"role": "user", "content": "hi"}], 0.0, 8) is None
+
+
+@pytest.mark.asyncio
+async def test_cache_write_failure_does_not_raise() -> None:
+    cache = CacheService(_DownRedis(), ttl_seconds=60)
+    await cache.store(
+        [{"role": "user", "content": "hi"}],
+        0.0,
+        8,
+        {"content": "pong", "provider": "local"},
+    )
+
+
+@pytest.mark.asyncio
+async def test_cached_non_object_json_is_a_miss() -> None:
+    redis = MemoryRedis()
+    cache = CacheService(redis, ttl_seconds=60)
+    messages = [{"role": "user", "content": "hi"}]
+    redis.data[cache_key(messages, 0.0, 8)] = "[1]"
+    assert await cache.get(messages, 0.0, 8) is None
+
+
+@pytest.mark.asyncio
+async def test_invalid_cached_json_is_a_miss() -> None:
+    redis = MemoryRedis()
+    cache = CacheService(redis, ttl_seconds=60)
+    messages = [{"role": "user", "content": "hi"}]
+    redis.data[cache_key(messages, 0.0, 8)] = "not-json"
+    assert await cache.get(messages, 0.0, 8) is None
+
+
 @pytest.mark.asyncio
 async def test_cache_does_not_store_error_payloads() -> None:
     redis = MemoryRedis()

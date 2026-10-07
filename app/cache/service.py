@@ -7,6 +7,8 @@ import json
 from collections.abc import Awaitable
 from typing import Any, Protocol
 
+from app.redis_failures import REDIS_FAILURES
+
 
 class RedisLike(Protocol):
     """Subset of ``redis.asyncio.Redis`` used by the exact-match cache."""
@@ -42,10 +44,18 @@ class CacheService:
         temperature: float,
         max_tokens: int | None,
     ) -> dict[str, Any] | None:
-        raw = await self._redis.get(cache_key(messages, temperature, max_tokens))
+        try:
+            raw = await self._redis.get(cache_key(messages, temperature, max_tokens))
+        except REDIS_FAILURES:
+            return None
         if raw is None:
             return None
-        loaded: dict[str, Any] = json.loads(raw)
+        try:
+            loaded = json.loads(raw)
+        except (json.JSONDecodeError, UnicodeDecodeError, TypeError):
+            return None
+        if not isinstance(loaded, dict):
+            return None
         return loaded
 
     async def store(
@@ -62,8 +72,11 @@ class CacheService:
             return
         if status_code is not None and status_code >= 400:
             return
-        await self._redis.set(
-            cache_key(messages, temperature, max_tokens),
-            json.dumps(value, ensure_ascii=False),
-            ex=self._ttl_seconds,
-        )
+        try:
+            await self._redis.set(
+                cache_key(messages, temperature, max_tokens),
+                json.dumps(value, ensure_ascii=False),
+                ex=self._ttl_seconds,
+            )
+        except REDIS_FAILURES:
+            return

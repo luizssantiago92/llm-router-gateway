@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "id": "C-0006/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Fail open on cache, fail closed on quota, and fail over once",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "A Redis read failure on the cache returns the upstream completion",
+    "A Redis write failure after a completion returns HTTP 200",
+    "A Redis failure while consuming quota returns HTTP 503 and does not call a provider",
+    "The live health endpoint returns HTTP 200",
+    "The ready health endpoint returns HTTP 503 when Redis is down",
+    "The ready health endpoint returns HTTP 200 when Redis is up and one provider is up",
+    "The ready health endpoint returns HTTP 503 when both providers are down",
+    "A retryable primary failure returns the secondary completion",
+    "A non-retryable primary failure does not call the secondary provider",
+    "Two provider failures return HTTP 502"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0006/T-001",
+      "description": "Fail open on cache, fail closed on quota, add live and ready probes, and hop once on provider failure",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "app/redis_failures.py",
+        "app/cache/service.py",
+        "app/quota/daily.py",
+        "app/api/completions.py",
+        "app/api/health.py",
+        "app/routing/router.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0006/T-002",
+      "description": "Cover the failure policy with tests and update the guide pages that describe it",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0006/T-001"
+      ],
+      "resources": [
+        "tests/test_resilience.py",
+        "tests/test_health.py",
+        "tests/test_fallback.py",
+        "tests/test_cache.py",
+        "docs/guide/API.md",
+        "docs/guide/concepts.md",
+        "docs/guide/How-it-works.md",
+        "docs/guide/Architecture.md",
+        "docs/guide/Glossary.md",
+        "docs/CHANGELOG.md",
+        "README.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
