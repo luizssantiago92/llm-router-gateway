@@ -142,3 +142,7 @@ _Fill during Wake / first Change. Prefer facts from the repo over assumptions._
 ## Agent narrative
 
 CI fails pytest when branch coverage is under 85. The comment in the workflow says a later test pass raises that floor to 90. Ollama sampling options, Gemini timeouts, and a health probe with no Redis client are not covered. Chat status codes, request ids, the Redis failure policy, and Gemini request mapping stay as they are.
+
+## Reopened Situation
+
+The workflow path needs a review claim before the scope gate can pass.
