@@ -29,6 +29,29 @@ async def test_ollama_adapter_maps_chat_response() -> None:
     assert result.content == "hi"
     assert result.provider == "local"
     assert result.model == "llama3"
+    assert result.usage is None
+
+
+@pytest.mark.asyncio
+async def test_ollama_adapter_sums_only_counts_the_provider_reported() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "model": "llama3",
+                "message": {"role": "assistant", "content": "hi"},
+                "prompt_eval_count": 4,
+                "eval_count": 6,
+            },
+        )
+
+    async with httpx.AsyncClient(transport=_transport(handler), base_url="http://ollama") as client:
+        provider = OllamaProvider("http://ollama", client=client)
+        result = await provider.complete([{"role": "user", "content": "hello"}], 0.1, 16)
+    assert result.usage is not None
+    assert result.usage.prompt_tokens == 4
+    assert result.usage.completion_tokens == 6
+    assert result.usage.total_tokens == 10
 
 
 @pytest.mark.asyncio

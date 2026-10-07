@@ -4,7 +4,13 @@ from typing import Any
 
 import httpx
 
-from app.providers.base import Completion, ProviderError
+from app.providers.base import (
+    Completion,
+    ProviderError,
+    TokenUsage,
+    count_or_none,
+    reported_usage,
+)
 
 
 def _messages_to_gemini(
@@ -63,7 +69,12 @@ class GeminiProvider:
         data = await self._request("POST", url, json=payload)
         content = _extract_text(data)
         model = str(data.get("modelVersion", self._model))
-        return Completion(content=content, model=model, provider=self.name)
+        return Completion(
+            content=content,
+            model=model,
+            provider=self.name,
+            usage=_usage_from_gemini(data),
+        )
 
     async def health(self) -> bool:
         try:
@@ -96,6 +107,17 @@ class GeminiProvider:
             raise ProviderError("gemini client error", status_code=response.status_code)
         body: dict[str, Any] = response.json()
         return body
+
+
+def _usage_from_gemini(data: dict[str, Any]) -> TokenUsage | None:
+    meta = data.get("usageMetadata")
+    if not isinstance(meta, dict):
+        return None
+    return reported_usage(
+        count_or_none(meta.get("promptTokenCount")),
+        count_or_none(meta.get("candidatesTokenCount")),
+        count_or_none(meta.get("totalTokenCount")),
+    )
 
 
 def _extract_text(data: dict[str, Any]) -> str:

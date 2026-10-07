@@ -4,7 +4,7 @@ from typing import Any
 
 import httpx
 
-from app.providers.base import Completion, ProviderError
+from app.providers.base import Completion, ProviderError, count_or_none, reported_usage
 
 
 class OllamaProvider:
@@ -41,7 +41,16 @@ class OllamaProvider:
         message = data.get("message") or {}
         content = str(message.get("content", ""))
         model = str(data.get("model", self._model))
-        return Completion(content=content, model=model, provider=self.name)
+        return Completion(
+            content=content,
+            model=model,
+            provider=self.name,
+            usage=reported_usage(
+                count_or_none(data.get("prompt_eval_count")),
+                count_or_none(data.get("eval_count")),
+                None,
+            ),
+        )
 
     async def health(self) -> bool:
         try:

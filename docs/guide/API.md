@@ -18,13 +18,23 @@ Process factory: `app.main:build_default_app` (Uvicorn `--factory`). The factory
 
 OpenAI Chat Completions-compatible body: `messages`, `temperature`, `max_tokens`. Additional OpenAI fields are accepted and ignored.
 
-Gateway-specific response fields (in addition to a standard completion payload):
+Each success includes a unique `id` (`chatcmpl-` plus a random hex), `created` (unix seconds), `model` (the provider model, or null when a cached value has none), and `usage`. `usage.prompt_tokens`, `usage.completion_tokens`, and `usage.total_tokens` are copied from the provider. Gemini uses `usageMetadata` (`promptTokenCount`, `candidatesTokenCount`, `totalTokenCount`). Ollama uses `prompt_eval_count` and `eval_count`; when both are present and no total was sent, `total_tokens` is their sum. A count the provider did not send is **null**. The gateway does not estimate tokens. `latency_ms` is a whole number of milliseconds.
+
+Gateway-specific response fields (in addition to that completion payload):
 
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `cached` | boolean | Redis exact-match hit |
-| `latency_ms` | number | Gateway hop latency |
+| `latency_ms` | integer | Gateway hop latency, rounded to a millisecond |
 | `provider` | string | Adapter that produced the completion (`local` or `cloud`). Cache hits reuse the stored origin; they do not set `provider` to `cache`. |
+
+The chat route declares `response_model` and `responses` for 200, 401, 413, 422, 429, and 502. The schema `info.version` is `app.__version__`. `GET /` redirects to `/docs`.
+
+Errors use one envelope and do not repeat the submitted body:
+
+```json
+{"error": {"message": "...", "type": "...", "param": null, "code": "..."}}
+```
 
 Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
 
@@ -39,8 +49,9 @@ Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
 | Missing/invalid `X-API-Key` or Bearer token, even if the body is invalid or oversized | HTTP 401 |
 | Authenticated body over the size cap | HTTP 413 |
 | Daily quota exhausted | HTTP 429 |
-| Invalid body, including out-of-range fields | HTTP 422 (Pydantic) |
+| Invalid body, including out-of-range fields | HTTP 422 (`invalid_request_error`; submitted text is not echoed) |
 | `stream: true` | HTTP 422 |
+| Unknown path | HTTP 404 (`not_found`) |
 
 Cache key: SHA-256 of a canonical serialization of `messages` + `temperature` + `max_tokens`. The routed model name is not part of the key.
 

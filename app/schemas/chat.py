@@ -47,13 +47,47 @@ class ChatCompletionChoice(BaseModel):
     finish_reason: str = "stop"
 
 
+class Usage(BaseModel):
+    """Provider-reported token counts. Null means the provider did not report it."""
+
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    total_tokens: int | None = None
+
+
 class ChatCompletionResponse(BaseModel):
-    id: str = "chatcmpl-gateway"
+    id: str
     object: str = "chat.completion"
+    created: int
+    model: str | None = None
     choices: list[ChatCompletionChoice]
+    usage: Usage
     cached: bool
-    latency_ms: float
+    latency_ms: int
     provider: str
+
+
+class ErrorDetail(BaseModel):
+    message: str
+    type: str
+    param: str | None = None
+    code: str | None = None
+
+
+class ErrorEnvelope(BaseModel):
+    error: ErrorDetail
+
+
+def error_payload(
+    message: str,
+    error_type: str,
+    *,
+    param: str | None = None,
+    code: str | None = None,
+) -> dict[str, object]:
+    return ErrorEnvelope(
+        error=ErrorDetail(message=message, type=error_type, param=param, code=code)
+    ).model_dump()
 
 
 def configured_limit_reason(body: ChatCompletionRequest, settings: Settings) -> str | None:

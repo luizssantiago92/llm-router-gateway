@@ -24,7 +24,7 @@ You will find an OpenAI-shaped `POST /v1/chat/completions`, a `GET /health` prob
 
 The stack is **Python 3.10+ / FastAPI**, **Redis**, **Google Gemini** (default `gemini-3.5-flash`), and **optional Ollama** (`llama3` class). To run the demo you **do** need Docker and a Gemini API key. You do **not** need a paid OpenAI account, Kubernetes, or a UI.
 
-> **The contract:** applications never pick a provider. They send `messages`, `temperature`, and `max_tokens`. The gateway decides cache vs local vs cloud, hops once on 5xx/timeout, and returns `cached`, `latency_ms`, and `provider`.
+> **The contract:** applications never pick a provider. They send `messages`, `temperature`, and `max_tokens`. The gateway decides cache vs local vs cloud, hops once on 5xx/timeout, and returns a unique id, `created`, `model`, provider-reported `usage` (null when unreported), `cached`, integer `latency_ms`, and `provider`.
 
 | Status | Detail |
 | --- | --- |
@@ -171,7 +171,8 @@ curl -s http://localhost:8000/v1/chat/completions \
 | `401` | Missing or wrong `X-API-Key` or Bearer token, before the body is read |
 | `413` | Authenticated body larger than the size cap (default 256 KiB) |
 | `429` | Daily cache-miss quota exhausted (default 5; UTC midnight) |
-| `422` | Invalid body, out-of-range fields, or `stream: true` |
+| `422` | Invalid body, out-of-range fields, or `stream: true` (error envelope, submitted text omitted) |
+| `404` | Unknown path, same error envelope |
 | `502` | Both hops failed, or primary returned non-retryable 4xx (no second hop). Quota refunded |
 
 Never commit `.env`. The app does not call `load_dotenv`.
