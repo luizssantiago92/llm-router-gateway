@@ -2,6 +2,10 @@
 
 Project-level notes (not a library semver). Product page: [README](../README.md). Guide: [docs/guide](guide/README.md).
 
+## 2026-10-07
+
+- Cache Redis failures fail open: a read error is a miss, and a write error still returns the completion. Quota Redis failures fail closed with HTTP 503 and do not call a provider. The quota bucket id is a scrypt digest of the caller credential. `GET /health/live` does not probe dependencies. `GET /health/ready` is ready only when Redis is up and at least one provider is up. A retryable or unexpected primary failure hops once; a non-retryable primary failure does not.
+
 ## 2026-10-06
 
 - Chat responses include a unique id, `created`, `model`, and provider-reported `usage` (null when the provider sent no count). Validation and unknown paths use the same `{"error": ...}` envelope as 401 and 413, without repeating the submitted text. `latency_ms` is a whole millisecond. `GET /` redirects to `/docs`. The schema version is `app.__version__`.

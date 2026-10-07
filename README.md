@@ -159,7 +159,7 @@ curl -s http://localhost:8000/v1/chat/completions \
 
 ### Check your first access
 
-1. `GET /health` returns HTTP 200 with `"degraded"` (no Ollama) or `"ok"` (Ollama + Gemini up). Redis down would be HTTP **503**.
+1. `GET /health` returns HTTP 200 with `"degraded"` (no Ollama) or `"ok"` (Ollama + Gemini up). Redis down would be HTTP **503**. `GET /health/live` stays HTTP 200 while the process is up. `GET /health/ready` is HTTP 503 when Redis is down or both providers are down.
 2. The `"Hello"` curl returns assistant content. Without Ollama, expect `provider: "cloud"` on a cache miss.
 3. Repeat the **same** body: `cached: true` and the daily quota is **not** consumed.
 4. A wrong or missing `X-API-Key` or Bearer token returns **401**, including when the body is invalid or larger than the size cap. A valid key with a body over 256 KiB returns **413**.
@@ -173,7 +173,8 @@ curl -s http://localhost:8000/v1/chat/completions \
 | `429` | Daily cache-miss quota exhausted (default 5; UTC midnight) |
 | `422` | Invalid body, out-of-range fields, or `stream: true` (error envelope, submitted text omitted) |
 | `404` | Unknown path, same error envelope |
-| `502` | Both hops failed, or primary returned non-retryable 4xx (no second hop). Quota refunded |
+| `502` | Both hops failed, or primary returned non-retryable 4xx (no second hop). Quota refunded when Redis accepts it |
+| `503` | Quota store could not be updated. Providers are not called |
 
 Never commit `.env`. The app does not call `load_dotenv`.
 

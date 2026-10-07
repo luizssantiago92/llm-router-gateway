@@ -46,7 +46,7 @@ Status: **demo shipped** on Compose (Gemini + optional Ollama + quota).
                                   Return final response
 ```
 
-On cache miss, a **5xx or timeout** on the primary provider triggers **one** hop to the opposite tier (local ↔ cloud) before the request fails. Error responses are not cached. Non-retryable 4xx from the primary is not hopped (HTTP 502 at the route).
+On cache miss, a **5xx, timeout, or unexpected exception** on the primary provider triggers **one** hop to the opposite tier (local ↔ cloud) before the request fails. Error responses are not cached. Non-retryable 4xx from the primary is not hopped (HTTP 502 at the route). Cache Redis errors fail open. Quota Redis errors fail closed with HTTP 503.
 
 ## Components
 
@@ -60,7 +60,7 @@ On cache miss, a **5xx or timeout** on the primary provider triggers **one** hop
 | Local adapter | `app/providers/ollama.py` | Optional Ollama (`llama3` class); `name="local"` |
 | Cloud adapter | `app/providers/gemini.py` | Default Gemini (`GEMINI_API_KEY` in the `x-goog-api-key` header); `name="cloud"` |
 | Quota | `app/quota/daily.py` | Redis daily bucket per `X-API-Key` (cache hits free) |
-| Health | `app/api/health.py` | Process + Redis + each configured upstream |
+| Health | `app/api/health.py` | `GET /health`, `GET /health/live`, and `GET /health/ready` |
 
 ## Observability
 

@@ -9,7 +9,7 @@ Without it, every service picks a provider SDK, retries on its own, and pays for
 1. **Same contract** (OpenAI-shaped JSON)
 2. **Same prompt?** (Redis exact match — no quota)
 3. **Simple or complex?** (word count or keywords)
-4. **One hop if the primary is sick** (5xx or timeout only)
+4. **One hop if the primary is sick** (5xx, timeout, or an unexpected error)
 5. **Show your work** (`cached`, `latency_ms`, `provider`)
 
 If both hops fail, the gateway **stops** with HTTP 502 and refunds the quota unit. It does not retry forever.
@@ -22,11 +22,11 @@ If both hops fail, the gateway **stops** with HTTP 502 and refunds the quota uni
 
 ### 1. Cache — “Have we answered this exact thing?”
 
-The key is SHA-256 of a canonical JSON of `messages` + `temperature` + `max_tokens`. The model id is **not** in the key. Hits return the stored body with `cached: true` and the stored `provider` (`local` or `cloud` — never `"cache"`). Quota is not consumed. Errors are never stored.
+The key is SHA-256 of a canonical JSON of `messages` + `temperature` + `max_tokens`. The model id is **not** in the key. Hits return the stored body with `cached: true` and the stored `provider` (`local` or `cloud` — never `"cache"`). Quota is not consumed. Errors are never stored. If Redis cannot be read, the request continues as a miss. If Redis cannot store the success, the completion is still returned.
 
 ### 2. Quota — “Misses cost a demo token”
 
-On miss, the gateway consumes one unit of the caller’s daily Redis bucket (`CHAT_DAILY_LIMIT`, default 5, UTC midnight). Exhausted → **429**. Dual-fail (or any remaining `ProviderError` after routing) **refunds** that unit.
+On miss, the gateway consumes one unit of the caller’s daily Redis bucket (`CHAT_DAILY_LIMIT`, default 5, UTC midnight). Exhausted → **429**. If Redis cannot update that counter → **503**, and no provider is called. Dual-fail (or any remaining `ProviderError` after routing) **refunds** that unit when Redis accepts the refund.
 
 ### 3. Classify — “Local or cloud first?”
 
@@ -34,7 +34,7 @@ Concatenated message contents are **complex** if word count **> 150** (configura
 
 ### 4. Call — “One adapter, then maybe the other”
 
-Simple → Ollama then Gemini. Complex → Gemini then Ollama. Connection failures and HTTP 5xx / timeouts are retryable. Gemini/Ollama **4xx** is **not** hopped; the route still returns **502**.
+Simple → Ollama then Gemini. Complex → Gemini then Ollama. Connection failures, HTTP 5xx / timeouts, and unexpected provider exceptions hop once. Gemini/Ollama **4xx** is **not** hopped; the route still returns **502**.
 
 Without Ollama, simple prompts fail locally once (retryable) and **fall back to Gemini**. Health stays `degraded`. That is the supported light-PC path (REQ-022).
 

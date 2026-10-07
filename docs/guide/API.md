@@ -14,7 +14,9 @@ Process factory: `app.main:build_default_app` (Uvicorn `--factory`). The factory
 
 **Fields:** `role` is `system`, `user`, or `assistant`. Each `content` is 1–32,000 characters (`MAX_MESSAGE_CHARS`). `messages` has 1–50 items (`MAX_MESSAGES`). Combined `content` is at most 64,000 characters (`MAX_TOTAL_MESSAGE_CHARS`). `temperature`, when present, is 0–2; when omitted, providers still receive `1.0`. `max_tokens`, when present, is 1–4096. Settings can lower these ceilings and cannot raise them. Out-of-range values are HTTP **422**.
 
-**Quota:** each cache **miss** consumes one unit of the caller's daily limit (`CHAT_DAILY_LIMIT`, default 5). Cache **hits** do not consume. Exhausted → HTTP **429** (`rate_limit_reached`). Upstream dual-fail refunds the consumed unit. The Redis bucket resets at **UTC midnight**.
+**Quota:** each cache **miss** consumes one unit of the caller's daily limit (`CHAT_DAILY_LIMIT`, default 5). Cache **hits** do not consume. Exhausted → HTTP **429** (`rate_limit_reached`). If Redis cannot update the counter, the route returns HTTP **503** (`quota_unavailable`) and does not call a provider. Upstream dual-fail refunds the consumed unit; a refund that itself cannot reach Redis still returns **502**. The Redis bucket resets at **UTC midnight**.
+
+**Cache failures:** a Redis error on read is a cache miss. A Redis error on write does not fail the completion. Invalid cached JSON is a miss.
 
 OpenAI Chat Completions-compatible body: `messages`, `temperature`, `max_tokens`. Additional OpenAI fields are accepted and ignored.
 
@@ -28,7 +30,7 @@ Gateway-specific response fields (in addition to that completion payload):
 | `latency_ms` | integer | Gateway hop latency, rounded to a millisecond |
 | `provider` | string | Adapter that produced the completion (`local` or `cloud`). Cache hits reuse the stored origin; they do not set `provider` to `cache`. |
 
-The chat route declares `response_model` and `responses` for 200, 401, 413, 422, 429, and 502. The schema `info.version` is `app.__version__`. `GET /` redirects to `/docs`.
+The chat route declares `response_model` and `responses` for 200, 401, 413, 422, 429, 502, and 503. The schema `info.version` is `app.__version__`. `GET /` redirects to `/docs`.
 
 Errors use one envelope and do not repeat the submitted body:
 
@@ -44,11 +46,16 @@ Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
 | --- | --- |
 | Cache hit | Stored completion, `cached: true`, target latency <10 ms |
 | Cache miss, success | Upstream completion, write Redis, `cached: false` |
-| Primary 5xx or timeout | One retry on the secondary provider; success is cached |
-| Both providers fail | HTTP 502; **not** cached; quota refunded. Remaining `ProviderError` (including adapter-mapped Gemini 4xx) also surfaces as 502 |
+| Primary 5xx, timeout, or unexpected provider exception | One retry on the secondary provider; success is cached |
+| Primary non-retryable 4xx | HTTP 502; the secondary provider is not called |
+| Both providers fail | HTTP 502; **not** cached; quota refunded when Redis allows it |
+| Redis cannot read the cache | Treated as a miss; the upstream completion is returned |
+| Redis cannot write the cache | HTTP 200 with the completion |
+| Redis cannot consume quota | HTTP 503 (`quota_unavailable`); providers are not called |
 | Missing/invalid `X-API-Key` or Bearer token, even if the body is invalid or oversized | HTTP 401 |
 | Authenticated body over the size cap | HTTP 413 |
 | Daily quota exhausted | HTTP 429 |
+| Quota store cannot be updated | HTTP 503 |
 | Invalid body, including out-of-range fields | HTTP 422 (`invalid_request_error`; submitted text is not echoed) |
 | `stream: true` | HTTP 422 |
 | Unknown path | HTTP 404 (`not_found`) |
@@ -64,6 +71,8 @@ Cache key: SHA-256 of a canonical serialization of `messages` + `temperature` + 
 | Down | — | 503 | `down` |
 
 The process can still serve cache hits when a single upstream is down, as long as Redis is healthy. Without Ollama, expect `degraded` while Gemini remains up. `GET /health` does **not** require `X-API-Key`.
+
+`GET /health/live` returns HTTP 200 `{"status": "live"}` and does not probe Redis or providers. `GET /health/ready` returns HTTP 200 `ready` when Redis is up and at least one provider is up. It returns HTTP 503 `not_ready` when Redis is down or both providers are down. Neither probe requires `X-API-Key`.
 
 Interactive OpenAPI: `GET /docs` (FastAPI default).
 

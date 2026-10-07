@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0006",
+  "version": 1,
+  "what": "Treat cache Redis failures as a miss or a skipped write so a chat completion still returns. Treat a Redis failure while consuming daily quota as HTTP 503 and do not call a provider. Add a live health endpoint that returns HTTP 200 without probing dependencies, and a ready health endpoint that returns HTTP 503 when Redis is down or both providers are down, and HTTP 200 when Redis is up and at least one provider is up. Keep the existing health probe. On a retryable or unexpected primary provider failure, call the opposite provider once. A non-retryable primary failure does not call the secondary. Two provider failures return HTTP 502. Do not change Gemini sampling, add structured logs, or add a third provider attempt.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "A Redis read failure on the cache returns the upstream completion",
+    "A Redis write failure after a completion returns HTTP 200",
+    "A Redis failure while consuming quota returns HTTP 503 and does not call a provider",
+    "The live health endpoint returns HTTP 200",
+    "The ready health endpoint returns HTTP 503 when Redis is down",
+    "The ready health endpoint returns HTTP 200 when Redis is up and one provider is up",
+    "The ready health endpoint returns HTTP 503 when both providers are down",
+    "A retryable primary failure returns the secondary completion",
+    "A non-retryable primary failure does not call the secondary provider",
+    "Two provider failures return HTTP 502"
+  ],
+  "active": true,
+  "activated_at": "2026-10-07T11:18:44.097468Z"
+}
