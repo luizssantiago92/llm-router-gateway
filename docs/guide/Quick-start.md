@@ -68,7 +68,8 @@ curl -s http://localhost:8000/v1/chat/completions \
 | --- | --- |
 | `200` + `provider: "cloud"` | Gemini served a cache miss (typical without Ollama) |
 | `200` + `cached: true` | Repeat of the same messages/temperature/max_tokens (quota not consumed) |
-| `401` | Missing or wrong `X-API-Key` |
+| `401` | Missing or wrong `X-API-Key` (also when the body is oversized) |
+| `413` | Valid key and a body over the size cap (default 256 KiB) |
 | `429` | Daily cache-miss quota exhausted (default 5; UTC midnight) |
 | `422` | Invalid body or `stream: true` |
 | `502` | Both hops failed, or primary returned non-retryable 4xx (no second hop). Quota refunded |

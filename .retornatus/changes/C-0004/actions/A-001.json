@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "id": "C-0004/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Bound POST /v1/chat/completions: role is system, user, or assistant; each content is 1 to 32000 characters; messages length is 1 to 50; combined message characters are at most 64000; temperature is omitted or between 0 and 2; max_tokens is omitted or between 1 and 4096. When temperature is omitted, upstream calls still receive 1.0 and Gemini sampling stays unchanged. Refuse a body over the byte cap with HTTP 413 after a valid credential. A missing credential still returns HTTP 401 before the body is read, including when the body exceeds the cap. Numeric caps are settings with those safe defaults, and settings may only tighten them. Do not add an OpenAI error envelope, retries, Gemini model changes, or structured logs.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "An empty message list is rejected",
+    "A role other than system, user, or assistant is rejected",
+    "temperature below 0 or above 2 is rejected",
+    "max_tokens below 1 or above 4096 is rejected",
+    "A message of 32001 characters is rejected and a message of 32000 characters is accepted",
+    "A list of 51 messages is rejected and a list of 50 messages is accepted",
+    "Combined message characters above 64000 are rejected and 64000 are accepted",
+    "A chat body larger than the size cap returns HTTP 413",
+    "A missing credential on an oversized chat body returns HTTP 401"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0004/T-001",
+      "description": "Add field bounds, the total-character validator, settings, and the post-auth body cap",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "app/schemas/chat.py",
+        "app/settings.py",
+        "app/security.py",
+        "app/main.py",
+        "app/api/completions.py",
+        ".env.example"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0004/T-002",
+      "description": "Add boundary tests and document the limits",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0004/T-001"
+      ],
+      "resources": [
+        "tests/test_request_limits.py",
+        "tests/test_schemas.py",
+        "tests/test_settings.py",
+        "docs/guide/API.md",
+        "docs/guide/Development.md",
+        "docs/CHANGELOG.md",
+        "README.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

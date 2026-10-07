@@ -21,7 +21,7 @@ from app.providers.base import Provider
 from app.quota.daily import DailyQuota
 from app.routing.router import Router
 from app.runtime import AppRuntime, build_runtime
-from app.security import GatewayUnauthorized
+from app.security import GatewayUnauthorized, PayloadTooLarge
 from app.settings import Settings
 
 _RESOURCE_NAMES = (
@@ -47,6 +47,7 @@ def create_app(
 ) -> FastAPI:
     app = FastAPI(title="LLM Router Gateway", lifespan=lifespan)
     app.add_exception_handler(GatewayUnauthorized, _unauthorized)
+    app.add_exception_handler(PayloadTooLarge, _payload_too_large)
     app.state.settings = settings
     app.state.cache = cache
     app.state.router = router
@@ -63,6 +64,18 @@ async def _unauthorized(_request: Request, _exc: Exception) -> JSONResponse:
     return JSONResponse(
         {"error": {"message": "missing or invalid X-API-Key", "type": "unauthorized"}},
         status_code=401,
+    )
+
+
+async def _payload_too_large(_request: Request, _exc: Exception) -> JSONResponse:
+    return JSONResponse(
+        {
+            "error": {
+                "message": "request body exceeds the size limit",
+                "type": "payload_too_large",
+            }
+        },
+        status_code=413,
     )
 
 

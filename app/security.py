@@ -3,7 +3,9 @@
 ``APIKeyHeader`` and ``HTTPBearer`` are both optional schemes. A presented
 credential is compared to ``GATEWAY_API_KEY`` as UTF-8 bytes so a non-ASCII
 value is a 401, not a ``TypeError``. ``AuthFirstRoute`` runs that check before
-the chat route reads the body.
+the chat route reads the body. A missing credential is 401 even when the body
+exceeds the size cap, and the body is not read. A valid credential then gets
+413 when ``Content-Length`` or a chunked body is over the cap.
 """
 
 from __future__ import annotations
@@ -31,6 +33,10 @@ bearer_scheme = HTTPBearer(auto_error=False, scheme_name="HTTPBearer")
 
 class GatewayUnauthorized(Exception):
     """The chat credential is missing or does not match the gateway key."""
+
+
+class PayloadTooLarge(Exception):
+    """The chat body is larger than the configured byte cap."""
 
 
 def keys_match(presented: str, expected: str) -> bool:
@@ -93,14 +99,49 @@ async def enforce_gateway_key(request: Request) -> str:
     )
 
 
+def _declared_length(request: Request) -> int | None:
+    raw = request.headers.get("content-length")
+    if raw is None:
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        return None
+
+
+async def enforce_body_limit(request: Request) -> None:
+    """Reject an oversized body after authentication and before parsing.
+
+    A ``Content-Length`` above the cap is refused without reading the body.
+    A missing or unusable length (chunked transfer) is measured from the
+    stream, and a body that fits is cached for the route handler.
+    """
+    settings = await _settings_for(request)
+    limit = settings.max_body_bytes
+    declared = _declared_length(request)
+    if declared is not None and declared > limit:
+        raise PayloadTooLarge()
+    if declared is not None and declared >= 0:
+        return
+    chunks: list[bytes] = []
+    total = 0
+    async for chunk in request.stream():
+        total += len(chunk)
+        if total > limit:
+            raise PayloadTooLarge()
+        chunks.append(chunk)
+    request._body = b"".join(chunks)
+
+
 class AuthFirstRoute(APIRoute):
-    """Reject a bad chat credential before request-body validation."""
+    """Reject a bad credential, then an oversized body, before validation."""
 
     def get_route_handler(self) -> Callable[[Request], Coroutine[Any, Any, Response]]:
         original = super().get_route_handler()
 
         async def auth_first(request: Request) -> Response:
             await enforce_gateway_key(request)
+            await enforce_body_limit(request)
             return await original(request)
 
         return auth_first

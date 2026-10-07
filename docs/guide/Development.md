@@ -53,6 +53,12 @@ Copy [`.env.example`](../../.env.example) to `.env` (never commit `.env`):
 | `CACHE_TTL_SECONDS` | no | `3600` |
 | `COMPLEXITY_WORD_THRESHOLD` | no | `150` |
 | `UPSTREAM_TIMEOUT_SECONDS` | no | `30` |
+| `MAX_MESSAGE_CHARS` | no | `32000` (cannot exceed this ceiling) |
+| `MAX_MESSAGES` | no | `50` (cannot exceed this ceiling) |
+| `MAX_TOTAL_MESSAGE_CHARS` | no | `64000` (cannot exceed this ceiling) |
+| `MIN_TEMPERATURE` / `MAX_TEMPERATURE` | no | `0` / `2` (the window must stay inside 0–2) |
+| `MIN_MAX_TOKENS` / `MAX_MAX_TOKENS` | no | `1` / `4096` (the window must stay inside 1–4096) |
+| `MAX_BODY_BYTES` | no | `262144` (256 KiB; cannot exceed this ceiling) |
 
 Never commit `.env`. Secrets are env-only (no `load_dotenv` in the app).
 

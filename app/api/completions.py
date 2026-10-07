@@ -4,13 +4,18 @@ import time
 from typing import Any
 
 from fastapi import APIRouter
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from app.deps import CacheDep, QuotaDep, RouterDep
+from app.deps import CacheDep, QuotaDep, RouterDep, SettingsDep
 from app.providers.base import ProviderError
 from app.quota.daily import QuotaExceededError
-from app.schemas.chat import ChatCompletionRequest
+from app.schemas.chat import ChatCompletionRequest, configured_limit_reason
 from app.security import AuthFirstRoute, GatewayKeyDep
+
+# Providers still receive a concrete temperature. Omitting the field keeps
+# today's sampling input (1.0) without changing the Gemini adapter.
+_OMITTED_TEMPERATURE = 1.0
 
 router = APIRouter(route_class=AuthFirstRoute)
 
@@ -22,10 +27,24 @@ async def chat_completions(
     cache: CacheDep,
     gateway: RouterDep,
     quota: QuotaDep,
+    settings: SettingsDep,
 ) -> JSONResponse:
+    reason = configured_limit_reason(body, settings)
+    if reason is not None:
+        raise RequestValidationError(
+            [
+                {
+                    "type": "value_error",
+                    "loc": ("body",),
+                    "msg": reason,
+                    "input": None,
+                }
+            ]
+        )
+    temperature = _OMITTED_TEMPERATURE if body.temperature is None else body.temperature
     started = time.perf_counter()
     messages = [message.model_dump() for message in body.messages]
-    cached_value = await cache.get(messages, body.temperature, body.max_tokens)
+    cached_value = await cache.get(messages, temperature, body.max_tokens)
     if cached_value is not None:
         latency_ms = (time.perf_counter() - started) * 1000
         return _completion_response(
@@ -45,7 +64,7 @@ async def chat_completions(
             )
 
     try:
-        completion = await gateway.complete(messages, body.temperature, body.max_tokens)
+        completion = await gateway.complete(messages, temperature, body.max_tokens)
     except ProviderError as exc:
         if quota is not None:
             await quota.refund(api_key)
@@ -55,7 +74,7 @@ async def chat_completions(
         )
     await cache.store(
         messages,
-        body.temperature,
+        temperature,
         body.max_tokens,
         {"content": completion.content, "provider": completion.provider, "model": completion.model},
     )

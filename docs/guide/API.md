@@ -8,7 +8,11 @@ Process factory: `app.main:build_default_app` (Uvicorn `--factory`). The factory
 
 ## `POST /v1/chat/completions`
 
-**Auth:** `X-API-Key` or `Authorization: Bearer <GATEWAY_API_KEY>` must match `GATEWAY_API_KEY`. Otherwise HTTP **401** (`unauthorized`), including when the body is missing, invalid JSON, or fails validation. The credential is compared as UTF-8 bytes. Health does not use either header. OpenAPI lists both schemes under `securitySchemes`.
+**Auth:** `X-API-Key` or `Authorization: Bearer <GATEWAY_API_KEY>` must match `GATEWAY_API_KEY`. Otherwise HTTP **401** (`unauthorized`), including when the body is missing, invalid JSON, fails validation, or is larger than the size cap. The credential is compared as UTF-8 bytes, and a missing credential does not read the body. Health does not use either header. OpenAPI lists both schemes under `securitySchemes`.
+
+**Size:** after a valid credential, `Content-Length` or a chunked body above the cap is HTTP **413** (`payload_too_large`) and is not parsed. The default cap is 256 KiB (`MAX_BODY_BYTES`). A missing credential on that same body is still **401**.
+
+**Fields:** `role` is `system`, `user`, or `assistant`. Each `content` is 1–32,000 characters (`MAX_MESSAGE_CHARS`). `messages` has 1–50 items (`MAX_MESSAGES`). Combined `content` is at most 64,000 characters (`MAX_TOTAL_MESSAGE_CHARS`). `temperature`, when present, is 0–2; when omitted, providers still receive `1.0`. `max_tokens`, when present, is 1–4096. Settings can lower these ceilings and cannot raise them. Out-of-range values are HTTP **422**.
 
 **Quota:** each cache **miss** consumes one unit of the caller's daily limit (`CHAT_DAILY_LIMIT`, default 5). Cache **hits** do not consume. Exhausted → HTTP **429** (`rate_limit_reached`). Upstream dual-fail refunds the consumed unit. The Redis bucket resets at **UTC midnight**.
 
@@ -32,9 +36,10 @@ Mirrored headers: `X-Cache`, `X-Latency-Ms`, `X-Provider`.
 | Cache miss, success | Upstream completion, write Redis, `cached: false` |
 | Primary 5xx or timeout | One retry on the secondary provider; success is cached |
 | Both providers fail | HTTP 502; **not** cached; quota refunded. Remaining `ProviderError` (including adapter-mapped Gemini 4xx) also surfaces as 502 |
-| Missing/invalid `X-API-Key` or Bearer token, even if the body is invalid | HTTP 401 |
+| Missing/invalid `X-API-Key` or Bearer token, even if the body is invalid or oversized | HTTP 401 |
+| Authenticated body over the size cap | HTTP 413 |
 | Daily quota exhausted | HTTP 429 |
-| Invalid body | HTTP 422 (Pydantic) |
+| Invalid body, including out-of-range fields | HTTP 422 (Pydantic) |
 | `stream: true` | HTTP 422 |
 
 Cache key: SHA-256 of a canonical serialization of `messages` + `temperature` + `max_tokens`. The routed model name is not part of the key.
