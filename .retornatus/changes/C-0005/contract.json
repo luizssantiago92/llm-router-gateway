@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0005",
+  "version": 2,
+  "what": "Give each chat response a unique id, a created unix time, the provider model, and usage counts taken only from provider-reported numbers. When a count is absent, return null and do not estimate. Declare the chat response model and the error responses on the route so they appear in the generated schema. Return 422 and 404, and the existing 401 and 413, as an error object with message, type, param, and code, and do not repeat the submitted text. Round latency_ms to an integer. Set the schema info version from app.__version__. Redirect GET / to /docs. Keep a missing credential as 401 before the body is read, and keep an authenticated oversized body as 413. Do not add retries, Gemini sampling changes, or structured logs.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "Two chat responses return different ids",
+    "A chat response includes a created timestamp and the provider model",
+    "A chat response includes null usage counts when the provider reports none",
+    "A chat response includes usage counts when the provider reports them",
+    "Chat validation failure returns HTTP 422 without the submitted text",
+    "An unknown path returns HTTP 404 in the error envelope",
+    "HTTP 401 still precedes a body read and an oversized authenticated body returns HTTP 413",
+    "The generated schema lists a response model and the error responses",
+    "The application version in the schema info matches app.__version__",
+    "The root path returns HTTP 307",
+    "latency_ms is an integer"
+  ],
+  "active": true,
+  "activated_at": "2026-10-07T11:09:27.242224Z"
+}

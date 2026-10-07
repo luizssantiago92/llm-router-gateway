@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "id": "C-0005/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Give each chat response a unique id, a created unix time, the provider model, and usage counts taken only from provider-reported numbers. When a count is absent, return null and do not estimate. Declare the chat response model and the error responses on the route so they appear in the generated schema. Return 422 and 404, and the existing 401 and 413, as an error object with message, type, param, and code, and do not repeat the submitted text. Round latency_ms to an integer. Set the schema info version from app.__version__. Redirect GET / to /docs. Keep a missing credential as 401 before the body is read, and keep an authenticated oversized body as 413. Do not add retries, Gemini sampling changes, or structured logs.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "Two chat responses return different ids",
+    "A chat response includes a created timestamp and the provider model",
+    "A chat response includes null usage counts when the provider reports none",
+    "A chat response includes usage counts when the provider reports them",
+    "Chat validation failure returns HTTP 422 without the submitted text",
+    "An unknown path returns HTTP 404 in the error envelope",
+    "HTTP 401 still precedes a body read and an oversized authenticated body returns HTTP 413",
+    "The generated schema lists a response model and the error responses",
+    "The application version in the schema info matches app.__version__",
+    "GET / redirects to /docs",
+    "latency_ms is an integer"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0005/T-001",
+      "description": "Shape the completion, pass through reported usage, and unify error handlers",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "app/__init__.py",
+        "app/schemas/chat.py",
+        "app/api/completions.py",
+        "app/main.py",
+        "app/providers/base.py",
+        "app/providers/gemini.py",
+        "app/providers/ollama.py",
+        "app/providers/fake.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0005/T-002",
+      "description": "Add response tests and describe the envelope",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0005/T-001"
+      ],
+      "resources": [
+        "tests/test_openai_envelope.py",
+        "tests/test_gemini_adapter.py",
+        "tests/test_ollama_adapter.py",
+        "tests/test_chat_completions.py",
+        "docs/guide/API.md",
+        "docs/CHANGELOG.md",
+        "README.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

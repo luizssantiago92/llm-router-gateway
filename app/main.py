@@ -12,8 +12,10 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse, RedirectResponse
 
+from app import __version__
 from app.api.completions import router as completions_router
 from app.api.health import router as health_router
 from app.cache.service import CacheService
@@ -21,6 +23,7 @@ from app.providers.base import Provider
 from app.quota.daily import DailyQuota
 from app.routing.router import Router
 from app.runtime import AppRuntime, build_runtime
+from app.schemas.chat import error_payload
 from app.security import GatewayUnauthorized, PayloadTooLarge
 from app.settings import Settings
 
@@ -45,9 +48,20 @@ def create_app(
     cloud: Provider | None = None,
     quota: DailyQuota | None = None,
 ) -> FastAPI:
-    app = FastAPI(title="LLM Router Gateway", lifespan=lifespan)
+    app = FastAPI(
+        title="LLM Router Gateway",
+        version=__version__,
+        description=(
+            "OpenAI-shaped chat facade. Token counts are copied from the provider. "
+            "A count the provider did not report is null; the gateway does not estimate it."
+        ),
+        lifespan=lifespan,
+    )
     app.add_exception_handler(GatewayUnauthorized, _unauthorized)
     app.add_exception_handler(PayloadTooLarge, _payload_too_large)
+    app.add_exception_handler(RequestValidationError, _invalid_request)
+    app.add_exception_handler(404, _not_found)
+    app.add_api_route("/", _docs_redirect, methods=["GET"], include_in_schema=False)
     app.state.settings = settings
     app.state.cache = cache
     app.state.router = router
@@ -60,22 +74,60 @@ def create_app(
     return app
 
 
+def _docs_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/docs", status_code=307)
+
+
 async def _unauthorized(_request: Request, _exc: Exception) -> JSONResponse:
     return JSONResponse(
-        {"error": {"message": "missing or invalid X-API-Key", "type": "unauthorized"}},
+        error_payload(
+            "missing or invalid X-API-Key",
+            "unauthorized",
+            code="invalid_api_key",
+        ),
         status_code=401,
     )
 
 
 async def _payload_too_large(_request: Request, _exc: Exception) -> JSONResponse:
     return JSONResponse(
-        {
-            "error": {
-                "message": "request body exceeds the size limit",
-                "type": "payload_too_large",
-            }
-        },
+        error_payload(
+            "request body exceeds the size limit",
+            "payload_too_large",
+            code="payload_too_large",
+        ),
         status_code=413,
+    )
+
+
+def _validation_param(exc: RequestValidationError) -> str | None:
+    errors = exc.errors()
+    if not errors:
+        return None
+    loc = errors[0].get("loc", ())
+    parts = [str(part) for part in loc if str(part) != "body"]
+    if not parts:
+        return None
+    return ".".join(parts)
+
+
+async def _invalid_request(_request: Request, exc: Exception) -> JSONResponse:
+    param = _validation_param(exc) if isinstance(exc, RequestValidationError) else None
+    return JSONResponse(
+        error_payload(
+            "request validation failed",
+            "invalid_request_error",
+            param=param,
+            code="validation_error",
+        ),
+        status_code=422,
+    )
+
+
+async def _not_found(_request: Request, _exc: Exception) -> JSONResponse:
+    return JSONResponse(
+        error_payload("Not Found", "not_found", code="not_found"),
+        status_code=404,
     )
 
 

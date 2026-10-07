@@ -35,6 +35,31 @@ async def test_gemini_adapter_maps_generate_content() -> None:
         )
     assert result.content == "pong"
     assert result.provider == "cloud"
+    assert result.usage is None
+
+
+@pytest.mark.asyncio
+async def test_gemini_adapter_copies_reported_usage_and_does_not_fill_gaps() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "modelVersion": "gemini-3.5-flash",
+                "candidates": [{"content": {"parts": [{"text": "pong"}]}}],
+                "usageMetadata": {"promptTokenCount": 3, "totalTokenCount": 9},
+            },
+        )
+
+    async with httpx.AsyncClient(
+        transport=_transport(handler),
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+    ) as client:
+        provider = GeminiProvider("gemini-test", client=client)
+        result = await provider.complete([{"role": "user", "content": "ping"}], 0.0, 8)
+    assert result.usage is not None
+    assert result.usage.prompt_tokens == 3
+    assert result.usage.completion_tokens is None
+    assert result.usage.total_tokens == 9
 
 
 @pytest.mark.asyncio
