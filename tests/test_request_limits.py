@@ -15,7 +15,15 @@ from app.providers.fake import FakeProvider
 from app.quota.daily import DailyQuota
 from app.routing.router import Router
 from app.schemas.chat import ChatCompletionRequest
-from app.settings import MAX_BODY_BYTES, MAX_MESSAGE_CHARS, MAX_MESSAGES, Settings
+from app.settings import (
+    MAX_BODY_BYTES,
+    MAX_MAX_TOKENS,
+    MAX_MESSAGE_CHARS,
+    MAX_MESSAGES,
+    MAX_TEMPERATURE,
+    MAX_TOTAL_MESSAGE_CHARS,
+    Settings,
+)
 
 API_KEY = "gateway-test"
 HEADERS = {"X-API-Key": API_KEY}
@@ -45,23 +53,50 @@ class _Redis:
         return None
 
 
-def _settings(**overrides: object) -> Settings:
-    base: dict[str, object] = {
-        "redis_url": "redis://localhost:6379/0",
-        "ollama_base_url": "http://ollama",
-        "gemini_api_key": "gemini-test",
-        "gateway_api_key": API_KEY,
-        "cache_ttl_seconds": 60,
-        "complexity_word_threshold": 150,
-        "upstream_timeout_seconds": 30,
-        "chat_daily_limit": 5,
-    }
-    base.update(overrides)
-    return Settings(**base)  # type: ignore[arg-type]
+def _settings(
+    *,
+    max_message_chars: int = MAX_MESSAGE_CHARS,
+    max_messages: int = MAX_MESSAGES,
+    max_total_message_chars: int = MAX_TOTAL_MESSAGE_CHARS,
+    max_temperature: float = MAX_TEMPERATURE,
+    max_max_tokens: int = MAX_MAX_TOKENS,
+    max_body_bytes: int = MAX_BODY_BYTES,
+) -> Settings:
+    return Settings(
+        redis_url="redis://localhost:6379/0",
+        ollama_base_url="http://ollama",
+        gemini_api_key="gemini-test",
+        gateway_api_key=API_KEY,
+        cache_ttl_seconds=60,
+        complexity_word_threshold=150,
+        upstream_timeout_seconds=30,
+        chat_daily_limit=5,
+        max_message_chars=max_message_chars,
+        max_messages=max_messages,
+        max_total_message_chars=max_total_message_chars,
+        max_temperature=max_temperature,
+        max_max_tokens=max_max_tokens,
+        max_body_bytes=max_body_bytes,
+    )
 
 
-def _app(**overrides: object) -> tuple[FastAPI, FakeProvider]:
-    settings = _settings(**overrides)
+def _app(
+    *,
+    max_message_chars: int = MAX_MESSAGE_CHARS,
+    max_messages: int = MAX_MESSAGES,
+    max_total_message_chars: int = MAX_TOTAL_MESSAGE_CHARS,
+    max_temperature: float = MAX_TEMPERATURE,
+    max_max_tokens: int = MAX_MAX_TOKENS,
+    max_body_bytes: int = MAX_BODY_BYTES,
+) -> tuple[FastAPI, FakeProvider]:
+    settings = _settings(
+        max_message_chars=max_message_chars,
+        max_messages=max_messages,
+        max_total_message_chars=max_total_message_chars,
+        max_temperature=max_temperature,
+        max_max_tokens=max_max_tokens,
+        max_body_bytes=max_body_bytes,
+    )
     redis = _Redis()
     local = FakeProvider("local", content="hello")
     cloud = FakeProvider("cloud", content="cloud")
@@ -256,11 +291,18 @@ async def test_missing_credential_on_an_oversized_body_is_401_before_the_body_is
     ],
 )
 async def test_tighter_settings_apply_below_the_builtin_ceiling(
-    overrides: dict[str, object],
+    overrides: dict[str, int | float],
     payload: dict[str, object],
     status: int,
 ) -> None:
-    app, local = _app(**overrides)
+    app, local = _app(
+        max_messages=int(overrides.get("max_messages", MAX_MESSAGES)),
+        max_total_message_chars=int(
+            overrides.get("max_total_message_chars", MAX_TOTAL_MESSAGE_CHARS)
+        ),
+        max_temperature=float(overrides.get("max_temperature", MAX_TEMPERATURE)),
+        max_max_tokens=int(overrides.get("max_max_tokens", MAX_MAX_TOKENS)),
+    )
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.post("/v1/chat/completions", headers=HEADERS, json=payload)
