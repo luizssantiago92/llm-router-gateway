@@ -57,6 +57,5 @@ jobs:
         run: uv export --frozen --no-emit-project | uv run pip-audit -r /dev/stdin --progress-spinner off --disable-pip
 
       - name: Test
-        # Branch coverage is 86% on 3.10, 3.12, and 3.13 today. The gate is 85
-        # so this stays green; PR 12 of the cleanup plan raises the floor to 90.
-        run: uv run pytest --cov --cov-report=term-missing --cov-fail-under=85
+        # Branch coverage stays above 90 on Python 3.10, 3.12, and 3.13.
+        run: uv run pytest --cov --cov-report=term-missing --cov-fail-under=90

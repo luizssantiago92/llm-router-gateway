@@ -77,6 +77,7 @@ async def test_gemini_adapter_maps_timeout() -> None:
         with pytest.raises(ProviderError) as exc:
             await provider.complete([{"role": "user", "content": "x"}], 0.0, 1)
     assert exc.value.timed_out is True
+    assert exc.value.is_retryable is True
 
 
 def _body(request: httpx.Request) -> dict[str, object]:
@@ -244,3 +245,75 @@ async def test_blocked_prompt_without_text_is_not_retryable() -> None:
             await provider.complete([{"role": "user", "content": "ping"}], 0.0, 8)
     assert exc.value.status_code == 400
     assert exc.value.is_retryable is False
+
+
+@pytest.mark.asyncio
+async def test_gemini_client_error_is_not_retryable() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(400, json={"error": "bad"})
+
+    async with httpx.AsyncClient(
+        transport=_transport(handler),
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+    ) as client:
+        provider = GeminiProvider("gemini-test", client=client)
+        with pytest.raises(ProviderError) as exc:
+            await provider.complete([{"role": "user", "content": "ping"}], 0.0, 8)
+    assert exc.value.status_code == 400
+    assert exc.value.is_retryable is False
+
+
+@pytest.mark.asyncio
+async def test_gemini_health_follows_the_model_probe() -> None:
+    def down(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(503, json={"error": "down"})
+
+    async with httpx.AsyncClient(
+        transport=_transport(down),
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+    ) as client:
+        provider = GeminiProvider("gemini-test", client=client)
+        assert await provider.health() is False
+
+    def up(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json={"name": "models/gemini-3.5-flash"})
+
+    async with httpx.AsyncClient(
+        transport=_transport(up),
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+    ) as client:
+        provider = GeminiProvider("gemini-test", client=client)
+        assert await provider.health() is True
+
+
+@pytest.mark.asyncio
+async def test_gemini_system_message_and_stop_are_sent() -> None:
+    seen: dict[str, object] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["body"] = _body(request)
+        return httpx.Response(
+            200,
+            json={"candidates": [{"content": {"parts": [{"text": "ok"}]}}]},
+        )
+
+    async with httpx.AsyncClient(
+        transport=_transport(handler),
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+    ) as client:
+        provider = GeminiProvider("gemini-test", client=client)
+        await provider.complete(
+            [{"role": "system", "content": "be brief"}],
+            None,
+            None,
+            stop=["END"],
+        )
+    body = seen["body"]
+    assert isinstance(body, dict)
+    instruction = body["systemInstruction"]
+    assert isinstance(instruction, dict)
+    assert instruction["parts"] == [{"text": "be brief"}]
+    config = body["generationConfig"]
+    assert isinstance(config, dict)
+    assert config["stopSequences"] == ["END"]
+    assert body["contents"] == [{"role": "user", "parts": [{"text": ""}]}]

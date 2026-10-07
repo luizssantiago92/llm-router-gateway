@@ -12,7 +12,7 @@ Human docs live in this `docs/guide/` tree. The root [README](../../README.md) i
 | `app/` | FastAPI gateway (settings, lifespan-owned Redis and HTTP clients, dependency providers, schemas, cache, routing, providers, routes) |
 | `tests/` | pytest-asyncio suite; `tests/eval/` golden routing harness |
 | `docker-compose.yml` / `Dockerfile` | Ship unit: `api` + Redis (loopback port, password, non-root image) |
-| `.github/workflows/ci.yml` | Ruff check, ruff format, mypy, pytest with an 85% branch-coverage gate, and pip-audit on Python 3.10, 3.12, and 3.13; actions pinned by commit SHA |
+| `.github/workflows/ci.yml` | Ruff check, ruff format, mypy, pytest with a 90% branch-coverage gate, and pip-audit on Python 3.10, 3.12, and 3.13; actions pinned by commit SHA |
 | `.github/workflows/retornatus.yml` | Retornatus verify and diff gates on pull requests (`luizssantiago92/retornatus@v1`) |
 | `.github/workflows/codeql.yml` | CodeQL analysis for Python and GitHub Actions; weekly schedule |
 | `.retornatus/` | Retornatus Changes, Contracts, and Evidence (agent governance; not Spec Guardrails) |
@@ -70,10 +70,10 @@ uv run ruff check app tests
 uv run ruff format --check
 uv run mypy app
 uv export --frozen --no-emit-project | uv run pip-audit -r /dev/stdin --progress-spinner off --disable-pip
-uv run pytest --cov --cov-report=term-missing --cov-fail-under=85
+uv run pytest --cov --cov-report=term-missing --cov-fail-under=90
 ```
 
-`uv sync` installs the `dev` group from `uv.lock` (pytest, ruff, mypy, pip-audit, pytest-cov). CI (`.github/workflows/ci.yml`) runs the same commands on Python 3.10, 3.12, and 3.13. `pip-audit --disable-pip` reads the hashed lock export directly, so it does not build a temporary virtualenv (that path fails on uv's CPython 3.10). `pyproject.toml` `addopts` already applies `-m "not live"`. Live upstream tests stay opt-in via their marker; do not expect `pytest` (no extra `-m`) to call Gemini or Ollama. Coverage is configured (`source = app`, branch coverage, missing lines). The suite is about 86% branch coverage today, so CI fails under 85%. A later test pass raises that floor to 90%.
+`uv sync` installs the `dev` group from `uv.lock` (pytest, ruff, mypy, pip-audit, pytest-cov). CI (`.github/workflows/ci.yml`) runs the same commands on Python 3.10, 3.12, and 3.13. `pip-audit --disable-pip` reads the hashed lock export directly, so it does not build a temporary virtualenv (that path fails on uv's CPython 3.10). `pyproject.toml` `addopts` already applies `-m "not live"`. Live upstream tests stay opt-in via their marker; do not expect `pytest` (no extra `-m`) to call Gemini or Ollama. Coverage is configured (`source = app`, branch coverage, missing lines). CI fails when branch coverage is under 90%.
 
 ## Compose
 

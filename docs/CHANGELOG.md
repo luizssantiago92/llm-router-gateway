@@ -4,6 +4,7 @@ Project-level notes (not a library semver). Product page: [README](../README.md)
 
 ## 2026-10-07
 
+- The pytest branch-coverage gate is 90%. Adapter and health tests cover Ollama sampling options, Gemini timeouts, and a health probe with no Redis client.
 - Every response returns `X-Request-Id` (a caller token, or a generated id). One JSON access log line records the request id, method, route, status, and latency, and leaves out the submitted message text and credential headers. `GET /metrics` returns Prometheus counters for requests and latency.
 - Gemini generation config receives `temperature` only when the caller set it, plus `topP`, `maxOutputTokens`, and `stopSequences` when those fields are set. A Gemini model id on the request selects the cloud model for that call. Gemini `MAX_TOKENS` maps to `finish_reason` `length`. A blocked Gemini prompt with no text returns HTTP 502 and does not call the other provider.
 - Cache Redis failures fail open: a read error is a miss, and a write error still returns the completion. Quota Redis failures fail closed with HTTP 503 and do not call a provider. The quota bucket id is a scrypt digest of the caller credential. `GET /health/live` does not probe dependencies. `GET /health/ready` is ready only when Redis is up and at least one provider is up. A retryable or unexpected primary failure hops once; a non-retryable primary failure does not.

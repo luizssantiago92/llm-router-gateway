@@ -1,3 +1,5 @@
+import json
+
 import httpx
 import pytest
 
@@ -64,4 +66,58 @@ async def test_ollama_adapter_maps_5xx_to_provider_error() -> None:
         with pytest.raises(ProviderError) as exc:
             await provider.complete([{"role": "user", "content": "x"}], 0.0, 1)
     assert exc.value.status_code == 503
+    assert exc.value.is_retryable is True
+
+
+@pytest.mark.asyncio
+async def test_ollama_request_includes_top_p_and_stop() -> None:
+    seen: dict[str, object] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["body"] = json.loads(request.content)
+        return httpx.Response(
+            200,
+            json={"model": "llama3", "message": {"role": "assistant", "content": "ok"}},
+        )
+
+    async with httpx.AsyncClient(transport=_transport(handler), base_url="http://ollama") as client:
+        provider = OllamaProvider("http://ollama", client=client)
+        result = await provider.complete(
+            [{"role": "user", "content": "hello"}],
+            temperature=None,
+            max_tokens=4,
+            top_p=0.2,
+            stop=["END"],
+        )
+    assert result.content == "ok"
+    body = seen["body"]
+    assert isinstance(body, dict)
+    options = body["options"]
+    assert isinstance(options, dict)
+    assert options["temperature"] == 1.0
+    assert options["top_p"] == 0.2
+    assert options["stop"] == ["END"]
+    assert options["num_predict"] == 4
+
+
+@pytest.mark.asyncio
+async def test_ollama_health_is_false_when_the_upstream_fails() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(503, json={"error": "down"})
+
+    async with httpx.AsyncClient(transport=_transport(handler), base_url="http://ollama") as client:
+        provider = OllamaProvider("http://ollama", client=client)
+        assert await provider.health() is False
+
+
+@pytest.mark.asyncio
+async def test_ollama_timeout_is_retryable() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.TimeoutException("slow")
+
+    async with httpx.AsyncClient(transport=_transport(handler), base_url="http://ollama") as client:
+        provider = OllamaProvider("http://ollama", client=client)
+        with pytest.raises(ProviderError) as exc:
+            await provider.complete([{"role": "user", "content": "x"}], 0.0, 1)
+    assert exc.value.timed_out is True
     assert exc.value.is_retryable is True

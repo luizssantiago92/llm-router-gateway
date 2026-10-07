@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "C-0009/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Raise the branch-coverage gate to 90 and cover the missing adapter and health paths",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "pytest with a branch-coverage floor of 90 exits 0",
+    "An Ollama request that includes top_p and stop returns those options",
+    "A Gemini timeout returns a retryable provider error",
+    "A health probe with no Redis client returns false"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0009/T-001",
+      "description": "Cover adapter failures, sampling options, and the empty health probe",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "tests/test_ollama_adapter.py",
+        "tests/test_gemini_adapter.py",
+        "tests/test_health.py",
+        "tests/test_coverage_edges.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0009/T-002",
+      "description": "Raise the branch-coverage gate to 90 and update the operator pages",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0009/T-001"
+      ],
+      "resources": [
+        ".github/workflows/ci.yml",
+        "CONTRIBUTING.md",
+        "README.md",
+        "docs/guide/Development.md",
+        "docs/CHANGELOG.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
