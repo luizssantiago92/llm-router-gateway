@@ -1,6 +1,6 @@
 # Product Requirement Document (PRD) — LLM Router Gateway
 
-> Historical kickoff, in Brazilian Portuguese. Moved from the repository root. Current behavior is the root README and `docs/guide/`. The live cloud default is Gemini, not a paid OpenAI or Anthropic account.
+> Historical kickoff, in Brazilian Portuguese. Moved from the repository root. Current behavior is the root README, `docs/architecture.md`, `docs/api.md`, and `docs/operations.md`. The live cloud default is Gemini, not a paid OpenAI or Anthropic account.
 
 ## 1. Visão Geral do Produto
 O **LLM Router Gateway** é um microsserviço de alta performance e baixa latência desenvolvido em Python (FastAPI) para orquestrar, rotear e otimizar requisições direcionadas a múltiplos Provedores de Modelos de Linguagem (LLMs). 

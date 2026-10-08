@@ -14,7 +14,7 @@ This repository is the **demo you run locally**: Compose (`api` + `redis`), a Ge
 [Commands](#commands-at-hand) ·
 [Explore](#explore-the-project)
 
-**Docs:** [Overview](docs/guide/Overview.md) · [Quick start](docs/guide/Quick-start.md) · [Full guide](docs/guide/README.md)
+**Docs:** [Architecture](docs/architecture.md) · [API](docs/api.md) · [Operations](docs/operations.md)
 
 ---
 
@@ -47,7 +47,7 @@ The stack is **Python 3.10+ / FastAPI**, **Redis**, **Google Gemini** (default `
 | Opaque origin | `X-Cache` / `X-Latency-Ms` / `X-Provider` on every response |
 | Unbounded demo spend | Shared `X-API-Key` + daily quota (cache hits free) |
 
-Different setups are welcome. Docker + a Gemini key is enough for the light-PC path (no Ollama). The numbered steps below get the process running; concepts live in the [guide](docs/guide/How-it-works.md).
+Different setups are welcome. Docker + a Gemini key is enough for the light-PC path (no Ollama). The numbered steps below get the process running; the request path is in [Architecture](docs/architecture.md).
 
 ---
 
@@ -189,7 +189,7 @@ curl -s http://localhost:8000/v1/chat/completions \
 
 Never commit `.env`. The app does not call `load_dotenv`.
 
-Stuck? [FAQ](docs/guide/FAQ.md) · [Quick start](docs/guide/Quick-start.md)
+Stuck? [Operations](docs/operations.md#common-questions)
 
 ---
 
@@ -256,12 +256,15 @@ Daily quota lives in Redis and resets at **UTC midnight**. To wipe cache and quo
 | [`.github/dependabot.yml`](.github/dependabot.yml) | Weekly grouped minor/patch updates for `uv` and GitHub Actions |
 | [`LICENSE`](LICENSE) | MIT |
 | [`SECURITY.md`](SECURITY.md) | How to report a vulnerability |
-| [`docs/guide/`](docs/guide/README.md) | Overview, Quick start, Architecture, API, FAQ |
+| [`docs/architecture.md`](docs/architecture.md) | Request path, components, ship unit, limits |
+| [`docs/api.md`](docs/api.md) | HTTP contract |
+| [`docs/operations.md`](docs/operations.md) | Run, configure, and test |
+| [`CHANGELOG.md`](CHANGELOG.md) | Keep a Changelog record |
 | [`docs/history/domain-spec.md`](docs/history/domain-spec.md) | Archived domain requirements REQ-001–REQ-022 |
 | [`docs/history/design.md`](docs/history/design.md) | Archived feature design |
 | [`docs/history/PRD.pt-BR.md`](docs/history/PRD.pt-BR.md) | Product kickoff (historical; live cloud default is Gemini) |
 
-The target is **one local Compose instance**. A shared demo key simplifies the lab; production would need its own identity, multi-tenant quotas, and hosting decisions. See [Limitations](docs/guide/Limitations.md).
+The target is **one local Compose instance**. A shared demo key simplifies the lab; production would need its own identity, multi-tenant quotas, and hosting decisions. See [Limitations](docs/architecture.md#limitations).
 
 ---
 
@@ -304,33 +307,21 @@ POST /v1/chat/completions
 
 Streaming is not supported (`stream: true` → 422). Clients never choose a provider.
 
-**Go deeper:** [How it works](docs/guide/How-it-works.md) · [Architecture](docs/guide/Architecture.md) · [API](docs/guide/API.md)
+**Go deeper:** [Architecture](docs/architecture.md) · [API](docs/api.md) · [Operations](docs/operations.md)
 
-Deferred scope (streaming, production auth, hosted deploy, and the rest) lives in [Limitations](docs/guide/Limitations.md).
+Deferred scope (streaming, production auth, hosted deploy, and the rest) lives in [Limitations](docs/architecture.md#limitations).
 
 ---
 
 ## Documentation
 
-### Start here
-
-- [Overview](docs/guide/Overview.md) — what it is
-- [Quick start](docs/guide/Quick-start.md) — first ten minutes
-- [How it works](docs/guide/How-it-works.md) — request path
-- [Home](docs/guide/Home.md) — short hub
-
-### Understand the system
-
-- [Architecture](docs/guide/Architecture.md) · [API](docs/guide/API.md) · [concepts](docs/guide/concepts.md)
-- [FAQ](docs/guide/FAQ.md) · [Glossary](docs/guide/Glossary.md)
-- [Development](docs/guide/Development.md) — stack, env, pytest
-
-### Advanced
-
-- [Limitations](docs/guide/Limitations.md) · [CHANGELOG](docs/CHANGELOG.md) · [CONTRIBUTING](CONTRIBUTING.md)
+- [Architecture](docs/architecture.md) — request path, components, ship unit, limits
+- [API](docs/api.md) — chat, health, metrics, status codes
+- [Operations](docs/operations.md) — Compose, demo mode, environment, tests
+- [CHANGELOG](CHANGELOG.md) · [CONTRIBUTING](CONTRIBUTING.md)
 - [Domain spec](docs/history/domain-spec.md) · [design](docs/history/design.md) · [PRD (pt-BR)](docs/history/PRD.pt-BR.md)
 
-Full index: [docs/guide/README.md](docs/guide/README.md)
+Index: [docs/README.md](docs/README.md)
 
 ---
 

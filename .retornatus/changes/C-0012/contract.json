@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0012",
+  "version": 1,
+  "what": "Consolidate the human pages into docs/architecture.md, docs/api.md, and docs/operations.md, and keep archived material under docs/history. Place CHANGELOG.md at the repository root in Keep a Changelog form. State Retornatus, uv, and squash merges in CONTRIBUTING. Keep the vulnerability page aligned with private reporting. Add a pull request template and issue forms. Do not change application behavior, chat status codes, or the Compose ship unit.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "pytest with a branch-coverage floor of 90 exits 0",
+    "The root changelog returns a Keep a Changelog heading",
+    "The architecture page returns the request path",
+    "The pull request template returns a test plan",
+    "The bug form returns a required description"
+  ],
+  "active": true,
+  "activated_at": "2026-10-07T23:58:25.886718Z"
+}

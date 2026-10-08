@@ -6,14 +6,14 @@ Chat may be in any language. **Artifacts stay in English:** code, tests, comment
 
 ## Documentation on every significant PR
 
-If the PR changes **product behavior, API, setup, architecture, or public status**, the **same PR** must:
+If the PR changes **product behavior, the HTTP contract, setup, architecture, or public status**, the **same PR** must:
 
 1. Update root [`README.md`](README.md) so operators are not reading a lie.
-2. Update matching pages under [`docs/guide/`](docs/guide/README.md) (add a page only when an existing one cannot hold the change; link it from the guide index).
+2. Update the matching page: [`docs/architecture.md`](docs/architecture.md), [`docs/api.md`](docs/api.md), or [`docs/operations.md`](docs/operations.md).
 
-Skip the README only for purely internal diffs where no operator-facing sentence went stale. **When in doubt, update the README.** Do not open a docs follow-up instead of documenting the change you just shipped.
+Skip the README only for purely internal diffs where no operator-facing sentence went stale. **When in doubt, update the README.** Do not open a follow-up instead of recording the change you just shipped.
 
-Procedure: [docs/guide/Development.md](docs/guide/Development.md#documentation-on-every-pr).
+Procedure: [docs/operations.md](docs/operations.md#changing-the-repository).
 
 ## Basics
 
@@ -33,6 +33,10 @@ uv run pytest --cov --cov-report=term-missing --cov-fail-under=90
 `uv sync` installs the `dev` dependency group. CI uses `uv.lock` and runs those commands on Python 3.10, 3.12, and 3.13. The coverage gate is 90% branch coverage. `make test` runs pytest, `make lint` runs ruff and mypy, `make dev` starts Compose, and `make demo` starts the zero-key compose file.
 
 `pytest` already skips `@pytest.mark.live` via `pyproject.toml` `addopts`.
+
+## Squash merges
+
+Pull requests are squash-merged. The pull request title is the commit subject on `main`. Use Conventional Commits (`feat:`, `fix:`, `docs:`), a lowercase-initial subject, and no trailing period. Keep the branch diff focused so the squash commit stays one change.
 
 ## Agent governance
 
@@ -55,10 +59,14 @@ Cursor reads [`.cursor/rules/retornatus.mdc`](.cursor/rules/retornatus.mdc) and 
 | --- | --- |
 | `app/` | FastAPI gateway |
 | `tests/` | pytest-asyncio + eval harness |
-| `docs/guide/` | Human guides (Overview, Quick start, …) |
+| `docs/architecture.md` | System description |
+| `docs/api.md` | HTTP contract |
+| `docs/operations.md` | Run, configure, and test |
 | `docs/history/` | Archived PRD, domain spec, and feature design |
+| `docs/guide/` | Short pointers to the three pages above |
 | `README.md` | Product entry point |
+| `CHANGELOG.md` | Keep a Changelog record |
 
 ## Out of scope
 
-Do not grow streaming, production auth, RAG, paid OpenAI, or Kubernetes here. See [Limitations](docs/guide/Limitations.md).
+Do not grow streaming, production auth, RAG, paid OpenAI, or Kubernetes here. See [Limitations](docs/architecture.md#limitations).

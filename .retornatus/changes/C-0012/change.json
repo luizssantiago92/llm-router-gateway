@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0012",
+  "title": "Consolidate human pages and GitHub templates",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Consolidate the human pages, changelog, contributing notes, vulnerability page, and GitHub templates (cleanup plan item 15).",
+    "kind": "MAINTENANCE"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-07T23:58:25.878699Z"
+}

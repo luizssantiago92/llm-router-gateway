@@ -1,0 +1,22 @@
+name: Feature request
+description: A change you want in the demo
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Streaming, production auth, RAG, paid cloud happy paths, and Kubernetes stay out of this demo.
+        Do not paste API keys, tokens, or `.env` contents.
+  - type: textarea
+    id: description
+    attributes:
+      label: What should change
+      description: The behavior you want, and who it helps.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What you do today instead.
