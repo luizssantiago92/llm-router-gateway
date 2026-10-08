@@ -1,5 +1,13 @@
 # Documentation
 
-The root [README](../README.md) is the operator front door (numbered Prepare → Run → Verify, checklist, commands, repo map). **New here?** [Overview](guide/Overview.md) · [Quick start](guide/Quick-start.md) · [Full index](guide/README.md)
+The root [README](../README.md) is the operator front door.
 
-Guides live under [`guide/`](guide/README.md). Archived kickoff, domain requirements, and the feature design live under [`history/`](history/).
+| Page | What it covers |
+| --- | --- |
+| [Architecture](architecture.md) | Request path, components, ship unit, limits |
+| [API](api.md) | Chat, health, metrics, status codes |
+| [Operations](operations.md) | Compose, demo mode, environment, tests |
+| [Changelog](../CHANGELOG.md) | Keep a Changelog record |
+| [history/](history/) | Archived kickoff, domain requirements, and feature design |
+
+Pages under [guide/](guide/README.md) are short pointers to the three pages above.

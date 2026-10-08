@@ -6,13 +6,13 @@ LLM Router Gateway is an academic / lab demo. The Compose file, image, and CI de
 
 | Version | Supported |
 | --- | --- |
-| `main` | yes |
+| `main` (package `0.1.0`) | yes |
 
 ## Reporting a vulnerability
 
 Do not open a public GitHub issue for a security report, and do not paste secrets, tokens, or `.env` contents into issues, pull requests, or logs.
 
-Use [private vulnerability reporting](https://github.com/luizssantiago92/llm-router-gateway/security/advisories/new) for this repository.
+Private vulnerability reporting is the channel for this repository. Use [Report a vulnerability](https://github.com/luizssantiago92/llm-router-gateway/security/advisories/new). The issue chooser points at that same page and does not offer a public form for it.
 
 Include:
 
@@ -38,5 +38,5 @@ Please allow time for a fix before any public disclosure.
 ## Secrets in this demo
 
 - Never commit `.env`, API keys, or Redis passwords.
-- Compose requires `REDIS_PASSWORD`. Redis is published on `127.0.0.1:6379` only.
+- Compose requires `REDIS_PASSWORD`. The API is published on `127.0.0.1:8000` only. Redis is published on `127.0.0.1:6379` only.
 - The Gemini adapter sends `GEMINI_API_KEY` in the `x-goog-api-key` header, not the query string.
