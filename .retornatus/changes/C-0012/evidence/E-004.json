@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0012/E-004",
+  "type": "test_result",
+  "subject": "The architecture page returns the request path",
+  "source": "pytest",
+  "producer": "retornatus",
+  "observed_at": "2026-10-08T00:03:52.037951Z",
+  "subject_state": "commit:259fc907278ba1865c57417cd5d6a824c25f3e31",
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-08T00:03:48.773512Z",
+  "ended_at": "2026-10-08T00:03:51.775112Z",
+  "duration_ms": 3001,
+  "output_sha256": "852995e749a10737a182f0d21d8b3cd8887bc86bcc51842228538d183361420e",
+  "output_tail": "........................................................................ [ 34%]\n........................................................................ [ 69%]\n................................................................         [100%]\n208 passed in 2.67s\n",
+  "output_artifact": ".retornatus/changes/C-0012/evidence/E-004.output.txt",
+  "git_commit": "259fc907278ba1865c57417cd5d6a824c25f3e31",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0012/claim-done-4",
+      "note": null
+    }
+  ]
+}
