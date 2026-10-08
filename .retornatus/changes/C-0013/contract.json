@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0013",
+  "version": 1,
+  "what": "Replace the long front page with a short recruiter page: an icon, CI CodeQL license and Python badges, one value sentence, a mermaid request path, a Swagger WebP at or under 80 KB, a short cache animation, a one-minute demo, engineering decisions, a private-reporting section, and short limitations with no fixed test count. Point operators at the existing architecture, API, and operations pages. Do not change application behavior.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "pytest with a branch-coverage floor of 90 exits 0",
+    "The front page returns a one-minute demo heading",
+    "The front page returns an engineering-decisions heading",
+    "The swagger image returns under 80 kilobytes"
+  ],
+  "active": true,
+  "activated_at": "2026-10-08T01:32:27.763705Z"
+}

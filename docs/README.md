@@ -1,6 +1,6 @@
 # Documentation
 
-The root [README](../README.md) is the operator front door.
+The root [README](../README.md) is the short front door. Day-to-day setup lives in [Operations](operations.md).
 
 | Page | What it covers |
 | --- | --- |

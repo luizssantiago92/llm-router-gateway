@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "id": "C-0013/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Replace the long front page with a short recruiter page: an icon, CI CodeQL license and Python badges, one value sentence, a mermaid request path, a Swagger WebP at or under 80 KB, a short cache animation, a one-minute demo, engineering decisions, a private-reporting section, and short limitations with no fixed test count. Point operators at the existing architecture, API, and operations pages. Do not change application behavior.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "pytest with a branch-coverage floor of 90 exits 0",
+    "The front page returns a one-minute demo heading",
+    "The front page returns an engineering-decisions heading",
+    "The swagger image returns under 80 kilobytes"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0013/T-001",
+      "description": "Rewrite the front page, add the icon and images, and test the page",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "README.md",
+        "docs/assets/icon.svg",
+        "docs/assets/icon.png",
+        "docs/assets/swagger.webp",
+        "docs/assets/cache.webp",
+        "tests/test_front_page.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0013/T-002",
+      "description": "Note the front-page change on the changelog and the docs index",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0013/T-001"
+      ],
+      "resources": [
+        "CHANGELOG.md",
+        "docs/README.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

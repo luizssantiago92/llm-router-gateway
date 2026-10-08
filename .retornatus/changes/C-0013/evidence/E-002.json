@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0013/E-002",
+  "type": "test_result",
+  "subject": "pytest with a branch-coverage floor of 90 exits 0",
+  "source": "pytest",
+  "producer": "retornatus",
+  "observed_at": "2026-10-08T01:46:50.567534Z",
+  "subject_state": "commit:a4fff974c1126a13542c35f82221f5ec8756e09e",
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-08T01:46:47.338720Z",
+  "ended_at": "2026-10-08T01:46:50.335342Z",
+  "duration_ms": 2996,
+  "output_sha256": "6de6ed0037eff9f9ef7a6650b5574f05cd57f0de3120ae1930552a91925a46c4",
+  "output_tail": "........................................................................ [ 33%]\n........................................................................ [ 67%]\n......................................................................   [100%]\n214 passed in 2.69s\n",
+  "output_artifact": ".retornatus/changes/C-0013/evidence/E-002.output.txt",
+  "git_commit": "a4fff974c1126a13542c35f82221f5ec8756e09e",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0013/claim-done-2",
+      "note": null
+    }
+  ]
+}
