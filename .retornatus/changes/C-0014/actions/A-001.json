@@ -30,7 +30,8 @@
         "CHANGELOG.md",
         "SECURITY.md",
         "docs/api.md",
-        "tests/test_release_version.py"
+        "tests/test_release_version.py",
+        "uv.lock"
       ]
     }
   ],
