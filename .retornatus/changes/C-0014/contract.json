@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0014",
+  "version": 1,
+  "what": "Set the application version to 1.0.0 in pyproject.toml and app.__version__. Move the unreleased changelog notes under a 1.0.0 heading dated 2026-10-08, and keep the 0.1.0 notes. Update the pages that quote the old version. Do not create a git tag, a GitHub release, or a publish. Do not change chat behavior.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "pytest with a branch-coverage floor of 90 exits 0",
+    "The application version returns 1.0.0",
+    "The changelog returns a 1.0.0 heading"
+  ],
+  "active": true,
+  "activated_at": "2026-10-08T02:52:44.710322Z"
+}

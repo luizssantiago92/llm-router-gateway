@@ -6,7 +6,7 @@ LLM Router Gateway is an academic / lab demo. The Compose file, image, and CI de
 
 | Version | Supported |
 | --- | --- |
-| `main` (package `0.1.0`) | yes |
+| `main` (package `1.0.0`) | yes |
 
 ## Reporting a vulnerability
 

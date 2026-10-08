@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "id": "C-0014/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Set the application version to 1.0.0 in pyproject.toml and app.__version__. Move the unreleased changelog notes under a 1.0.0 heading dated 2026-10-08, and keep the 0.1.0 notes. Update the pages that quote the old version. Do not create a git tag, a GitHub release, or a publish. Do not change chat behavior.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "pytest with a branch-coverage floor of 90 exits 0",
+    "The application version returns 1.0.0",
+    "The changelog returns a 1.0.0 heading"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0014/T-001",
+      "description": "Set version 1.0.0 and record it in the changelog and the pages that quote it",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "pyproject.toml",
+        "app/__init__.py",
+        "CHANGELOG.md",
+        "SECURITY.md",
+        "docs/api.md",
+        "tests/test_release_version.py",
+        "uv.lock"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
