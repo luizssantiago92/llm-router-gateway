@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0014/E-004",
+  "type": "test_result",
+  "subject": "The changelog returns a 1.0.0 heading",
+  "source": "pytest",
+  "producer": "retornatus",
+  "observed_at": "2026-10-08T02:53:38.804990Z",
+  "subject_state": "commit:ae8a3ed45a322d6494bac22d223771a62965363a",
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-08T02:53:35.392693Z",
+  "ended_at": "2026-10-08T02:53:38.508296Z",
+  "duration_ms": 3115,
+  "output_sha256": "4880c276aadf35ced9a02143a75a55bea2c411699ce453d9978a2c397f7a85ec",
+  "output_tail": "........................................................................ [ 33%]\n........................................................................ [ 66%]\n........................................................................ [100%]\n216 passed in 2.78s\n",
+  "output_artifact": ".retornatus/changes/C-0014/evidence/E-004.output.txt",
+  "git_commit": "ae8a3ed45a322d6494bac22d223771a62965363a",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0014/claim-done-4",
+      "note": null
+    }
+  ]
+}
