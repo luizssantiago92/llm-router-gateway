@@ -9,6 +9,7 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Changed
 
+- The front page leads with an icon, status badges, a one-minute demo, and pictures of the OpenAPI page and a cache hit. Setup detail stays in `docs/operations.md`.
 - Human pages are `docs/architecture.md`, `docs/api.md`, and `docs/operations.md`. Archived kickoff material stays in `docs/history/`.
 - This file is the changelog. `CONTRIBUTING.md` states Retornatus, uv, and squash merges. Pull requests and issues use GitHub templates.
 
