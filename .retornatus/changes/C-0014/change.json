@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0014",
+  "title": "Prepare version 1.0.0",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Prepare the 1.0.0 version bump (cleanup plan item 17).",
+    "kind": "MAINTENANCE"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-08T02:52:44.704697Z"
+}

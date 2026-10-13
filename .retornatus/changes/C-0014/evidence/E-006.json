@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "C-0014/E-006",
+  "type": "lint_result",
+  "subject": "ruff-format",
+  "source": "ruff-format",
+  "producer": "retornatus",
+  "observed_at": "2026-10-08T02:53:38.812619Z",
+  "subject_state": "commit:ae8a3ed45a322d6494bac22d223771a62965363a",
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "ruff",
+    "format",
+    "--check"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-08T02:53:38.546571Z",
+  "ended_at": "2026-10-08T02:53:38.568878Z",
+  "duration_ms": 22,
+  "output_sha256": "c0e5e25bab31b3d55ca20587ad32a798a72f9d0cca80c542239bf4d1472695fc",
+  "output_tail": "97 files already formatted\n",
+  "output_artifact": ".retornatus/changes/C-0014/evidence/E-006.output.txt",
+  "git_commit": "ae8a3ed45a322d6494bac22d223771a62965363a",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": []
+}

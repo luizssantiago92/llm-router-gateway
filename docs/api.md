@@ -52,7 +52,7 @@ Gateway fields on the same object: `cached` (boolean), `latency_ms` (integer), `
 | Both providers fail, a non-retryable primary 4xx, or a blocked Gemini prompt with no text | 502 | `upstream_error` |
 | Unknown path | 404 | `not_found` / `not_found`. Message `Not Found`. |
 
-`GET /` redirects to `/docs` with HTTP 307 and is omitted from the schema. The schema title is `LLM Router Gateway` and `info.version` is `app.__version__` (`0.1.0`).
+`GET /` redirects to `/docs` with HTTP 307 and is omitted from the schema. The schema title is `LLM Router Gateway` and `info.version` is `app.__version__` (`1.0.0`).
 
 ## `GET /metrics`
 
